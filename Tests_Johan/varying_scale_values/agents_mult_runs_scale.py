@@ -4,10 +4,6 @@ import dopamine
 from dopamine.discrete_domains import run_experiment
 import gin.tf
 
-path = 'DQN'
-#path = '/results/Rainbow/'
-#path = '/results/IQN/'
-#path = '/results/QR/'
 
 import sys
 from dqn_agent_new import*
@@ -37,10 +33,6 @@ for j in range (1,7):
       #return JaxImplicitQuantileAgentNew(num_actions=environment.action_space.n)
     
     gin.parse_config_file(inf[j])
-    #gin.parse_config_file('/revisiting_rainbow/Configs/dqn_cartpole.gin')
-    #gin.parse_config_file('/revisiting_rainbow/Configs/rainbow_cartpole.gin')
-    #gin.parse_config_file('/revisiting_rainbow/Configs/quantile_cartpole.gin')
-    #gin.parse_config_file('/revisiting_rainbow/Configs/implicit_cartpole.gin')
 
     random_dqn_runner = run_experiment.TrainRunner(LOG_PATH, create_random_dqn_agent)
 

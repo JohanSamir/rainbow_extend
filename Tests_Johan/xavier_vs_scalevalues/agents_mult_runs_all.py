@@ -3,27 +3,12 @@ import dopamine
 from dopamine.discrete_domains import run_experiment
 import gin.tf
 
-#path = '/results/Rainbow/'
-#path = '/results/IQN/'
-#path = '/results/QR/'
-
 import sys
 from dqn_agent_new import*
 from rainbow_agent_new import*
 from quantile_agent_new import*
 from implicit_quantile_agent_new import*
 
-'''
-inf = {1:{'gin':'/home/jobando0730/Tmp/revisiting_rainbow/Configs/dqn_cartpole.gin',
-          'path': '/home/jobando0730/Tmp/results/DQN/'},
-      2:{'gin':'/home/jobando0730/Tmp/revisiting_rainbow/Configs/rainbow_cartpole.gin',
-          'path': '/home/jobando0730/Tmp/results/Rainbow/'},
-      3: {'gin':'/revisitin/home/jobando0730/Tmp/revisiting_rainbow/Configs/quantile_cartpole.gin',
-          'path': '/home/jobando0730/Tmp/results/QR/'},
-      4:{'gin':'/home/jobando0730/Tmp/revisiting_rainbow/Configs/implicit_cartpole.gin',
-          'path': '/home/jobando0730/Tmp/results/IQ/'}
-          }
-'''
 
 #.gin files-> xavier or variance_scalin
 inf = {1:{'gin':'dqn_acrobot.gin',
@@ -38,25 +23,11 @@ inf = {1:{'gin':'dqn_acrobot.gin',
 
 for agnt in range (1,5):
   path = inf[agnt]['path']
-  #print('path:',path)
 
   for i in range (1,8):
 
     LOG_PATH = os.path.join(path, 'dqn_test'+str(i))
     sys.path.append(path)
-
-    '''
-     def create_random_dqn_agent(sess, environment, summary_writer=None):
-
-      infr = {1:{'return':JaxDQNAgentNew(num_actions=environment.action_space.n)},
-      2:{'return':JaxRainbowAgentNew(num_actions=environment.action_space.n)},
-      3: {'return':JaxQuantileAgentNew(num_actions=environment.action_space.n)},
-      4:{'return':JaxImplicitQuantileAgentNew(num_actions=environment.action_space.n)}
-          }
-
-      print('return:',infr[agnt]['return'])
-      return infr[agnt]['return']
-    '''
 
     if agnt == 1:
         def create_random_dqn_agent(sess, environment, summary_writer=None):
@@ -72,15 +43,8 @@ for agnt in range (1,5):
     		return JaxImplicitQuantileAgentNew(num_actions=environment.action_space.n)
     else:
     	print('error!')
-    
-    #path_gin = os.chdir(inf[agnt]['gin'])
-    #print('gin:', inf[agnt]['gin'])
-    gin.parse_config_file(inf[agnt]['gin'])
 
-    #gin.parse_config_file('/revisiting_rainbow/Configs/dqn_cartpole.gin')
-    #gin.parse_config_file('/revisiting_rainbow/Configs/rainbow_cartpole.gin')
-    #gin.parse_config_file('/revisiting_rainbow/Configs/quantile_cartpole.gin')
-    #gin.parse_config_file('/revisiting_rainbow/Configs/implicit_cartpole.gin')
+    gin.parse_config_file(inf[agnt]['gin'])
 
     random_dqn_runner = run_experiment.TrainRunner(LOG_PATH, create_random_dqn_agent)
 
