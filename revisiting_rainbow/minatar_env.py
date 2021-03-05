@@ -1,7 +1,7 @@
 """MinAtar environment made compatible for Dopamine."""
 
 from dopamine.discrete_domains import atari_lib
-from flax import nn
+# from flax import nn
 import gin 
 import jax 
 import jax.numpy as jnp 

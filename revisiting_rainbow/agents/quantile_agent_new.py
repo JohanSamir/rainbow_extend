@@ -154,7 +154,7 @@ class JaxQuantileAgentNew(dqn_agent.JaxDQNAgent):
       observation_dtype: DType, specifies the type of the observations. Note
         that if your inputs are continuous, you should set this to jnp.float32.
       stack_size: int, number of frames to use in state stack.
-      network: tf.Keras.Model, expects 3 parameters: num_actions, num_atoms,
+      network: flax.linen.Module, expects 3 parameters: num_actions, num_atoms,
         network_type. A call to this object will return an instantiation of the
         network provided. The network returned can be run with different inputs
         to create different outputs. See
