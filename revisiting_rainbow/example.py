@@ -1,31 +1,54 @@
-# %%
 import numpy as np
 import os
 
 import dopamine
 from dopamine.discrete_domains import run_experiment
-from dopamine.colab import utils as colab_utils
 from absl import flags
 import gin.tf
-# sys.path.append(path_or)
-# %%
 import sys
 path = "."
 sys.path.append(".")
 
-from agents.quantile_agent_new import*
-# %%
-def create_random_dqn_agent(sess, environment, summary_writer=None):
-    """The Runner class will expect a function of this type to create an agent."""  
-    return JaxQuantileAgentNew(num_actions=environment.action_space.n)
+from agents.dqn_agent_new import *
+from agents.rainbow_agent_new import *
+from agents.quantile_agent_new import *
+from agents.implicit_quantile_agent_new import *
 
-for i in range (1):
-    LOG_PATH = os.path.join(path, 'dqn_test'+str(i))
-    sys.path.append(path)
-    gin.parse_config_file('./Configs/quantile_cartpole.gin')
+ags = {
+    # 'dqn': JaxDQNAgentNew,
+    # 'rainbow': JaxRainbowAgentNew,
+    # 'quantile': JaxQuantileAgentNew,
+    'implicit': JaxImplicitQuantileAgentNew,
+}
 
-    random_dqn_runner = run_experiment.TrainRunner(LOG_PATH, create_random_dqn_agent) 
+names = {
+    # 'dqn': "JaxDQNAgentNew",
+    # 'rainbow': "JaxRainbowAgentNew",
+    # 'quantile': "JaxQuantileAgentNew",
+    'implicit': "JaxImplicitQuantileAgentNew",
+}
 
-    print(f'Train agent {i}, please be patient, may be a while...')
-    random_dqn_runner.run_experiment()
-    print('Done training!')
+
+num_runs = 1
+
+env = 'cartpole'
+
+
+for agent in ags:
+  for width in [128]:
+    for i in range (num_runs):
+        def create_agent(sess, environment, summary_writer=None):
+            return ags[agent](num_actions=environment.action_space.n)
+        
+        LOG_PATH = os.path.join(agent, f'../../test_joao/{agent}/{width}_test10')
+        sys.path.append(path)
+        
+        gin_file = f'./Configs/{agent}_{env}.gin'
+        gin.parse_config_file(gin_file)
+        gin.bind_parameter(f"{names[agent]}.neurons", width)
+
+        agent_runner = run_experiment.TrainRunner(LOG_PATH, create_agent)
+
+        print(f'Training agent {i+1}, please be patient, may be a while...')
+        agent_runner.run_experiment()
+        print('Done training!')
