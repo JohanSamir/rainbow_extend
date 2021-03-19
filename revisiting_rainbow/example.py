@@ -35,7 +35,7 @@ env = 'cartpole'
 
 
 for agent in ags:
-  for width in [128]:
+  for width in [64, 128, 256, 512, 1024]:
     for i in range (num_runs):
         def create_agent(sess, environment, summary_writer=None):
             return ags[agent](num_actions=environment.action_space.n)
