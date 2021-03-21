@@ -15,21 +15,21 @@ from agents.quantile_agent_new import *
 from agents.implicit_quantile_agent_new import *
 
 ags = {
-    # 'dqn': JaxDQNAgentNew,
-    # 'rainbow': JaxRainbowAgentNew,
-    # 'quantile': JaxQuantileAgentNew,
+    'dqn': JaxDQNAgentNew,
+    'rainbow': JaxRainbowAgentNew,
+    'quantile': JaxQuantileAgentNew,
     'implicit': JaxImplicitQuantileAgentNew,
 }
 
 names = {
-    # 'dqn': "JaxDQNAgentNew",
-    # 'rainbow': "JaxRainbowAgentNew",
-    # 'quantile': "JaxQuantileAgentNew",
+    'dqn': "JaxDQNAgentNew",
+    'rainbow': "JaxRainbowAgentNew",
+    'quantile': "JaxQuantileAgentNew",
     'implicit': "JaxImplicitQuantileAgentNew",
 }
 
 
-num_runs = 1
+num_runs = 10
 
 env = 'cartpole'
 
