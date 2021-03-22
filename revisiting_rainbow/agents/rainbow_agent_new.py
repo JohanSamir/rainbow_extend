@@ -110,7 +110,8 @@ class JaxRainbowAgentNew(dqn_agent.JaxDQNAgent):
                replay_scheme='prioritized',
                optimizer='adam',
                network=networks.RainbowNetwork,
-               epsilon_fn=dqn_agent.linearly_decaying_epsilon):
+               epsilon_fn=dqn_agent.linearly_decaying_epsilon,
+               eval_mode=False):
     """Initializes the agent and constructs the necessary components.
 
     Args:
@@ -120,7 +121,7 @@ class JaxRainbowAgentNew(dqn_agent.JaxDQNAgent):
       observation_dtype: DType, specifies the type of the observations. Note
         that if your inputs are continuous, you should set this to jnp.float32.
       stack_size: int, number of frames to use in state stack.
-      network: flax.nn Module that is initialized by shape in _create_network
+      network: flax.linen Module that is initialized by shape in _create_network
         below. See dopamine.jax.networks.RainbowNetwork as an example.
       num_atoms: int, the number of buckets of the value function distribution.
       vmax: float, the value distribution support is [-vmax, vmax].
@@ -174,10 +175,11 @@ class JaxRainbowAgentNew(dqn_agent.JaxDQNAgent):
                                 neurons=self._neurons,
                                 noisy=self._noisy,
                                 dueling=self._dueling,
-                                initzer=self._initzer),
+                                initzer=self._initzer,),
        
         epsilon_fn = dqn_agent.identity_epsilon if self._noisy == True else epsilon_fn,
-        optimizer=optimizer)
+        optimizer=optimizer, 
+        allow_partial_reload=True, eval_mode=eval_mode)
 
   def _create_network(self, name):
     """Builds a convolutional network that outputs Q-value distributions.

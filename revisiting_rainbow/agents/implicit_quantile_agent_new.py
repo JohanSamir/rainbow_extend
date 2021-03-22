@@ -347,7 +347,7 @@ class JaxImplicitQuantileAgentNew(dqn_agent.JaxDQNAgent):
       observation_dtype: DType, specifies the type of the observations. Note
         that if your inputs are continuous, you should set this to jnp.float32.
       stack_size: int, number of frames to use in state stack.
-      network: flax.nn Module that is initialized by shape in _create_network
+      network: flax.linen Module that is initialized by shape in _create_network
         below. See dopamine.jax.networks.JaxImplicitQuantileNetwork as an
         example.
       kappa: float, Huber loss cutoff.
