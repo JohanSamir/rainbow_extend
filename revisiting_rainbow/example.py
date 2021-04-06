@@ -40,7 +40,7 @@ for agent in ags:
         def create_agent(sess, environment, summary_writer=None):
             return ags[agent](num_actions=environment.action_space.n)
         
-        LOG_PATH = os.path.join(agent, f'../../test_joao/{agent}/{width}_test10')
+        LOG_PATH = os.path.join(path, f'../../test_joao/{agent}/{width}_test10')
         sys.path.append(path)
         
         gin_file = f'./Configs/{agent}_{env}.gin'
