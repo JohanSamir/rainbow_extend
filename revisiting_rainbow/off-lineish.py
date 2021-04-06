@@ -22,6 +22,9 @@ class OffRunner(run_experiment.Runner):
                create_environment_fn, _pretrained_agent):
         super().__init__(base_dir, create_agent_fn,
                                         create_environment_fn)
+        self._num_iterations = 30
+        self._training_steps = 1000
+        self._evaluation_steps = 200
         self._pretrained_agent = _pretrained_agent
 
     def _run_one_episode(self):
@@ -39,6 +42,7 @@ class OffRunner(run_experiment.Runner):
         while True:
             observation, reward, is_terminal = self._run_one_step(action)
 
+            
             total_reward += reward
             step_number += 1
 
@@ -54,9 +58,15 @@ class OffRunner(run_experiment.Runner):
                 # If we lose a life but the episode is not over, signal an artificial
                 # end of episode to the agent.
                 self._end_episode(reward)
-                action = self._pretrained_agent.begin_episode(observation)
+                if self._agent.eval_mode:
+                    action = self._agent.begin_episode(observation)
+                else:
+                    action = self._pretrained_agent.begin_episode(observation)
             else:
-                action = self._pretrained_agent.step(reward, observation)
+                if self._agent.eval_mode:
+                    action = self._agent.step(reward, observation)
+                else:
+                    action = self._pretrained_agent.step(reward, observation)
 
         self._end_episode(reward)
 
@@ -87,7 +97,7 @@ for agent in ags:
         def create_agent(sess, environment, summary_writer=None):
             return ags[agent](num_actions=environment.action_space.n)
         
-        LOG_PATH = os.path.join(path, f'../../test_joao/{agent}/test{i}')
+        LOG_PATH = os.path.join(path, f'../../test_joao/{agent}/test_off')
         gin_file = f'./Configs/{agent}_cartpole.gin'
         gin.parse_config_file(gin_file)
 
