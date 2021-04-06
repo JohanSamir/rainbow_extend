@@ -20,7 +20,7 @@ from agents.implicit_quantile_agent_new import *
 class OffRunner(run_experiment.Runner):
     def __init__(self, base_dir, create_agent_fn,
                create_environment_fn, _pretrained_agent):
-        super(OffRunner, self).__init__(base_dir, create_agent_fn,
+        super().__init__(base_dir, create_agent_fn,
                                         create_environment_fn)
         self._pretrained_agent = _pretrained_agent
 
@@ -53,12 +53,12 @@ class OffRunner(run_experiment.Runner):
             elif is_terminal:
                 # If we lose a life but the episode is not over, signal an artificial
                 # end of episode to the agent.
-                self._end_episode(reward, is_terminal)
+                self._end_episode(reward)
                 action = self._pretrained_agent.begin_episode(observation)
             else:
                 action = self._pretrained_agent.step(reward, observation)
 
-        self._end_episode(reward, is_terminal)
+        self._end_episode(reward)
 
         return step_number, total_reward
 
@@ -78,7 +78,6 @@ names = {
 
 
 num_runs = 1
-training_steps = 10
 ckpt_path = "../../results/rainbow/512_test10/checkpoints/ckpt.29"
 env = gym_lib.create_gym_environment("CartPole")
 
