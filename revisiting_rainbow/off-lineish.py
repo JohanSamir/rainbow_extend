@@ -62,11 +62,15 @@ class OffRunner(run_experiment.Runner):
                     action = self._agent.begin_episode(observation)
                 else:
                     action = self._pretrained_agent.begin_episode(observation)
+                    self._agent._store_transition(jnp.reshape(observation, (4,1)), action, reward, is_terminal)
+                    self._agent._train_step()
             else:
                 if self._agent.eval_mode:
                     action = self._agent.step(reward, observation)
                 else:
                     action = self._pretrained_agent.step(reward, observation)
+                    self._agent._store_transition(jnp.reshape(observation, (4,1)), action, reward, is_terminal)
+                    self._agent._train_step()
 
         self._end_episode(reward)
 
@@ -97,7 +101,7 @@ for agent in ags:
         def create_agent(sess, environment, summary_writer=None):
             return ags[agent](num_actions=environment.action_space.n)
         
-        LOG_PATH = os.path.join(path, f'../../test_joao/{agent}/test_off')
+        LOG_PATH = os.path.join(path, f'../../test_joao/{agent}/test_off2')
         gin_file = f'./Configs/{agent}_cartpole.gin'
         gin.parse_config_file(gin_file)
 
