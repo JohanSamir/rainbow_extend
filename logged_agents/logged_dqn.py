@@ -20,6 +20,7 @@ Details in:
 """
 
 import functools
+from .logged_replay_buffer import WrappedLoggedPrioritizedReplayBuffer
 from dopamine.jax import networks
 from dopamine.jax.agents.dqn import dqn_agent
 from dopamine.replay_memory import prioritized_replay_buffer
@@ -122,7 +123,7 @@ def target_m_dqn(model, target_network, states, next_states, actions,rewards, te
   tau_log_pi_a = jnp.clip(tau_log_pi_a, a_min=clip_value_min,a_max=1)
 
   munchausen_term = alpha * tau_log_pi_a
-  modified_bellman = (rewards + munchausen_term +cumulative_gamma * replay_next_qt_softmax *
+  modified_bellman = (rewards + munchausen_term + cumulative_gamma * replay_next_qt_softmax *
         (1. - jnp.float32(terminals)))
   
   return jax.lax.stop_gradient(modified_bellman)
@@ -149,7 +150,7 @@ def select_action(network, state, rng, num_actions, eval_mode,
                         selected_action)
 
 @gin.configurable
-class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
+class LoggedDQNAgent(dqn_agent.JaxDQNAgent):
   """A compact implementation of a simplified Rainbow agent."""
 
   def __init__(self,
@@ -164,10 +165,10 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
                normalize_obs = True,
                hidden_layer=2, 
                neurons=512,
-               replay_scheme='prioritized',
+               replay_scheme='uniform',
                noisy = False,
                dueling = False,
-               initzer = 'xavier_uniform',
+               initializer = 'xavier_uniform',
                target_opt=0,
                mse_inf=True,
                network=networks.NatureDQNNetwork,
@@ -219,14 +220,14 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
     self._neurons=neurons 
     self._noisy = noisy
     self._dueling = dueling
-    self._initzer = initzer
+    self._initializer = initializer
     self._target_opt = target_opt
     self._mse_inf = mse_inf
     self._tau = tau
     self._alpha = alpha
     self._clip_value_min = clip_value_min
 
-    super(JaxDQNAgentNew, self).__init__(
+    super(LoggedDQNAgent, self).__init__(
         num_actions= num_actions,
         network=network.partial(num_actions=num_actions,
                                 net_conf=self._net_conf,
@@ -236,7 +237,7 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
                                 neurons=self._neurons,
                                 noisy=self._noisy,
                                 dueling=self._dueling,
-                                initzer=self._initzer),
+                                initializer=self._initializer),
         optimizer=optimizer,
         epsilon_fn=dqn_agent.identity_epsilon if self._noisy == True else epsilon_fn)
 
@@ -248,14 +249,25 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
     self._build_networks_and_optimizer()
 
 
-  def _build_replay_buffer(self):
-    """Creates the prioritized replay buffer used by the agent."""
-    return prioritized_replay_buffer.OutOfGraphPrioritizedReplayBuffer(
+  def log_final_buffer(self):
+    self._replay.memory.log_final_buffer()
+
+  def _build_replay_buffer(self, use_staging):
+    """Creates the replay buffer used by the agent.
+    Args:
+      use_staging: bool, if True, uses a staging area to prefetch data for
+        faster training.
+    Returns:
+      A WrapperReplayBuffer object.
+    """
+    return WrappedLoggedPrioritizedReplayBuffer(
+        log_dir=self._replay_log_dir,
         observation_shape=self.observation_shape,
         stack_size=self.stack_size,
+        use_staging=use_staging,
         update_horizon=self.update_horizon,
         gamma=self.gamma,
-        observation_dtype=self.observation_dtype)
+        observation_dtype=self.observation_dtype.as_numpy_dtype)
     
   def _train_step(self):
     """Runs a single training step.
@@ -415,5 +427,4 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
     return self.action
 
 
-    def log_replay_buffer(self):
-      pass
+

@@ -46,8 +46,6 @@ for agent in ags:
         gin_file = f'./Configs/{agent}_cartpole.gin'
         gin.parse_config_file(gin_file)
 
-        new_agent = JaxRainbowAgentNew(num_actions=env.action_space.n)
-
         exp_data = checkpointer.Checkpointer(path)._load_data_from_file(ckpt_path)
         trained_agent = JaxRainbowAgentNew(num_actions=env.action_space.n, eval_mode=True)
         trained_agent.unbundle(ckpt_path, 29, exp_data)
