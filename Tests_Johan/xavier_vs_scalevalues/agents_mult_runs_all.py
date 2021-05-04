@@ -9,7 +9,6 @@ from rainbow_agent_new import *
 from quantile_agent_new import *
 from implicit_quantile_agent_new import *
 
-
 agents = {
     'dqn': JaxDQNAgentNew,
     'rainbow': JaxRainbowAgentNew,
@@ -22,22 +21,24 @@ num_runs = 7
 environments = ['cartpole', 'acrobot']
 
 for agent in agents:
-  for env in environments:
-    for i in range (1, num_runs + 1):
+    for env in environments:
+        for i in range(1, num_runs + 1):
 
-      LOG_PATH = os.path.join(agent, f'dqn_test{i}')
-      sys.path.append(path)
-          
-      def create_agent(sess, environment, summary_writer=None):
-        return agents[agent](num_actions=environment.action_space.n)
+            LOG_PATH = os.path.join(agent, f'dqn_test{i}')
+            sys.path.append(path)
 
-      gin_file = f'{agent}_{env}.gin'
-      gin.parse_config_file(gin_file)
-      # gin_bindings = ["JaxDQNAgentNew.initzer='variance_scaling_5'", ...]
-      # gin.parse_config_files_and_bindings([gin_file], gin_bindings, skip_unknown=False)
+            def create_agent(sess, environment, summary_writer=None):
+                return agents[agent](num_actions=environment.action_space.n)
 
-      agent_runner = run_experiment.TrainRunner(LOG_PATH, create_agent)
+            gin_file = f'{agent}_{env}.gin'
+            gin.parse_config_file(gin_file)
+            # gin_bindings = ["JaxDQNAgentNew.initzer='variance_scaling_5'", ...]
+            # gin.parse_config_files_and_bindings([gin_file], gin_bindings, skip_unknown=False)
 
-      print(f'Will train agent {agent} in {env}, run {i}, please be patient, may be a while...')
-      agent_runner.run_experiment()
-      print('Done training!')
+            agent_runner = run_experiment.TrainRunner(LOG_PATH, create_agent)
+
+            print(
+                f'Will train agent {agent} in {env}, run {i}, please be patient, may be a while...'
+            )
+            agent_runner.run_experiment()
+            print('Done training!')

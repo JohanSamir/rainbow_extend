@@ -12,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Logged Runner."""
 
 from __future__ import absolute_import
@@ -25,8 +24,7 @@ import gin
 
 @gin.configurable
 class LoggedRunner(run_experiment.Runner):
-
-  def run_experiment(self):
-    super(LoggedRunner, self).run_experiment()
-    # Log the replay buffer at the end
-    self._agent.log_final_buffer()
+    def run_experiment(self):
+        super(LoggedRunner, self).run_experiment()
+        # Log the replay buffer at the end
+        self._agent.log_final_buffer()

@@ -1,4 +1,3 @@
-
 # coding=utf-8
 # Copyright 2021 The Google Research Authors.
 #
@@ -13,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 r"""The entry point for running experiments for collecting replay datasets.
 """
 
@@ -23,7 +21,6 @@ from __future__ import print_function
 
 import functools
 import os
-
 
 from .logged_dqn import LoggedDQNAgent
 # from batch_rl.baselines.agents import quantile_agent
@@ -48,7 +45,7 @@ import tensorflow.compat.v1 as tf
 
 
 def create_agent(sess, environment, replay_log_dir, summary_writer=None):
-  """Creates a DQN agent.
+    """Creates a DQN agent.
   Args:
     sess: A `tf.Session`object  for running associated ops.
     environment: An Atari 2600 environment.
@@ -58,31 +55,35 @@ def create_agent(sess, environment, replay_log_dir, summary_writer=None):
   Returns:
     A DQN agent with metrics.
   """
-  if FLAGS.agent_name == 'dqn':
-    agent = dqn_agent.LoggedDQNAgent
-  elif FLAGS.agent_name == 'quantile':
-    agent = quantile_agent.LoggedQuantileAgent
-  elif FLAGS.agent_name == 'random':
-    agent = random_agent.RandomAgent
-  else:
-    raise ValueError('{} is not a valid agent name'.format(FLAGS.agent_name))
+    if FLAGS.agent_name == 'dqn':
+        agent = dqn_agent.LoggedDQNAgent
+    elif FLAGS.agent_name == 'quantile':
+        agent = quantile_agent.LoggedQuantileAgent
+    elif FLAGS.agent_name == 'random':
+        agent = random_agent.RandomAgent
+    else:
+        raise ValueError('{} is not a valid agent name'.format(
+            FLAGS.agent_name))
 
-  return agent(sess, num_actions=environment.action_space.n,
-               replay_log_dir=replay_log_dir, summary_writer=summary_writer)
+    return agent(sess,
+                 num_actions=environment.action_space.n,
+                 replay_log_dir=replay_log_dir,
+                 summary_writer=summary_writer)
 
 
 def main(unused_argv):
-  tf.logging.set_verbosity(tf.logging.INFO)
-  run_experiment.load_gin_configs(f'./Configs/dqn_cartpole.gin', FLAGS.gin_bindings)
-  # Create the replay log dir.
-  replay_log_dir = os.path.join(FLAGS.base_dir, 'replay_logs')
-  tf.logging.info('Saving replay buffer data to {}'.format(replay_log_dir))
-  create_agent_fn = functools.partial(
-      create_agent, replay_log_dir=replay_log_dir)
-  runner = LoggedRunner(FLAGS.base_dir, create_agent_fn)
-  runner.run_experiment()
+    tf.logging.set_verbosity(tf.logging.INFO)
+    run_experiment.load_gin_configs(f'./Configs/dqn_cartpole.gin',
+                                    FLAGS.gin_bindings)
+    # Create the replay log dir.
+    replay_log_dir = os.path.join(FLAGS.base_dir, 'replay_logs')
+    tf.logging.info('Saving replay buffer data to {}'.format(replay_log_dir))
+    create_agent_fn = functools.partial(create_agent,
+                                        replay_log_dir=replay_log_dir)
+    runner = LoggedRunner(FLAGS.base_dir, create_agent_fn)
+    runner.run_experiment()
 
 
 if __name__ == '__main__':
-  flags.mark_flag_as_required('base_dir')
-  app.run(main)
+    flags.mark_flag_as_required('base_dir')
+    app.run(main)

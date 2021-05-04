@@ -33,148 +33,156 @@ import jax.scipy.special as scp
 
 
 def mse_loss(targets, predictions):
-  return jnp.mean(jnp.power((targets - (predictions)),2))
+    return jnp.mean(jnp.power((targets - (predictions)), 2))
 
 
-@functools.partial(jax.jit, static_argnums=(8,9,10,11,12,13))
+@functools.partial(jax.jit, static_argnums=(8, 9, 10, 11, 12, 13))
 def train(target_network, optimizer, states, actions, next_states, rewards,
-          terminals, loss_weights, cumulative_gamma, target_opt, mse_inf,tau,alpha,clip_value_min):
-  """Run the training step."""
-  def loss_fn(model, target, loss_multipliers):
-    q_values = jax.vmap(model, in_axes=(0))(states).q_values
-    q_values = jnp.squeeze(q_values)
-    replay_chosen_q = jax.vmap(lambda x, y: x[y])(q_values, actions)
-    
-    if mse_inf:
-      loss = jax.vmap(mse_loss)(target, replay_chosen_q)
+          terminals, loss_weights, cumulative_gamma, target_opt, mse_inf, tau,
+          alpha, clip_value_min):
+    """Run the training step."""
+    def loss_fn(model, target, loss_multipliers):
+        q_values = jax.vmap(model, in_axes=(0))(states).q_values
+        q_values = jnp.squeeze(q_values)
+        replay_chosen_q = jax.vmap(lambda x, y: x[y])(q_values, actions)
+
+        if mse_inf:
+            loss = jax.vmap(mse_loss)(target, replay_chosen_q)
+        else:
+            loss = jax.vmap(dqn_agent.huber_loss)(target, replay_chosen_q)
+
+        mean_loss = jnp.mean(loss_multipliers * loss)
+        return mean_loss, loss
+
+    grad_fn = jax.value_and_grad(loss_fn, has_aux=True)
+
+    if target_opt == 0:
+        target = dqn_agent.target_q(target_network, next_states, rewards,
+                                    terminals, cumulative_gamma)
+    elif target_opt == 1:
+        #Double DQN
+        target = target_DDQN(optimizer, target_network, next_states, rewards,
+                             terminals, cumulative_gamma)
+    elif target_opt == 2:
+        #Munchausen
+        target = target_m_dqn(optimizer, target_network, states, next_states,
+                              actions, rewards, terminals, cumulative_gamma,
+                              tau, alpha, clip_value_min)
     else:
-      loss = jax.vmap(dqn_agent.huber_loss)(target, replay_chosen_q)
+        print('error')
 
-    mean_loss = jnp.mean(loss_multipliers * loss)
-    return mean_loss, loss
+    (mean_loss, loss), grad = grad_fn(optimizer.target, target, loss_weights)
+    optimizer = optimizer.apply_gradient(grad)
+    return optimizer, loss, mean_loss
 
 
-  grad_fn = jax.value_and_grad(loss_fn, has_aux=True)
+def target_DDQN(model, target_network, next_states, rewards, terminals,
+                cumulative_gamma):
+    """Compute the target Q-value. Double DQN"""
+    next_q_values = jax.vmap(model.target, in_axes=(0))(next_states).q_values
+    next_q_values = jnp.squeeze(next_q_values)
+    replay_next_qt_max = jnp.argmax(next_q_values, axis=1)
+    next_q_state_values = jax.vmap(target_network,
+                                   in_axes=(0))(next_states).q_values
 
-  if target_opt == 0:
-    target = dqn_agent.target_q(target_network, next_states, rewards, terminals, cumulative_gamma) 
-  elif target_opt == 1:
-    #Double DQN
-    target = target_DDQN(optimizer, target_network, next_states, rewards,  terminals, cumulative_gamma)
-  elif target_opt == 2:
-    #Munchausen
-    target = target_m_dqn(optimizer,target_network,states,next_states,actions,rewards,terminals,
-                cumulative_gamma,tau,alpha,clip_value_min)
-  else:
-    print('error')
+    q_values = jnp.squeeze(next_q_state_values)
+    replay_chosen_q = jax.vmap(lambda t, u: t[u])(q_values, replay_next_qt_max)
 
-  (mean_loss, loss), grad = grad_fn(optimizer.target, target, loss_weights)
-  optimizer = optimizer.apply_gradient(grad)
-  return optimizer, loss, mean_loss
+    return jax.lax.stop_gradient(rewards + cumulative_gamma * replay_chosen_q *
+                                 (1. - terminals))
 
-def target_DDQN(model, target_network, next_states, rewards, terminals, cumulative_gamma):
-  """Compute the target Q-value. Double DQN"""
-  next_q_values = jax.vmap(model.target, in_axes=(0))(next_states).q_values
-  next_q_values = jnp.squeeze(next_q_values)
-  replay_next_qt_max = jnp.argmax(next_q_values, axis=1)
-  next_q_state_values = jax.vmap(target_network, in_axes=(0))(next_states).q_values
-
-  q_values = jnp.squeeze(next_q_state_values)
-  replay_chosen_q = jax.vmap(lambda t, u: t[u])(q_values, replay_next_qt_max)
- 
-  return jax.lax.stop_gradient(rewards + cumulative_gamma * replay_chosen_q *
-                               (1. - terminals))
 
 def stable_scaled_log_softmax(x, tau, axis=-1):
-  max_x = jnp.amax(x, axis=axis, keepdims=True)
-  y = x - max_x
-  tau_lse = max_x + tau * jnp.log(jnp.sum(jnp.exp(y / tau), axis=axis, keepdims=True))
-  return x - tau_lse
+    max_x = jnp.amax(x, axis=axis, keepdims=True)
+    y = x - max_x
+    tau_lse = max_x + tau * jnp.log(
+        jnp.sum(jnp.exp(y / tau), axis=axis, keepdims=True))
+    return x - tau_lse
+
 
 def stable_softmax(x, tau, axis=-1):
-  max_x = jnp.amax(x, axis=axis, keepdims=True)
-  y = x - max_x
-  return jax.nn.softmax(y/tau, axis=axis)
+    max_x = jnp.amax(x, axis=axis, keepdims=True)
+    y = x - max_x
+    return jax.nn.softmax(y / tau, axis=axis)
 
-def target_m_dqn(model, target_network, states, next_states, actions,rewards, terminals, 
-                cumulative_gamma,tau,alpha,clip_value_min):
-  """Compute the target Q-value. Munchausen DQN"""
-  
-  #----------------------------------------
-  q_state_values = jax.vmap(target_network, in_axes=(0))(states).q_values
-  q_state_values = jnp.squeeze(q_state_values)
-  
-  next_q_values = jax.vmap(target_network, in_axes=(0))(next_states).q_values
-  next_q_values = jnp.squeeze(next_q_values)
-  #----------------------------------------
 
-  tau_log_pi_next =  stable_scaled_log_softmax(next_q_values, tau, axis=1)
-  pi_target = stable_softmax(next_q_values,tau, axis=1)
-  replay_log_policy = stable_scaled_log_softmax(q_state_values, tau, axis=1)
+def target_m_dqn(model, target_network, states, next_states, actions, rewards,
+                 terminals, cumulative_gamma, tau, alpha, clip_value_min):
+    """Compute the target Q-value. Munchausen DQN"""
 
-  #----------------------------------------
-  
-  replay_next_qt_softmax = jnp.sum((next_q_values-tau_log_pi_next)*pi_target,axis=1)
+    #----------------------------------------
+    q_state_values = jax.vmap(target_network, in_axes=(0))(states).q_values
+    q_state_values = jnp.squeeze(q_state_values)
 
-  replay_action_one_hot = jax.nn.one_hot(actions, q_state_values.shape[-1])
-  tau_log_pi_a = jnp.sum(replay_log_policy * replay_action_one_hot, axis=1)
+    next_q_values = jax.vmap(target_network, in_axes=(0))(next_states).q_values
+    next_q_values = jnp.squeeze(next_q_values)
+    #----------------------------------------
 
-  #a_max=1
-  tau_log_pi_a = jnp.clip(tau_log_pi_a, a_min=clip_value_min,a_max=1)
+    tau_log_pi_next = stable_scaled_log_softmax(next_q_values, tau, axis=1)
+    pi_target = stable_softmax(next_q_values, tau, axis=1)
+    replay_log_policy = stable_scaled_log_softmax(q_state_values, tau, axis=1)
 
-  munchausen_term = alpha * tau_log_pi_a
-  modified_bellman = (rewards + munchausen_term + cumulative_gamma * replay_next_qt_softmax *
-        (1. - jnp.float32(terminals)))
-  
-  return jax.lax.stop_gradient(modified_bellman)
+    #----------------------------------------
+
+    replay_next_qt_softmax = jnp.sum(
+        (next_q_values - tau_log_pi_next) * pi_target, axis=1)
+
+    replay_action_one_hot = jax.nn.one_hot(actions, q_state_values.shape[-1])
+    tau_log_pi_a = jnp.sum(replay_log_policy * replay_action_one_hot, axis=1)
+
+    #a_max=1
+    tau_log_pi_a = jnp.clip(tau_log_pi_a, a_min=clip_value_min, a_max=1)
+
+    munchausen_term = alpha * tau_log_pi_a
+    modified_bellman = (rewards + munchausen_term +
+                        cumulative_gamma * replay_next_qt_softmax *
+                        (1. - jnp.float32(terminals)))
+
+    return jax.lax.stop_gradient(modified_bellman)
 
 
 @functools.partial(jax.jit, static_argnums=(3, 4, 5, 6, 7, 9, 10, 11))
-def select_action(network, state, rng, num_actions, eval_mode,
-                  epsilon_eval, epsilon_train, epsilon_decay_period,
-                  training_steps, min_replay_history, epsilon_fn,tau, model):
+def select_action(network, state, rng, num_actions, eval_mode, epsilon_eval,
+                  epsilon_train, epsilon_decay_period, training_steps,
+                  min_replay_history, epsilon_fn, tau, model):
 
-  epsilon = jnp.where(eval_mode,
-                      epsilon_eval,
-                      epsilon_fn(epsilon_decay_period,
-                                 training_steps,
-                                 min_replay_history,
-                                 epsilon_train))
+    epsilon = jnp.where(
+        eval_mode, epsilon_eval,
+        epsilon_fn(epsilon_decay_period, training_steps, min_replay_history,
+                   epsilon_train))
 
-  selected_action = jnp.argmax(network(state).q_values, axis=1)[0]
+    selected_action = jnp.argmax(network(state).q_values, axis=1)[0]
 
-  rng, rng1, rng2 = jax.random.split(rng, num=3)
-  p = jax.random.uniform(rng1)
-  return rng, jnp.where(p <= epsilon,
-                        jax.random.randint(rng2, (), 0, num_actions),
-                        selected_action)
+    rng, rng1, rng2 = jax.random.split(rng, num=3)
+    p = jax.random.uniform(rng1)
+    return rng, jnp.where(p <= epsilon,
+                          jax.random.randint(rng2, (), 0, num_actions),
+                          selected_action)
+
 
 @gin.configurable
 class LoggedDQNAgent(dqn_agent.JaxDQNAgent):
-  """A compact implementation of a simplified Rainbow agent."""
-
-  def __init__(self,
-               num_actions,
-
-               tau,
-               alpha=1,
-               clip_value_min=-10,
-
-               net_conf = None,
-               env = "CartPole", 
-               normalize_obs = True,
-               hidden_layer=2, 
-               neurons=512,
-               replay_scheme='uniform',
-               noisy = False,
-               dueling = False,
-               initializer = 'xavier_uniform',
-               target_opt=0,
-               mse_inf=True,
-               network=networks.NatureDQNNetwork,
-               optimizer='adam',
-               epsilon_fn=dqn_agent.linearly_decaying_epsilon):
-    """Initializes the agent and constructs the necessary components.
+    """A compact implementation of a simplified Rainbow agent."""
+    def __init__(self,
+                 num_actions,
+                 tau,
+                 alpha=1,
+                 clip_value_min=-10,
+                 net_conf=None,
+                 env="CartPole",
+                 normalize_obs=True,
+                 hidden_layer=2,
+                 neurons=512,
+                 replay_scheme='uniform',
+                 noisy=False,
+                 dueling=False,
+                 initializer='xavier_uniform',
+                 target_opt=0,
+                 mse_inf=True,
+                 network=networks.NatureDQNNetwork,
+                 optimizer='adam',
+                 epsilon_fn=dqn_agent.linearly_decaying_epsilon):
+        """Initializes the agent and constructs the necessary components.
 
     Args:
       num_actions: int, number of actions the agent can take at any state.
@@ -211,66 +219,66 @@ class LoggedDQNAgent(dqn_agent.JaxDQNAgent):
       allow_partial_reload: bool, whether we allow reloading a partial agent
         (for instance, only the network parameters).
     """
-    # We need this because some tools convert round floats into ints.
+        # We need this because some tools convert round floats into ints.
 
-    self._net_conf = net_conf
-    self._env = env 
-    self._normalize_obs = normalize_obs
-    self._hidden_layer = hidden_layer
-    self._neurons=neurons 
-    self._noisy = noisy
-    self._dueling = dueling
-    self._initializer = initializer
-    self._target_opt = target_opt
-    self._mse_inf = mse_inf
-    self._tau = tau
-    self._alpha = alpha
-    self._clip_value_min = clip_value_min
+        self._net_conf = net_conf
+        self._env = env
+        self._normalize_obs = normalize_obs
+        self._hidden_layer = hidden_layer
+        self._neurons = neurons
+        self._noisy = noisy
+        self._dueling = dueling
+        self._initializer = initializer
+        self._target_opt = target_opt
+        self._mse_inf = mse_inf
+        self._tau = tau
+        self._alpha = alpha
+        self._clip_value_min = clip_value_min
 
-    super(LoggedDQNAgent, self).__init__(
-        num_actions= num_actions,
-        network=network.partial(num_actions=num_actions,
-                                net_conf=self._net_conf,
-                                env=self._env,
-                                normalize_obs=self._normalize_obs,
-                                hidden_layer=self._hidden_layer, 
-                                neurons=self._neurons,
-                                noisy=self._noisy,
-                                dueling=self._dueling,
-                                initializer=self._initializer),
-        optimizer=optimizer,
-        epsilon_fn=dqn_agent.identity_epsilon if self._noisy == True else epsilon_fn)
+        super(LoggedDQNAgent, self).__init__(
+            num_actions=num_actions,
+            network=network.partial(num_actions=num_actions,
+                                    net_conf=self._net_conf,
+                                    env=self._env,
+                                    normalize_obs=self._normalize_obs,
+                                    hidden_layer=self._hidden_layer,
+                                    neurons=self._neurons,
+                                    noisy=self._noisy,
+                                    dueling=self._dueling,
+                                    initializer=self._initializer),
+            optimizer=optimizer,
+            epsilon_fn=dqn_agent.identity_epsilon
+            if self._noisy == True else epsilon_fn)
 
-    self._replay_scheme = replay_scheme
-    self._rng = jax.random.PRNGKey(0)
-    state_shape = self.observation_shape + (self.stack_size,)
-    self.state = onp.zeros(state_shape)
-    self._optimizer_name = optimizer
-    self._build_networks_and_optimizer()
+        self._replay_scheme = replay_scheme
+        self._rng = jax.random.PRNGKey(0)
+        state_shape = self.observation_shape + (self.stack_size, )
+        self.state = onp.zeros(state_shape)
+        self._optimizer_name = optimizer
+        self._build_networks_and_optimizer()
 
+    def log_final_buffer(self):
+        self._replay.memory.log_final_buffer()
 
-  def log_final_buffer(self):
-    self._replay.memory.log_final_buffer()
-
-  def _build_replay_buffer(self, use_staging):
-    """Creates the replay buffer used by the agent.
+    def _build_replay_buffer(self, use_staging):
+        """Creates the replay buffer used by the agent.
     Args:
       use_staging: bool, if True, uses a staging area to prefetch data for
         faster training.
     Returns:
       A WrapperReplayBuffer object.
     """
-    return WrappedLoggedPrioritizedReplayBuffer(
-        log_dir=self._replay_log_dir,
-        observation_shape=self.observation_shape,
-        stack_size=self.stack_size,
-        use_staging=use_staging,
-        update_horizon=self.update_horizon,
-        gamma=self.gamma,
-        observation_dtype=self.observation_dtype.as_numpy_dtype)
-    
-  def _train_step(self):
-    """Runs a single training step.
+        return WrappedLoggedPrioritizedReplayBuffer(
+            log_dir=self._replay_log_dir,
+            observation_shape=self.observation_shape,
+            stack_size=self.stack_size,
+            use_staging=use_staging,
+            update_horizon=self.update_horizon,
+            gamma=self.gamma,
+            observation_dtype=self.observation_dtype.as_numpy_dtype)
+
+    def _train_step(self):
+        """Runs a single training step.
 
     Runs training if both:
       (1) A minimum number of frames have been added to the replay buffer.
@@ -279,69 +287,67 @@ class LoggedDQNAgent(dqn_agent.JaxDQNAgent):
     Also, syncs weights from online_network to target_network if training steps
     is a multiple of target update period.
     """
-    # Run a train op at the rate of self.update_period if enough training steps
-    # have been run. This matches the Nature DQN behaviour.
-    if self._replay.add_count > self.min_replay_history:
-      if self.training_steps % self.update_period == 0:
-        self._sample_from_replay_buffer()
+        # Run a train op at the rate of self.update_period if enough training steps
+        # have been run. This matches the Nature DQN behaviour.
+        if self._replay.add_count > self.min_replay_history:
+            if self.training_steps % self.update_period == 0:
+                self._sample_from_replay_buffer()
 
-        if self._replay_scheme == 'prioritized':
-          # The original prioritized experience replay uses a linear exponent
-          # schedule 0.4 -> 1.0. Comparing the schedule to a fixed exponent of
-          # 0.5 on 5 games (Asterix, Pong, Q*Bert, Seaquest, Space Invaders)
-          # suggested a fixed exponent actually performs better, except on Pong.
-          probs = self.replay_elements['sampling_probabilities']
-          # Weight the loss by the inverse priorities.
-          loss_weights = 1.0 / jnp.sqrt(probs + 1e-10)
-          loss_weights /= jnp.max(loss_weights)
-        else:
-          loss_weights = jnp.ones(self.replay_elements['state'].shape[0])
+                if self._replay_scheme == 'prioritized':
+                    # The original prioritized experience replay uses a linear exponent
+                    # schedule 0.4 -> 1.0. Comparing the schedule to a fixed exponent of
+                    # 0.5 on 5 games (Asterix, Pong, Q*Bert, Seaquest, Space Invaders)
+                    # suggested a fixed exponent actually performs better, except on Pong.
+                    probs = self.replay_elements['sampling_probabilities']
+                    # Weight the loss by the inverse priorities.
+                    loss_weights = 1.0 / jnp.sqrt(probs + 1e-10)
+                    loss_weights /= jnp.max(loss_weights)
+                else:
+                    loss_weights = jnp.ones(
+                        self.replay_elements['state'].shape[0])
 
+                self.optimizer, loss, mean_loss = train(
+                    self.target_network, self.optimizer,
+                    self.replay_elements['state'],
+                    self.replay_elements['action'],
+                    self.replay_elements['next_state'],
+                    self.replay_elements['reward'],
+                    self.replay_elements['terminal'], loss_weights,
+                    self.cumulative_gamma, self._target_opt, self._mse_inf,
+                    self._tau, self._alpha, self._clip_value_min)
 
-        self.optimizer, loss, mean_loss = train(self.target_network,
-                                     self.optimizer,
-                                     self.replay_elements['state'],
-                                     self.replay_elements['action'],
-                                     self.replay_elements['next_state'],
-                                     self.replay_elements['reward'],
-                                     self.replay_elements['terminal'],
-                                     loss_weights,
-                                     self.cumulative_gamma,
-                                     self._target_opt,
-                                     self._mse_inf,
-                                     self._tau,
-                                     self._alpha,
-                                     self._clip_value_min)
+                if self._replay_scheme == 'prioritized':
+                    # Rainbow and prioritized replay are parametrized by an exponent
+                    # alpha, but in both cases it is set to 0.5 - for simplicity's sake we
+                    # leave it as is here, using the more direct sqrt(). Taking the square
+                    # root "makes sense", as we are dealing with a squared loss.  Add a
+                    # small nonzero value to the loss to avoid 0 priority items. While
+                    # technically this may be okay, setting all items to 0 priority will
+                    # cause troubles, and also result in 1.0 / 0.0 = NaN correction terms.
+                    self._replay.set_priority(self.replay_elements['indices'],
+                                              jnp.sqrt(loss + 1e-10))
 
-        if self._replay_scheme == 'prioritized':
-          # Rainbow and prioritized replay are parametrized by an exponent
-          # alpha, but in both cases it is set to 0.5 - for simplicity's sake we
-          # leave it as is here, using the more direct sqrt(). Taking the square
-          # root "makes sense", as we are dealing with a squared loss.  Add a
-          # small nonzero value to the loss to avoid 0 priority items. While
-          # technically this may be okay, setting all items to 0 priority will
-          # cause troubles, and also result in 1.0 / 0.0 = NaN correction terms.
-          self._replay.set_priority(self.replay_elements['indices'],
-                                    jnp.sqrt(loss + 1e-10))
-        
-        if (self.summary_writer is not None and
-            self.training_steps > 0 and
-            self.training_steps % self.summary_writing_frequency == 0):
-          summary = tf.compat.v1.Summary(value=[
-              tf.compat.v1.Summary.Value(tag='HuberLoss', simple_value=mean_loss)])
-          self.summary_writer.add_summary(summary, self.training_steps)
-      if self.training_steps % self.target_update_period == 0:
-        self._sync_weights()
+                if (self.summary_writer is not None and self.training_steps > 0
+                        and self.training_steps %
+                        self.summary_writing_frequency == 0):
+                    summary = tf.compat.v1.Summary(value=[
+                        tf.compat.v1.Summary.Value(tag='HuberLoss',
+                                                   simple_value=mean_loss)
+                    ])
+                    self.summary_writer.add_summary(summary,
+                                                    self.training_steps)
+            if self.training_steps % self.target_update_period == 0:
+                self._sync_weights()
 
-    self.training_steps += 1
+        self.training_steps += 1
 
-  def _store_transition(self,
-                        last_observation,
-                        action,
-                        reward,
-                        is_terminal,
-                        priority=None):
-    """Stores a transition when in training mode.
+    def _store_transition(self,
+                          last_observation,
+                          action,
+                          reward,
+                          is_terminal,
+                          priority=None):
+        """Stores a transition when in training mode.
     Stores the following tuple in the replay buffer (last_observation, action,
     reward, is_terminal, priority).
     Args:
@@ -355,46 +361,40 @@ class LoggedDQNAgent(dqn_agent.JaxDQNAgent):
         is 1. If the replay scheme is prioritized, the default priority is the
         maximum ever seen [Schaul et al., 2015].
     """
-    if priority is None:
-      if self._replay_scheme == 'uniform':
-        priority = 1.
-      else:
-        priority = self._replay.sum_tree.max_recorded_priority
+        if priority is None:
+            if self._replay_scheme == 'uniform':
+                priority = 1.
+            else:
+                priority = self._replay.sum_tree.max_recorded_priority
 
-    if not self.eval_mode:
-      self._replay.add(last_observation, action, reward, is_terminal, priority)
+        if not self.eval_mode:
+            self._replay.add(last_observation, action, reward, is_terminal,
+                             priority)
 
-  def begin_episode(self, observation):
-    """Returns the agent's first action for this episode.
+    def begin_episode(self, observation):
+        """Returns the agent's first action for this episode.
     Args:
       observation: numpy array, the environment's initial observation.
     Returns:
       int, the selected action.
     """
-    self._reset_state()
-    self._record_observation(observation)
+        self._reset_state()
+        self._record_observation(observation)
 
-    if not self.eval_mode:
-      self._train_step()
+        if not self.eval_mode:
+            self._train_step()
 
-    self._rng, self.action = select_action(self.online_network,
-                                           self.state,
-                                           self._rng,
-                                           self.num_actions,
-                                           self.eval_mode,
-                                           self.epsilon_eval,
-                                           self.epsilon_train,
-                                           self.epsilon_decay_period,
-                                           self.training_steps,
-                                           self.min_replay_history,
-                                           self.epsilon_fn,
-                                           self._tau,
-                                           self.optimizer)
-    self.action = onp.asarray(self.action)
-    return self.action
+        self._rng, self.action = select_action(
+            self.online_network, self.state, self._rng, self.num_actions,
+            self.eval_mode, self.epsilon_eval, self.epsilon_train,
+            self.epsilon_decay_period, self.training_steps,
+            self.min_replay_history, self.epsilon_fn, self._tau,
+            self.optimizer)
+        self.action = onp.asarray(self.action)
+        return self.action
 
-  def step(self, reward, observation):
-    """Records the most recent transition and returns the agent's next action.
+    def step(self, reward, observation):
+        """Records the most recent transition and returns the agent's next action.
     We store the observation of the last time step since we want to store it
     with the reward.
     Args:
@@ -403,28 +403,19 @@ class LoggedDQNAgent(dqn_agent.JaxDQNAgent):
     Returns:
       int, the selected action.
     """
-    self._last_observation = self._observation
-    self._record_observation(observation)
+        self._last_observation = self._observation
+        self._record_observation(observation)
 
-    if not self.eval_mode:
-      self._store_transition(self._last_observation, self.action, reward, False)
-      self._train_step()
+        if not self.eval_mode:
+            self._store_transition(self._last_observation, self.action, reward,
+                                   False)
+            self._train_step()
 
-    self._rng, self.action = select_action(self.online_network,
-                                           self.state,
-                                           self._rng,
-                                           self.num_actions,
-                                           self.eval_mode,
-                                           self.epsilon_eval,
-                                           self.epsilon_train,
-                                           self.epsilon_decay_period,
-                                           self.training_steps,
-                                           self.min_replay_history,
-                                           self.epsilon_fn,
-                                           self._tau,
-                                           self.optimizer)
-    self.action = onp.asarray(self.action)
-    return self.action
-
-
-
+        self._rng, self.action = select_action(
+            self.online_network, self.state, self._rng, self.num_actions,
+            self.eval_mode, self.epsilon_eval, self.epsilon_train,
+            self.epsilon_decay_period, self.training_steps,
+            self.min_replay_history, self.epsilon_fn, self._tau,
+            self.optimizer)
+        self.action = onp.asarray(self.action)
+        return self.action

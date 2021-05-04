@@ -15,10 +15,11 @@ long_description = (here / 'README.md').read_text(encoding='utf-8')
 
 install_requires = [
     'dopamine-rl>= 3.1.8 ',
-    ]
+]
 
 rev_rainbow_description = (
-    'Revisiting Rainbow: Promoting more insightful and inclusive deep reinforcement learning research')
+    'Revisiting Rainbow: Promoting more insightful and inclusive deep reinforcement learning research'
+)
 
 setup(
     name='revisiting_rainbow',
@@ -60,4 +61,3 @@ setup(
     },
     license='Apache 2.0',
 )
-
