@@ -51,6 +51,7 @@ create_gym_environment.environment_name = 'CartPole'
 create_gym_environment.version = 'v0'
 
 TrainRunner.create_environment_fn = @gym_lib.create_gym_environment
+Runner.create_environment_fn = @gym_lib.create_gym_environment
 Runner.num_iterations = 30
 Runner.training_steps = 1000
 Runner.max_steps_per_episode = 200

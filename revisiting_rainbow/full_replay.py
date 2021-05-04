@@ -18,17 +18,17 @@ from agents.implicit_quantile_agent_new import *
 from replay_runner import FixedReplayRunner
 
 ags = {
-    # 'dqn': JaxDQNAgentNew,
+    'dqn': JaxDQNAgentNew,
     'rainbow': JaxRainbowAgentNew,
-    # 'quantile': JaxQuantileAgentNew,
-    # 'implicit': JaxImplicitQuantileAgentNew,
+    'quantile': JaxQuantileAgentNew,
+    'implicit': JaxImplicitQuantileAgentNew,
 }
 
 names = {
-    # 'dqn': "JaxDQNAgentNew",
+    'dqn': "JaxDQNAgentNew",
     'rainbow': "JaxRainbowAgentNew",
-    # 'quantile': "JaxQuantileAgentNew",
-    # 'implicit': "JaxImplicitQuantileAgentNew",
+    'quantile': "JaxQuantileAgentNew",
+    'implicit': "JaxImplicitQuantileAgentNew",
 }
 
 
@@ -53,8 +53,10 @@ for agent in ags:
         print('Done normal training!')
         
         LOG_PATH = os.path.join(path, f'../../test_joao/offline/{agent}/fixed_{i+1}')
+        gin_file = f'./Configs/{agent}_cartpole.gin'
+        gin.parse_config_file(gin_file)
         offline_runner = FixedReplayRunner(
             LOG_PATH, functools.partial(create_agent, memory=agent_runner._agent._replay), create_environment_fn=gym_lib.create_gym_environment)
         print(f'Training fixed agent {i+1}, please be patient, may be a while...')
-        agent_runner.run_experiment()
+        offline_runner.run_experiment()
         print('Done fixed training!')

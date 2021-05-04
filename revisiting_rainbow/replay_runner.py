@@ -32,6 +32,14 @@ import tensorflow.compat.v1 as tf
 @gin.configurable
 class FixedReplayRunner(run_experiment.Runner):
     """Object that handles running Dopamine experiments with fixed replay buffer."""
+    def __init__(self, base_dir, create_agent_fn,
+               create_environment_fn):
+        super().__init__(base_dir, create_agent_fn,
+                                        create_environment_fn)
+        self._num_iterations = 30
+        self._training_steps = 1000
+        self._evaluation_steps = 200
+
 
     def _run_train_phase(self):
         """Run training phase."""
@@ -48,9 +56,9 @@ class FixedReplayRunner(run_experiment.Runner):
         statistics = iteration_statistics.IterationStatistics()
         tf.logging.info('Starting iteration %d', iteration)
         # pylint: disable=protected-access
-        if not self._agent._replay_suffix:
-            # Reload the replay buffer
-            self._agent._replay.memory.reload_buffer(num_buffers=5)
+        # if not self._agent._replay_suffix:
+        #     # Reload the replay buffer
+        #     self._agent._replay.memory.reload_buffer(num_buffers=5)
         # pylint: enable=protected-access
         self._run_train_phase()
 
