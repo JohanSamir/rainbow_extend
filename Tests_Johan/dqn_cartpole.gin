@@ -3,9 +3,11 @@ import dopamine.jax.networks
 import dopamine.discrete_domains.run_experiment
 import dopamine.jax.agents.dqn.dqn_agent
 import dopamine.replay_memory.prioritized_replay_buffer
-
+import jax
+import gin
 import networks_new
 import dqn_agent_new
+import external_configurations
 
 JaxDQNAgent.observation_shape = %gym_lib.CARTPOLE_OBSERVATION_SHAPE
 JaxDQNAgent.observation_dtype = %jax_networks.CARTPOLE_OBSERVATION_DTYPE
@@ -24,11 +26,15 @@ JaxDQNAgentNew.normalize_obs = True
 JaxDQNAgentNew.hidden_layer = 2
 JaxDQNAgentNew.neurons = 512
 JaxDQNAgentNew.replay_scheme = 'uniform' #'prioritized' or 'uniform'
-JaxDQNAgentNew.target_opt = 0 #0:DQN 1:Double DQN 2:Munchausen DQN
+JaxDQNAgentNew.target_opt = 0 #0:DQN OK 1:Double DQN OK 2:Munchausen DQN OK
 JaxDQNAgentNew.mse_inf = False
 JaxDQNAgentNew.noisy = False
-JaxDQNAgentNew.dueling = False
-JaxDQNAgentNew.initzer = 'variance_scaling_3'#'xavier_uniform' #'variance_scaling'
+JaxDQNAgentNew.dueling = False #OK
+JaxDQNAgentNew.initzer = @variance_scaling() #@variance_scaling #@zeros #@ones
+variance_scaling.scale=1
+variance_scaling.mode='fan_avg'
+variance_scaling.distribution='uniform'
+
 JaxDQNAgentNew.tau = 100 
 JaxDQNAgentNew.alpha = 1
 JaxDQNAgentNew.clip_value_min = -1e3
