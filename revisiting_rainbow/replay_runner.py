@@ -1,17 +1,3 @@
-# coding=utf-8
-# Copyright 2021 The Google Research Authors.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 """Runner for experiments with a fixed replay buffer."""
 
 from __future__ import absolute_import
@@ -31,11 +17,12 @@ import tensorflow.compat.v1 as tf
 @gin.configurable
 class FixedReplayRunner(run_experiment.Runner):
     """Object that handles running Dopamine experiments with fixed replay buffer."""
-    def __init__(self, base_dir, create_agent_fn, create_environment_fn):
+    def __init__(self, base_dir, create_agent_fn, create_environment_fn,
+                 num_iterations, training_steps, evaluation_steps):
         super().__init__(base_dir, create_agent_fn, create_environment_fn)
-        self._num_iterations = 30
-        self._training_steps = 1000
-        self._evaluation_steps = 200
+        self._num_iterations = num_iterations
+        self._training_steps = training_steps
+        self._evaluation_steps = evaluation_steps
 
     def _run_train_phase(self):
         """Run training phase."""
@@ -51,11 +38,6 @@ class FixedReplayRunner(run_experiment.Runner):
         """Runs one iteration of agent/environment interaction."""
         statistics = iteration_statistics.IterationStatistics()
         tf.logging.info('Starting iteration %d', iteration)
-        # pylint: disable=protected-access
-        # if not self._agent._replay_suffix:
-        #     # Reload the replay buffer
-        #     self._agent._replay.memory.reload_buffer(num_buffers=5)
-        # pylint: enable=protected-access
         self._run_train_phase()
 
         num_episodes_eval, average_reward_eval = self._run_eval_phase(
