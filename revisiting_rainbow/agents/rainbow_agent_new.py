@@ -12,7 +12,8 @@ Specifically, we implement the following components from Rainbow:
 Details in "Rainbow: Combining Improvements in Deep Reinforcement Learning" by
 Hessel et al. (2018).
 """
-
+import copy
+import time
 import functools
 from dopamine.jax import networks
 from dopamine.jax.agents.dqn import dqn_agent
@@ -21,16 +22,22 @@ from flax import nn
 import gin
 import jax
 import jax.numpy as jnp
+import numpy as onp
 import tensorflow as tf
 
 
-@functools.partial(jax.jit, static_argnums=(9, 10))
-def train(target_network, optimizer, states, actions, next_states, rewards,
-          terminals, loss_weights, support, cumulative_gamma, double_dqn):
+@functools.partial(jax.jit, static_argnums=(0, 10, 11))
+def train(network_def, target_params, optimizer, states, actions, next_states,
+          rewards, terminals, loss_weights, support, cumulative_gamma,
+          double_dqn, rng):
     """Run a training step."""
-    def loss_fn(model, target, loss_multipliers):
-        logits = jax.vmap(model)(states).logits
-        logits = jnp.squeeze(logits)
+    online_params = optimizer.target
+
+    def loss_fn(params, rng_input, target, loss_multipliers):
+        def q_online(state):
+            return network_def.apply(params, state, support, rng=rng_input)
+
+        logits = jax.vmap(q_online)(states).logits
         # Fetch the logits for its selected action. We use vmap to perform this
         # indexing across the batch.
         chosen_action_logits = jax.vmap(lambda x, y: x[y])(logits, actions)
@@ -40,19 +47,28 @@ def train(target_network, optimizer, states, actions, next_states, rewards,
         mean_loss = jnp.mean(loss_multipliers * loss)
         return mean_loss, loss
 
+    rng, rng2, rng3, rng4 = jax.random.split(rng, 4)
+
     # Use the weighted mean loss for gradient computation
+    def q_target(state):
+        return network_def.apply(target_params, state, support, rng=rng2)
+
+    def q_target_online(state):
+        return network_def.apply(online_params, state, support, rng=rng4)
+
     grad_fn = jax.value_and_grad(loss_fn, has_aux=True)
 
     if double_dqn:
-        target = target_distributionDouble(optimizer.target, target_network,
+        target = target_distributionDouble(q_target_online, q_target,
                                            next_states, rewards, terminals,
                                            support, cumulative_gamma)
     else:
-        target = target_distribution(target_network, next_states, rewards,
-                                     terminals, support, cumulative_gamma)
+        target = target_distribution(q_target, next_states, rewards, terminals,
+                                     support, cumulative_gamma)
 
     # Get the unweighted loss without taking its mean for updating priorities.
-    (mean_loss, loss), grad = grad_fn(optimizer.target, target, loss_weights)
+    (mean_loss, loss), grad = grad_fn(online_params, rng3, target,
+                                      loss_weights)
     optimizer = optimizer.apply_gradient(grad)
     return optimizer, loss, mean_loss
 
@@ -96,6 +112,23 @@ def target_distribution(target_network, next_states, rewards, terminals,
         project_distribution(target_support, next_probabilities, support))
 
 
+@functools.partial(jax.jit, static_argnums=(0, 4, 5, 6, 7, 8, 10, 11))
+def select_action(network_def, params, state, rng, num_actions, eval_mode,
+                  epsilon_eval, epsilon_train, epsilon_decay_period,
+                  training_steps, min_replay_history, epsilon_fn, support):
+    epsilon = jnp.where(
+        eval_mode, epsilon_eval,
+        epsilon_fn(epsilon_decay_period, training_steps, min_replay_history,
+                   epsilon_train))
+
+    rng, rng1, rng2, rng3 = jax.random.split(rng, num=4)
+    p = jax.random.uniform(rng1)
+    return rng, jnp.where(
+        p <= epsilon, jax.random.randint(rng2, (), 0, num_actions),
+        jnp.argmax(
+            network_def.apply(params, state, support, rng=rng3).q_values))
+
+
 @gin.configurable
 class JaxRainbowAgentNew(dqn_agent.JaxDQNAgent):
     """A compact implementation of a simplified Rainbow agent."""
@@ -116,7 +149,7 @@ class JaxRainbowAgentNew(dqn_agent.JaxDQNAgent):
                  optimizer='adam',
                  network=networks.RainbowNetwork,
                  epsilon_fn=dqn_agent.linearly_decaying_epsilon,
-                 eval_mode=False):
+                 seed=None):
         """Initializes the agent and constructs the necessary components.
 
     Args:
@@ -126,7 +159,7 @@ class JaxRainbowAgentNew(dqn_agent.JaxDQNAgent):
       observation_dtype: DType, specifies the type of the observations. Note
         that if your inputs are continuous, you should set this to jnp.float32.
       stack_size: int, number of frames to use in state stack.
-      network: flax.linen Module that is initialized by shape in _create_network
+      network: flax.nn Module that is initialized by shape in _create_network
         below. See dopamine.jax.networks.RainbowNetwork as an example.
       num_atoms: int, the number of buckets of the value function distribution.
       vmax: float, the value distribution support is [-vmax, vmax].
@@ -155,7 +188,9 @@ class JaxRainbowAgentNew(dqn_agent.JaxDQNAgent):
         (for instance, only the network parameters).
     """
         # We need this because some tools convert round floats into ints.
+
         vmax = float(vmax)
+        seed = int(time.time() * 1e6) if seed is None else seed
         self._num_atoms = num_atoms
         self._support = jnp.linspace(-vmax, vmax, num_atoms)
         self._replay_scheme = replay_scheme
@@ -168,42 +203,33 @@ class JaxRainbowAgentNew(dqn_agent.JaxDQNAgent):
         self._noisy = noisy
         self._dueling = dueling
         self._initzer = initzer
+        self._rng = jax.random.PRNGKey(seed)
 
-        super(JaxRainbowAgentNew,
-              self).__init__(num_actions=num_actions,
-                             network=network.partial(
-                                 num_atoms=num_atoms,
-                                 support=self._support,
-                                 net_conf=self._net_conf,
-                                 env=self._env,
-                                 normalize_obs=self._normalize_obs,
-                                 hidden_layer=self._hidden_layer,
-                                 neurons=self._neurons,
-                                 noisy=self._noisy,
-                                 dueling=self._dueling,
-                                 initzer=self._initzer,
-                             ),
-                             epsilon_fn=dqn_agent.identity_epsilon
-                             if self._noisy == True else epsilon_fn,
-                             optimizer=optimizer,
-                             allow_partial_reload=True,
-                             eval_mode=eval_mode)
+        super(JaxRainbowAgentNew, self).__init__(
+            num_actions=num_actions,
+            network=functools.partial(network,
+                                      num_atoms=num_atoms,
+                                      net_conf=self._net_conf,
+                                      env=self._env,
+                                      normalize_obs=self._normalize_obs,
+                                      hidden_layer=self._hidden_layer,
+                                      neurons=self._neurons,
+                                      noisy=self._noisy,
+                                      dueling=self._dueling,
+                                      initzer=self._initzer),
+            epsilon_fn=dqn_agent.identity_epsilon
+            if self._noisy == True else epsilon_fn,
+            optimizer=optimizer)
 
-    def _create_network(self, name):
-        """Builds a convolutional network that outputs Q-value distributions.
-
-    Args:
-      name: str, this name is passed to the Jax Module.
-    Returns:
-      network: Jax Model, the network instantiated by Jax.
-    """
-        _, initial_params = self.network.init(self._rng,
-                                              name=name,
-                                              x=self.state,
-                                              num_actions=self.num_actions,
-                                              num_atoms=self._num_atoms,
-                                              support=self._support)
-        return nn.Model(self.network, initial_params)
+    def _build_networks_and_optimizer(self):
+        self._rng, rng = jax.random.split(self._rng)
+        online_network_params = self.network_def.init(rng,
+                                                      x=self.state,
+                                                      support=self._support,
+                                                      rng=self._rng)
+        optimizer_def = dqn_agent.create_optimizer(self._optimizer_name)
+        self.optimizer = optimizer_def.create(online_network_params)
+        self.target_network_params = copy.deepcopy(online_network_params)
 
     def _build_replay_buffer(self):
         """Creates the replay buffer used by the agent."""
@@ -218,6 +244,39 @@ class JaxRainbowAgentNew(dqn_agent.JaxDQNAgent):
             update_horizon=self.update_horizon,
             gamma=self.gamma,
             observation_dtype=self.observation_dtype)
+
+    def begin_episode(self, observation):
+        self._reset_state()
+        self._record_observation(observation)
+
+        if not self.eval_mode:
+            self._train_step()
+
+        self._rng, self.action = select_action(
+            self.network_def, self.online_params, self.state, self._rng,
+            self.num_actions, self.eval_mode, self.epsilon_eval,
+            self.epsilon_train, self.epsilon_decay_period, self.training_steps,
+            self.min_replay_history, self.epsilon_fn, self._support)
+        # TODO(psc): Why a numpy array? Why not an int?
+        self.action = onp.asarray(self.action)
+        return self.action
+
+    def step(self, reward, observation):
+        self._last_observation = self._observation
+        self._record_observation(observation)
+
+        if not self.eval_mode:
+            self._store_transition(self._last_observation, self.action, reward,
+                                   False)
+            self._train_step()
+
+        self._rng, self.action = select_action(
+            self.network_def, self.online_params, self.state, self._rng,
+            self.num_actions, self.eval_mode, self.epsilon_eval,
+            self.epsilon_train, self.epsilon_decay_period, self.training_steps,
+            self.min_replay_history, self.epsilon_fn, self._support)
+        self.action = onp.asarray(self.action)
+        return self.action
 
     def _train_step(self):
         """Runs a single training step.
@@ -247,13 +306,14 @@ class JaxRainbowAgentNew(dqn_agent.JaxDQNAgent):
                         self.replay_elements['state'].shape[0])
 
                 self.optimizer, loss, mean_loss = train(
-                    self.target_network, self.optimizer,
-                    self.replay_elements['state'],
+                    self.network_def, self.target_network_params,
+                    self.optimizer, self.replay_elements['state'],
                     self.replay_elements['action'],
                     self.replay_elements['next_state'],
                     self.replay_elements['reward'],
                     self.replay_elements['terminal'], loss_weights,
-                    self._support, self.cumulative_gamma, self._double_dqn)
+                    self._support, self.cumulative_gamma, self._double_dqn,
+                    self._rng)
 
                 if self._replay_scheme == 'prioritized':
                     # Rainbow and prioritized replay are parametrized by an exponent
