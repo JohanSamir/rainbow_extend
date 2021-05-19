@@ -3,7 +3,7 @@ import dopamine.jax.networks
 import dopamine.discrete_domains.gym_lib
 import dopamine.discrete_domains.run_experiment
 import dopamine.replay_memory.prioritized_replay_buffer
-
+import external_configurations
 import networks_new
 import rainbow_agent_new
 
@@ -14,13 +14,14 @@ JaxDQNAgent.stack_size = %gym_lib.ACROBOT_STACK_SIZE
 JaxDQNAgent.gamma = 0.99
 JaxDQNAgent.update_horizon = 3 # Rainbow
 JaxDQNAgent.min_replay_history = 500
-JaxDQNAgent.update_period = 2 
+JaxDQNAgent.update_period = 4 
 JaxDQNAgent.target_update_period = 100
 
 JaxRainbowAgentNew.optimizer = 'adam'
 JaxRainbowAgentNew.noisy = True
 JaxRainbowAgentNew.dueling = True
-JaxRainbowAgentNew.initzer = 'variance_scaling'#'xavier_uniform'
+JaxRainbowAgentNew.initzer = @variance_scaling #@variance_scaling #@zeros #@ones
+
 JaxRainbowAgentNew.double_dqn = True
 JaxRainbowAgentNew.net_conf = 'classic'
 JaxRainbowAgentNew.env = 'Acrobot'

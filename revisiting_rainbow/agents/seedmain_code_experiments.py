@@ -110,7 +110,7 @@ inits = {
 }
 
 num_runs = 5  #7
-path = "../../tests_joao"
+path = "../../joao_tests/"
 #environments = ['cartpole', 'acrobot','lunarlander','mountaincar']
 environments = ['cartpole', 'acrobot']
 #seeds = [True, False]
@@ -133,7 +133,7 @@ for seed in seeds:
                         f'{path}{seed}{i}_{agent}_{env}_{init}',
                         f'dqn_test{i}')
                     sys.path.append(path)
-                    gin_file = f'{path}{agent}_{env}.gin'
+                    gin_file = f'Configs/{agent}_{env}.gin'
 
                     if init == 'zeros' or init == 'ones':
                         gin_bindings = [

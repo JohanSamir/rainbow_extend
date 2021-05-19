@@ -3,7 +3,7 @@ import dopamine.jax.networks
 import dopamine.discrete_domains.gym_lib
 import dopamine.discrete_domains.run_experiment
 import dopamine.replay_memory.prioritized_replay_buffer
-
+import external_configurations
 import networks_new
 import quantile_agent_new
 
@@ -13,7 +13,7 @@ JaxDQNAgent.stack_size = %gym_lib.ACROBOT_STACK_SIZE
 JaxDQNAgent.gamma = 0.99
 JaxDQNAgent.update_horizon = 1
 JaxDQNAgent.min_replay_history = 500 # agent steps
-JaxDQNAgent.update_period = 2
+JaxDQNAgent.update_period = 4
 JaxDQNAgent.target_update_period = 100 # agent steps
 
 JaxQuantileAgentNew.optimizer = 'adam'
@@ -28,7 +28,8 @@ JaxQuantileAgentNew.double_dqn = False
 JaxQuantileAgentNew.noisy = False
 JaxQuantileAgentNew.dueling = False
 JaxQuantileAgentNew.replay_scheme = 'uniform'#'prioritized'
-JaxQuantileAgentNew.initzer = 'variance_scaling'#'xavier_uniform'
+JaxQuantileAgentNew.initzer = @variance_scaling #@variance_scaling #@zeros #@ones
+
 JaxQuantileAgentNew.network  = @networks_new.QuantileNetwork 
 JaxQuantileAgentNew.epsilon_fn = @dqn_agent.identity_epsilon
 
