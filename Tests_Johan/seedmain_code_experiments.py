@@ -110,7 +110,6 @@ inits = {
 }
 
 num_runs = 5  #7
-path = "../../tests_joao"
 #environments = ['cartpole', 'acrobot','lunarlander','mountaincar']
 environments = ['cartpole', 'acrobot']
 #seeds = [True, False]
