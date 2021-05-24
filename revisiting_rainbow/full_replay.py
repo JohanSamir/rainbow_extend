@@ -83,7 +83,6 @@ def main(argv):
             )
             offline_runner.run_experiment()
             print('Done fixed training!')
-        break
 
 
 if __name__ == '__main__':
