@@ -8,21 +8,24 @@ import gin.tf
 import sys
 
 import matplotlib
-from dqn_agent_new import *
-from rainbow_agent_new import *
-from quantile_agent_new import *
-from implicit_quantile_agent_new import *
-import networks_new
-import external_configurations
+from agents.dqn_agent_new import *
+from agents.rainbow_agent_new import *
+from agents.quantile_agent_new import *
+from agents.implicit_quantile_agent_new import *
+import agents.networks_new
+import agents.external_configurations
 
 agents = {
-    'dqn': JaxDQNAgentNew,
+    'dqn'd: JaxDQNAgentNew,
     'rainbow': JaxRainbowAgentNew,
     'quantile': JaxQuantileAgentNew,
     'implicit': JaxImplicitQuantileAgentNew,
 }
 
 inits = {
+    'orthogonal': {
+        'function': jax.nn.initializers.orthogonal
+    }
     'zeros': {
         'function': jax.nn.initializers.zeros
     },
@@ -106,11 +109,11 @@ inits = {
         'scale': 10,
         'mode': 'fan_in',
         'distribution': 'uniform'
-    }
+    # }
 }
 
-num_runs = 5  #7
-path = ""
+num_runs = 10  #7
+path = "."
 #environments = ['cartpole', 'acrobot','lunarlander','mountaincar']
 environments = ['cartpole', 'acrobot']
 #seeds = [True, False]
@@ -130,10 +133,10 @@ for seed in seeds:
                     initializer = inits[init]['function'].__name__
 
                     LOG_PATH = os.path.join(
-                        f'{path}{seed}{i}_{agent}_{env}_{init}',
-                        f'dqn_test{i}')
+                        f'{path}{agent}_{env}',
+                        f'test{i}')
                     sys.path.append(path)
-                    gin_file = f'../Configs/{agent}_{env}.gin'
+                    gin_file = f'Configs/{agent}_{env}.gin'
 
                     if init == 'zeros' or init == 'ones':
                         gin_bindings = [
@@ -142,6 +145,10 @@ for seed in seeds:
                             f"{agent_name}.seed={i}",
                             f"{agent_name}.initzer = @{initializer}"
                         ]
+                    elif init == "orthogonal":
+                        gin_bindings = [f"{agent_name}.seed={i}",
+                        f"{agent_name}.initzer = @{initializer}()",
+                        f"{initializer}.scale = 1"]
                     else:
                         mode = '"' + inits[init]['mode'] + '"'
                         distribution = '"' + inits[init]['distribution'] + '"'

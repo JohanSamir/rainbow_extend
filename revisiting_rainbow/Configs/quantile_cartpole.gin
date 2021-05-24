@@ -3,9 +3,9 @@ import dopamine.jax.networks
 import dopamine.discrete_domains.gym_lib
 import dopamine.discrete_domains.run_experiment
 import dopamine.replay_memory.prioritized_replay_buffer
-import external_configurations
-import networks_new
-import quantile_agent_new
+import agents.networks_new
+import agents.dqn_agent_new
+import agents.external_configurations
 
 JaxDQNAgent.observation_shape = %gym_lib.CARTPOLE_OBSERVATION_SHAPE
 JaxDQNAgent.observation_dtype = %jax_networks.CARTPOLE_OBSERVATION_DTYPE

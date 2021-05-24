@@ -4,9 +4,9 @@ import dopamine.discrete_domains.run_experiment
 import dopamine.jax.agents.dqn.dqn_agent
 import dopamine.replay_memory.prioritized_replay_buffer
 
-import networks_new
-import dqn_agent_new
-import external_configurations
+import agents.networks_new
+import agents.dqn_agent_new
+import agents.external_configurations
 
 JaxDQNAgent.observation_shape = %gym_lib.ACROBOT_OBSERVATION_SHAPE
 JaxDQNAgent.observation_dtype = %jax_networks.ACROBOT_OBSERVATION_DTYPE
