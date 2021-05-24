@@ -116,7 +116,7 @@ inits = {
 }
 
 num_runs = 10  #7
-path = "../../tests_joao/offline_init/"
+path = "../../tests_joao/offline_init_mse/"
 #environments = ['cartpole', 'acrobot','lunarlander','mountaincar']
 environments = ['cartpole']
 #seeds = [True, False]
