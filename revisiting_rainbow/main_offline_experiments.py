@@ -117,9 +117,7 @@ inits = {
 
 num_runs = 10  #7
 path = "../../tests_joao/offline_init_mse/"
-#environments = ['cartpole', 'acrobot','lunarlander','mountaincar']
 environments = ['cartpole']
-#seeds = [True, False]
 seeds = [True]
 
 for seed in seeds:
@@ -128,13 +126,12 @@ for seed in seeds:
             ag = agents[agent](num_actions=environment.action_space.n)
             if memory is not None:
                 ag._replay = memory
+                ag._replay.replay_capacity=(50000*0.2)
             return ag
             
         for env in environments:
             for init in inits:
                 for i in range(1, num_runs + 1):
-
-
                     agent_name = agents[agent].__name__
                     initializer = inits[init]['function'].__name__
 
@@ -183,7 +180,7 @@ for seed in seeds:
                     print('Done normal training!')
 
                     LOG_PATH = os.path.join(
-                        f'{path}{agent}_{init}_fixed',
+                        f'{path}{agent}_{init}_fixed_20',
                         f'test{i}')
 
                     offline_runner = FixedReplayRunner(
