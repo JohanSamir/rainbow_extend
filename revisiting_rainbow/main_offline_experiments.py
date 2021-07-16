@@ -3,7 +3,7 @@ import os
 import dopamine
 from dopamine.discrete_domains import gym_lib
 from dopamine.discrete_domains import run_experiment
-from absl import flags
+from absl import flags, app
 import gin.tf
 import sys
 sys.path.append(".")
@@ -18,11 +18,18 @@ import agents.networks_new
 import agents.external_configurations
 from replay_runner import FixedReplayRunner
 
+FLAGS = flags.FLAGS
+flags.DEFINE_string("env", "cartpole", 
+                        "the environment the experiment will be run in")
+
+flags.DEFINE_string("agent", "dqn", 
+                        "the agent used in the experiment")
+
 agents = {
     'dqn': JaxDQNAgentNew,
-    # 'rainbow': JaxRainbowAgentNew,
-    # 'quantile': JaxQuantileAgentNew,
-    # 'implicit': JaxImplicitQuantileAgentNew,
+    'rainbow': JaxRainbowAgentNew,
+    'quantile': JaxQuantileAgentNew,
+    'implicit': JaxImplicitQuantileAgentNew,
 }
 
 inits = {
@@ -120,81 +127,86 @@ path = "../../tests_joao/offline_init_mse/"
 environments = ['cartpole']
 seeds = [True]
 
-for seed in seeds:
-    for agent in agents:
-        def create_agent(sess, environment, summary_writer=None, memory=None):
-            ag = agents[agent](num_actions=environment.action_space.n)
-            if memory is not None:
-                ag._replay = memory
-                ag._replay.replay_capacity=(50000*0.2)
-            return ag
-            
-        for env in environments:
-            for init in inits:
-                for i in range(1, num_runs + 1):
-                    agent_name = agents[agent].__name__
-                    initializer = inits[init]['function'].__name__
 
-                    LOG_PATH = os.path.join(
-                        f'{path}{agent}_{init}_online',
-                        f'test{i}')
-                    sys.path.append(path)
-                    gin_file = f'Configs/{agent}_{env}.gin'
+def main(args):
+    
+    def create_agent(sess, environment, summary_writer=None, memory=None):
+        ag = agents[args["agent"]](num_actions=environment.action_space.n)
+        if memory is not None:
+            ag._replay = memory
+            ag._replay.replay_capacity = (50000*0.2)
+            ag._replay.add_count = 0
+        return ag
+    
+    for seed in seeds:     
+        for init in inits:
+            for i in range(1, num_runs + 1):
+                agent_name = agents[args["agent"]].__name__
+                initializer = inits[init]['function'].__name__
 
-                    if init == 'zeros' or init == 'ones':
-                        gin_bindings = [
-                            f"{agent_name}.seed=None"
-                        ] if seed is False else [
-                            f"{agent_name}.seed={i}",
-                            f"{agent_name}.initzer = @{initializer}"
-                        ]
-                    elif init == "orthogonal":
-                        gin_bindings = [f"{agent_name}.seed={i}",
+                LOG_PATH = os.path.join(
+                    f'{path}{args["agent"]}_{init}_online',
+                    f'test{i}')
+                sys.path.append(path)
+                gin_file = f'Configs/{args["agent"]}_{args["env"]}.gin'
+
+                if init == 'zeros' or init == 'ones':
+                    gin_bindings = [
+                        f"{agent_name}.seed=None"
+                    ] if seed is False else [
+                        f"{agent_name}.seed={i}",
+                        f"{agent_name}.initzer = @{initializer}"
+                    ]
+                elif init == "orthogonal":
+                    gin_bindings = [f"{agent_name}.seed={i}",
+                    f"{agent_name}.initzer = @{initializer}()",
+                    f"{initializer}.scale = 1"]
+                else:
+                    mode = '"' + inits[init]['mode'] + '"'
+                    distribution = '"' + inits[init]['distribution'] + '"'
+                    gin_bindings = [
+                        f"{agent_name}.seed=None"
+                    ] if seed is False else [
+                        f"{agent_name}.seed={i}",
                         f"{agent_name}.initzer = @{initializer}()",
-                        f"{initializer}.scale = 1"]
-                    else:
-                        mode = '"' + inits[init]['mode'] + '"'
-                        distribution = '"' + inits[init]['distribution'] + '"'
-                        gin_bindings = [
-                            f"{agent_name}.seed=None"
-                        ] if seed is False else [
-                            f"{agent_name}.seed={i}",
-                            f"{agent_name}.initzer = @{initializer}()",
-                            f"{initializer}.scale = {inits[init]['scale']}",
-                            f"{initializer}.mode = {mode}",
-                            f"{initializer}.distribution = {distribution}"
-                        ]
+                        f"{initializer}.scale = {inits[init]['scale']}",
+                        f"{initializer}.mode = {mode}",
+                        f"{initializer}.distribution = {distribution}"
+                    ]
 
-                    gin_bindings.append(f"OutOfGraphPrioritizedReplayBuffer.replay_capacity = 50000")
-                    gin.clear_config()
-                    gin.parse_config_files_and_bindings([gin_file],
-                                                        gin_bindings,
-                                                        skip_unknown=False)
-                    agent_runner = run_experiment.TrainRunner(
-                        LOG_PATH, create_agent)
+                gin_bindings.append(f"OutOfGraphPrioritizedReplayBuffer.replay_capacity = 50000")
+                gin.clear_config()
+                gin.parse_config_files_and_bindings([gin_file],
+                                                    gin_bindings,
+                                                    skip_unknown=False)
+                agent_runner = run_experiment.TrainRunner(
+                    LOG_PATH, create_agent)
 
-                    print(
-                        f'Will train agent {agent} with init {init} in {env}, run {i}, please be patient, may be a while...'
-                    )
-                    agent_runner.run_experiment()
-                    print('Done normal training!')
+                print(
+                    f'Will train agent {args["agent"]} with init {init} in {args["env"]}, run {i}, please be patient, may be a while...'
+                )
+                agent_runner.run_experiment()
+                print('Done normal training!')
 
-                    LOG_PATH = os.path.join(
-                        f'{path}{agent}_{init}_fixed_20',
-                        f'test{i}')
+                LOG_PATH = os.path.join(
+                    f'{path}{args["agent"]}_{init}_fixed_first_20',
+                    f'test{i}')
 
-                    offline_runner = FixedReplayRunner(
-                        base_dir=LOG_PATH,
-                        create_agent_fn=functools.partial(create_agent,
-                                        memory=agent_runner._agent._replay,
-                        ), 
-                        num_iterations=30, 
-                        training_steps=1000, 
-                        evaluation_steps=200,
-                        create_environment_fn=gym_lib.create_gym_environment)
-                    print(
-                        f'Training fixed agent {i+1}, please be patient, may be a while...'
-                    )
-                    offline_runner.run_experiment()
-                    print('Done fixed training!')
-print('Finished!')
+                offline_runner = FixedReplayRunner(
+                    base_dir=LOG_PATH,
+                    create_agent_fn=functools.partial(create_agent,
+                                    memory=agent_runner._agent._replay,
+                    ), 
+                    num_iterations=30, 
+                    training_steps=1000, 
+                    evaluation_steps=200,
+                    create_environment_fn=gym_lib.create_gym_environment)
+                print(
+                    f'Training fixed agent {i+1}, please be patient, may be a while...'
+                )
+                offline_runner.run_experiment()
+                print('Done fixed training!')
+    print('Finished!')
+
+if __name__ == "__main__":
+  app.run(main)
