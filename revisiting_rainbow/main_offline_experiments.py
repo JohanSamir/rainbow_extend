@@ -1,5 +1,8 @@
 import numpy as np
 import os
+import jax
+jax.config.update('jax_platform_name', 'cpu')
+
 import dopamine
 from dopamine.discrete_domains import gym_lib
 from dopamine.discrete_domains import run_experiment
@@ -8,8 +11,6 @@ import gin.tf
 import sys
 sys.path.append(".")
 
-
-import matplotlib
 from agents.dqn_agent_new import *
 from agents.rainbow_agent_new import *
 from agents.quantile_agent_new import *
@@ -123,32 +124,31 @@ inits = {
 }
 
 num_runs = 10  #7
-path = "../../tests_joao/offline_init_mse/"
-environments = ['cartpole']
+path = "../../tests_joao/offline_last_pct/"
 seeds = [True]
 
 
-def main(args):
+def main(_):
     
     def create_agent(sess, environment, summary_writer=None, memory=None):
-        ag = agents[args["agent"]](num_actions=environment.action_space.n)
+        ag = agents[FLAGS.agent](num_actions=environment.action_space.n)
         if memory is not None:
             ag._replay = memory
             ag._replay.replay_capacity = (50000*0.2)
-            ag._replay.add_count = 0
+            # ag._replay.add_count = 0 # only for first x%
         return ag
     
     for seed in seeds:     
         for init in inits:
             for i in range(1, num_runs + 1):
-                agent_name = agents[args["agent"]].__name__
+                agent_name = agents[FLAGS.agent].__name__
                 initializer = inits[init]['function'].__name__
 
                 LOG_PATH = os.path.join(
-                    f'{path}{args["agent"]}_{init}_online',
+                    f'{path}{FLAGS.agent}_{FLAGS.env}_{init}_online',
                     f'test{i}')
                 sys.path.append(path)
-                gin_file = f'Configs/{args["agent"]}_{args["env"]}.gin'
+                gin_file = f'Configs/{FLAGS.agent}_{FLAGS.env}.gin'
 
                 if init == 'zeros' or init == 'ones':
                     gin_bindings = [
@@ -183,13 +183,13 @@ def main(args):
                     LOG_PATH, create_agent)
 
                 print(
-                    f'Will train agent {args["agent"]} with init {init} in {args["env"]}, run {i}, please be patient, may be a while...'
+                    f'Will train agent {FLAGS.agent} with init {init} in {FLAGS.env}, run {i}, please be patient, may be a while...'
                 )
                 agent_runner.run_experiment()
                 print('Done normal training!')
 
                 LOG_PATH = os.path.join(
-                    f'{path}{args["agent"]}_{init}_fixed_first_20',
+                    f'{path}{FLAGS.agent}_{FLAGS.env}_{init}_fixed_20',
                     f'test{i}')
 
                 offline_runner = FixedReplayRunner(
