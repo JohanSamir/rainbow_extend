@@ -23,7 +23,7 @@ FLAGS = flags.FLAGS
 flags.DEFINE_string("env", "cartpole", 
                         "the environment the experiment will be run in")
 
-flags.DEFINE_string("agent", "rainbow", 
+flags.DEFINE_string("agent", "dqn", 
                         "the agent used in the experiment")
 
 agents = {
