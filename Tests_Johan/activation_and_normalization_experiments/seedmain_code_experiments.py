@@ -8,21 +8,24 @@ import gin.tf
 import sys
 
 import matplotlib
-from dqn_agent_new import *
+#from dqn_agent_new import *
 from rainbow_agent_new import *
-from quantile_agent_new import *
-from implicit_quantile_agent_new import *
+#from quantile_agent_new import *
+#from implicit_quantile_agent_new import *
 import networks_new
 import external_configurations
 
 agents = {
-    'dqn': JaxDQNAgentNew,
+    #'dqn': JaxDQNAgentNew,
     #rainbow': JaxRainbowAgentNew,
     #'quantile': JaxQuantileAgentNew,
     #'implicit': JaxImplicitQuantileAgentNew,
 }
 
+agents = {'rainbow': JaxRainbowAgentNew}
+
 inits = {
+    'conf_0_non_activation': {'layer_fun': 'non_activation'},
     'conf_1_relu': {'layer_fun':'relu'},
     'conf_2_relu6': {'layer_fun':'relu6'},
     'conf_3_sigmoid': {'layer_fun':'sigmoid'},
@@ -42,10 +45,10 @@ inits = {
     'conf_17_glu': {'layer_fun':'glu'}
     }
 
-num_runs = 4
-environments = ['cartpole', 'acrobot']
+num_runs = 7
+environments = ['cartpole', 'acrobot', 'lunarlander', 'mountaincar']
 seeds = [True]
-path= ''
+path= '/home/johan/ExperimentsInitializer/2_activation_experiments_Rainbow/'
 
 for seed in seeds:
   for agent in agents:

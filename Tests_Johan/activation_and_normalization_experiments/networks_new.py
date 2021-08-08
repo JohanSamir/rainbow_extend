@@ -38,6 +38,25 @@ layer_funct_inf = {'relu': jax.nn.relu,
                    'selu':jax.nn.selu,
                    'gelu':jax.nn.gelu,
                    'glu':jax.nn.glu }
+'''
+layer_funct_inf = {relu: jax.nn.relu, 
+                   relu6:jax.nn.relu6,
+                   sigmoid:jax.nn.sigmoid,
+                   softplus:jax.nn.softplus,
+                   soft_sign:jax.nn.soft_sign,
+                   silu:jax.nn.silu,
+                   swish:jax.nn.swish,
+                   log_sigmoid:jax.nn.log_sigmoid,
+                   hard_sigmoid:jax.nn.hard_sigmoid,
+                   hard_silu:jax.nn.hard_silu,
+                   hard_swish:jax.nn.hard_swish,
+                   hard_tanh:jax.nn.hard_tanh,
+                   elu:jax.nn.elu,
+                   celu:jax.nn.celu,
+                   selu:jax.nn.selu,
+                   gelu:jax.nn.gelu,
+                   glu:jax.nn.glu }
+'''                   
 #---------------------------------------------------------------------------------------------------------------------
 class NoisyNetwork(nn.Module):
   features: int
@@ -148,13 +167,16 @@ class DQNNetwork(nn.Module):
     for _ in range(self.hidden_layer):
       x = net(x, features=self.neurons, rng=rng)
       if self.normalization[0] == None:
-        x = layer_funct_inf[self.layer_funct[0]](x)
+        if self.layer_funct[0] != 'non_activation':
+          x = layer_funct_inf[self.layer_funct[0]](x)
       elif self.normalization[0] == 'BatchNorm':
-        x = nn.BatchNorm(use_running_average=True)(x)
-        x = layer_funct_inf[self.layer_funct[0]](x)
+        if self.layer_funct[0] != 'non_activation':
+          x = nn.BatchNorm(use_running_average=True)(x)
+          x = layer_funct_inf[self.layer_funct[0]](x)
       elif self.normalization[0] == 'LayerNorm':
-        x = layer_funct_inf[self.layer_funct[0]](x)
-        x = nn.LayerNorm()(x)
+        if self.layer_funct[0] != 'non_activation': 
+          x = layer_funct_inf[self.layer_funct[0]](x)
+          x = nn.LayerNorm()(x)
       else:
         print('error: Choose a correct Normalization Module')    
 
@@ -181,6 +203,8 @@ class RainbowDQN(nn.Module):
   num_atoms:int
   hidden_layer:int
   neurons:int
+  normalization:str
+  layer_funct:str
 
   @nn.compact
   def __call__(self, x, support, rng):
@@ -225,7 +249,21 @@ class RainbowDQN(nn.Module):
 
     for _ in range(self.hidden_layer):
       x = net(x, features=self.neurons, rng=rng)
-      x = jax.nn.relu(x)
+      if self.normalization == 'non_normalization':
+        print('norm:',self.normalization, 'activ:',self.layer_funct)
+        if self.layer_funct != 'non_activation':
+          print('norm:',self.normalization, 'activ:',self.layer_funct)
+          x = layer_funct_inf[self.layer_funct](x)
+      elif self.normalization == 'BatchNorm':
+        if self.layer_funct != 'non_activation':
+          x = nn.BatchNorm(use_running_average=True)(x)
+          x = layer_funct_inf[self.layer_funct](x)
+      elif self.normalization == 'LayerNorm':
+        if self.layer_funct != 'non_activation': 
+          x = layer_funct_inf[self.layer_funct](x)
+          x = nn.LayerNorm()(x)
+      else:
+        print('error: Choose a correct Normalization Module')
 
     if self.dueling:
       adv = net(x,features=self.num_actions * self.num_atoms, rng=rng)
