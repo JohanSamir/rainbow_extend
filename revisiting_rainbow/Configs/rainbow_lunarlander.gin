@@ -20,7 +20,13 @@ JaxDQNAgent.target_update_period = 300
 JaxRainbowAgentNew.optimizer = 'adam'
 JaxRainbowAgentNew.noisy = True
 JaxRainbowAgentNew.dueling = True
-JaxRainbowAgentNew.initzer = @variance_scaling #@variance_scaling #@zeros #@ones
+JaxRainbowAgentNew.initzer = @variance_scaling()
+variance_scaling.scale=1
+variance_scaling.mode='fan_avg'
+variance_scaling.distribution='uniform'
+
+JaxRainbowAgentNew.layer_funct = 'celu'#'relu'#'gelu'
+JaxRainbowAgentNew.normalization = 'non_normalization'
 
 JaxRainbowAgentNew.double_dqn = True
 JaxRainbowAgentNew.net_conf = 'classic'

@@ -3,7 +3,8 @@ import dopamine.jax.networks
 import dopamine.discrete_domains.run_experiment
 import dopamine.jax.agents.dqn.dqn_agent
 import dopamine.replay_memory.prioritized_replay_buffer
-
+import jax
+import gin
 import agents.networks_new
 import agents.dqn_agent_new
 import agents.external_configurations
@@ -26,7 +27,7 @@ JaxDQNAgentNew.hidden_layer = 2
 JaxDQNAgentNew.neurons = 512
 JaxDQNAgentNew.replay_scheme = 'uniform' #'prioritized' or 'uniform'
 JaxDQNAgentNew.target_opt = 0 #0:DQN 1:Double DQN 2:Munchausen DQN
-JaxDQNAgentNew.mse_inf = False
+JaxDQNAgentNew.mse_inf = True
 JaxDQNAgentNew.noisy = False
 JaxDQNAgentNew.dueling = False
 JaxDQNAgentNew.initzer = @variance_scaling() #@variance_scaling #@zeros #@ones
