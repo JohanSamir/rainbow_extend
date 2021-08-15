@@ -35,92 +35,97 @@ inits = {
     'orthogonal': {
         'function': jax.nn.initializers.orthogonal
     },
-    'zeros': {
-        'function': jax.nn.initializers.zeros
-    },
-    'ones': {
-        'function': jax.nn.initializers.ones
-    },
-    'xavier_uni': {
-        'function': jax.nn.initializers.variance_scaling,
-        'scale': 1,
-        'mode': 'fan_avg',
-        'distribution': 'uniform'
-    },
-    'xavier_nor': {
-        'function': jax.nn.initializers.variance_scaling,
-        'scale': 1,
-        'mode': 'fan_avg',
-        'distribution': 'truncated_normal'
-    },
-    'lecun_uni': {
-        'function': jax.nn.initializers.variance_scaling,
-        'scale': 1,
-        'mode': 'fan_in',
-        'distribution': 'uniform'
-    },
-    'lecun_nor': {
-        'function': jax.nn.initializers.variance_scaling,
-        'scale': 1,
-        'mode': 'fan_in',
-        'distribution': 'truncated_normal'
-    },
-    'he_uni': {
-        'function': jax.nn.initializers.variance_scaling,
-        'scale': 2,
-        'mode': 'fan_in',
-        'distribution': 'uniform'
-    },
-    'he_nor': {
-        'function': jax.nn.initializers.variance_scaling,
-        'scale': 2,
-        'mode': 'fan_in',
-        'distribution': 'truncated_normal'
-    },
-    'variance_baseline': {
-        'function': jax.nn.initializers.variance_scaling,
-        'scale': 1.0 / jnp.sqrt(3.0),
-        'mode': 'fan_in',
-        'distribution': 'uniform'
-    },
-    'variance_0.1': {
-        'function': jax.nn.initializers.variance_scaling,
-        'scale': 0.1,
-        'mode': 'fan_in',
-        'distribution': 'uniform'
-    },
-    'variance_0.3': {
-        'function': jax.nn.initializers.variance_scaling,
-        'scale': 0.3,
-        'mode': 'fan_in',
-        'distribution': 'uniform'
-    },
-    'variance_0.8': {
-        'function': jax.nn.initializers.variance_scaling,
-        'scale': 0.8,
-        'mode': 'fan_in',
-        'distribution': 'uniform'
-    },
-    'variance_3': {
-        'function': jax.nn.initializers.variance_scaling,
-        'scale': 3,
-        'mode': 'fan_in',
-        'distribution': 'uniform'
-    },
-    'variance_5': {
-        'function': jax.nn.initializers.variance_scaling,
-        'scale': 5,
-        'mode': 'fan_in',
-        'distribution': 'uniform'
-    },
-    'variance_10': {
-        'function': jax.nn.initializers.variance_scaling,
-        'scale': 10,
-        'mode': 'fan_in',
-        'distribution': 'uniform'
-    }
+    # 'zeros': {
+    #     'function': jax.nn.initializers.zeros
+    # },
+    # 'ones': {
+    #     'function': jax.nn.initializers.ones
+    # },
+    # 'xavier_uni': {
+    #     'function': jax.nn.initializers.variance_scaling,
+    #     'scale': 1,
+    #     'mode': 'fan_avg',
+    #     'distribution': 'uniform'
+    # },
+    # 'xavier_nor': {
+    #     'function': jax.nn.initializers.variance_scaling,
+    #     'scale': 1,
+    #     'mode': 'fan_avg',
+    #     'distribution': 'truncated_normal'
+    # },
+    # 'lecun_uni': {
+    #     'function': jax.nn.initializers.variance_scaling,
+    #     'scale': 1,
+    #     'mode': 'fan_in',
+    #     'distribution': 'uniform'
+    # },
+    # 'lecun_nor': {
+    #     'function': jax.nn.initializers.variance_scaling,
+    #     'scale': 1,
+    #     'mode': 'fan_in',
+    #     'distribution': 'truncated_normal'
+    # },
+    # 'he_uni': {
+    #     'function': jax.nn.initializers.variance_scaling,
+    #     'scale': 2,
+    #     'mode': 'fan_in',
+    #     'distribution': 'uniform'
+    # },
+    # 'he_nor': {
+    #     'function': jax.nn.initializers.variance_scaling,
+    #     'scale': 2,
+    #     'mode': 'fan_in',
+    #     'distribution': 'truncated_normal'
+    # },
+    # 'variance_baseline': {
+    #     'function': jax.nn.initializers.variance_scaling,
+    #     'scale': 1.0 / jnp.sqrt(3.0),
+    #     'mode': 'fan_in',
+    #     'distribution': 'uniform'
+    # },
+    # 'variance_0.1': {
+    #     'function': jax.nn.initializers.variance_scaling,
+    #     'scale': 0.1,
+    #     'mode': 'fan_in',
+    #     'distribution': 'uniform'
+    # },
+    # 'variance_0.3': {
+    #     'function': jax.nn.initializers.variance_scaling,
+    #     'scale': 0.3,
+    #     'mode': 'fan_in',
+    #     'distribution': 'uniform'
+    # },
+    # 'variance_0.8': {
+    #     'function': jax.nn.initializers.variance_scaling,
+    #     'scale': 0.8,
+    #     'mode': 'fan_in',
+    #     'distribution': 'uniform'
+    # },
+    # 'variance_3': {
+    #     'function': jax.nn.initializers.variance_scaling,
+    #     'scale': 3,
+    #     'mode': 'fan_in',
+    #     'distribution': 'uniform'
+    # },
+    # 'variance_5': {
+    #     'function': jax.nn.initializers.variance_scaling,
+    #     'scale': 5,
+    #     'mode': 'fan_in',
+    #     'distribution': 'uniform'
+    # },
+    # 'variance_10': {
+    #     'function': jax.nn.initializers.variance_scaling,
+    #     'scale': 10,
+    #     'mode': 'fan_in',
+    #     'distribution': 'uniform'
+    # }
 }
 
+num_runs = 10  #7
+# `path=os.environ['AIP_TENSORBOARD_LOG_DIR']`
+
+path = "../../tests_joao/offline_last_pct/" #TODO point to cloud bucket
+seeds = [True]
 activations = {
     'conf_0_non_activation': {'layer_fun': 'non_activation'},
     'conf_1_relu': {'layer_fun':'relu'},
@@ -142,8 +147,6 @@ activations = {
     'conf_17_glu': {'layer_fun':'glu'}
     }
 
-num_runs = 10  #7
-path = "../../tests_joao/offline_last_pct/activations/"
 
 
 def main(_):
