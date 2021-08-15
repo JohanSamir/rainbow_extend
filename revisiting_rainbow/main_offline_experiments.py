@@ -166,7 +166,7 @@ def main(_):
 
             layer_fun = "'" + activations[act]['layer_fun'] + "'"
             LOG_PATH = os.path.join(
-                f'{path}{FLAGS.agent}_{FLAGS.env}_{activations[act]["layer_fun"]}_online',
+                f'{path}{FLAGS.agent}/{FLAGS.env}_{activations[act]["layer_fun"]}_online',
                 f'test{i}')
             sys.path.append(path)
             gin_file = f'Configs/{FLAGS.agent}_{FLAGS.env}.gin'
@@ -190,7 +190,7 @@ def main(_):
             print('Done normal training!')
 
             LOG_PATH = os.path.join(
-                f'{path}{FLAGS.agent}_{FLAGS.env}_{activations[act]["layer_fun"]}_fixed_20',
+                f'{path}{FLAGS.agent}/{FLAGS.env}_{activations[act]["layer_fun"]}_fixed_20',
                 f'test{i}')
 
             offline_runner = FixedReplayRunner(
