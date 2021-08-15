@@ -192,6 +192,8 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
                  noisy=False,
                  dueling=False,
                  initzer='xavier_uniform',
+                 layer_funct='relu',
+                 normalization=None,
                  target_opt=0,
                  mse_inf=False,
                  network=networks.NatureDQNNetwork,
@@ -245,13 +247,14 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
         self._noisy = noisy
         self._dueling = dueling
         self._initzer = initzer
+        self._layer_funct = layer_funct
+        self._normalization = normalization
         self._target_opt = target_opt
         self._mse_inf = mse_inf
         self._tau = tau
         self._alpha = alpha
         self._clip_value_min = clip_value_min
         self._rng = jax.random.PRNGKey(seed)
-
         super(JaxDQNAgentNew, self).__init__(
             num_actions=num_actions,
             network=functools.partial(network,
@@ -263,13 +266,14 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
                                       neurons=self._neurons,
                                       noisy=self._noisy,
                                       dueling=self._dueling,
-                                      initzer=self._initzer),
+                                      initzer=self._initzer,
+                                      normalization=self._normalization,
+                                      layer_funct=self._layer_funct),
             optimizer=optimizer,
             epsilon_fn=dqn_agent.identity_epsilon
             if self._noisy == True else epsilon_fn)
-
         self._replay_scheme = replay_scheme
-
+        
     def _build_networks_and_optimizer(self):
         self._rng, rng = jax.random.split(self._rng)
         online_network_params = self.network_def.init(rng,
