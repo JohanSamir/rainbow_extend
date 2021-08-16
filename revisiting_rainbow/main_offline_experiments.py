@@ -24,6 +24,9 @@ flags.DEFINE_string("env", "cartpole",
 flags.DEFINE_string("agent", "dqn", 
                         "the agent used in the experiment")
 
+flags.DEFINE_integer("initial_seed", "1", 
+                        "the program will run seeds [initial_seed, initial_seed + 5)")
+
 agents = {
     'dqn': JaxDQNAgentNew,
     'rainbow': JaxRainbowAgentNew,
@@ -124,30 +127,30 @@ inits = {
 num_runs = 10  #7
 # `path=os.environ['AIP_TENSORBOARD_LOG_DIR']`
 
-path = "../../tests_joao/offline_last_pct/" #TODO point to cloud bucket
+path = "../../tests_joao/offline_last_pct/learning_rates" #TODO point to cloud bucket
 seeds = [True]
-activations = {
-    'conf_0_non_activation': {'layer_fun': 'non_activation'},
-    'conf_1_relu': {'layer_fun':'relu'},
-    'conf_2_relu6': {'layer_fun':'relu6'},
-    'conf_3_sigmoid': {'layer_fun':'sigmoid'},
-    'conf_4_softplus': {'layer_fun':'softplus'},
-    'conf_5_soft_sign': {'layer_fun':'soft_sign'},
-    'conf_6_silu': {'layer_fun':'silu'},
-    'conf_7_swish': {'layer_fun':'swish'},
-    'conf_8_log_sigmoid': {'layer_fun':'log_sigmoid'},
-    'conf_9_hard_sigmoid': {'layer_fun':'hard_sigmoid'},
-    'conf_10_hard_silu': {'layer_fun':'hard_silu'},
-    'conf_11_hard_swish': {'layer_fun':'hard_swish'},
-    'conf_12_hard_tanh': {'layer_fun':'hard_tanh'},
-    'conf_13_elu': {'layer_fun':'elu'},
-    'conf_14_celu': {'layer_fun':'celu'},
-    'conf_15_selu': {'layer_fun':'selu'},
-    'conf_16_gelu': {'layer_fun':'gelu'},
-    'conf_17_glu': {'layer_fun':'glu'}
-    }
+# activations = {
+#     'conf_0_non_activation': {'layer_fun': 'non_activation'},
+#     'conf_1_relu': {'layer_fun':'relu'},
+#     'conf_2_relu6': {'layer_fun':'relu6'},
+#     'conf_3_sigmoid': {'layer_fun':'sigmoid'},
+#     'conf_4_softplus': {'layer_fun':'softplus'},
+#     'conf_5_soft_sign': {'layer_fun':'soft_sign'},
+#     'conf_6_silu': {'layer_fun':'silu'},
+#     'conf_7_swish': {'layer_fun':'swish'},
+#     'conf_8_log_sigmoid': {'layer_fun':'log_sigmoid'},
+#     'conf_9_hard_sigmoid': {'layer_fun':'hard_sigmoid'},
+#     'conf_10_hard_silu': {'layer_fun':'hard_silu'},
+#     'conf_11_hard_swish': {'layer_fun':'hard_swish'},
+#     'conf_12_hard_tanh': {'layer_fun':'hard_tanh'},
+#     'conf_13_elu': {'layer_fun':'elu'},
+#     'conf_14_celu': {'layer_fun':'celu'},
+#     'conf_15_selu': {'layer_fun':'selu'},
+#     'conf_16_gelu': {'layer_fun':'gelu'},
+#     'conf_17_glu': {'layer_fun':'glu'}
+#     }
 
-
+learning_rates = [10, 5, 2, 1, 0.1, 0.01, 0.001, 0.0001, 0.00001]
 
 def main(_):
     
@@ -159,21 +162,19 @@ def main(_):
             # ag._replay.add_count = 0 # only for first x%
         return ag
     
-    for act in activations:
-        for i in range(1, num_runs + 1):
+    for lr in learning_rates:
+        for i in range(FLAGS.initial_seed, FLAGS.initial_seed + 5):
             agent_name = agents[FLAGS.agent].__name__
             # initializer = inits[init]['function'].__name__
+            # layer_fun = "'" + activations[act]['layer_fun'] + "'"
 
-            layer_fun = "'" + activations[act]['layer_fun'] + "'"
             LOG_PATH = os.path.join(
-                f'{path}{FLAGS.agent}/{FLAGS.env}_{activations[act]["layer_fun"]}_online',
+                f'{path}/{FLAGS.agent}/{FLAGS.env}_{lr}_online',
                 f'test{i}')
             sys.path.append(path)
             gin_file = f'Configs/{FLAGS.agent}_{FLAGS.env}.gin'
 
-            print('layer_fun:', layer_fun)
-
-            gin_bindings = [f"{agent_name}.seed={i}", f"{agent_name}.layer_funct = {layer_fun}"]
+            gin_bindings = [f"{agent_name}.seed={i}", f"create_optimizer.learning_rate = {lr}"]
 
             gin_bindings.append(f"OutOfGraphPrioritizedReplayBuffer.replay_capacity = 50000")
             gin.clear_config()
@@ -184,13 +185,13 @@ def main(_):
                 LOG_PATH, create_agent)
 
             print(
-                f'Will train agent {FLAGS.agent} with activation {layer_fun} in {FLAGS.env}, run {i}, please be patient, may be a while...'
+                f'Will train agent {FLAGS.agent} with learning rate {lr} in {FLAGS.env}, run {i}, please be patient, may be a while...'
             )
             agent_runner.run_experiment()
             print('Done normal training!')
 
             LOG_PATH = os.path.join(
-                f'{path}{FLAGS.agent}/{FLAGS.env}_{activations[act]["layer_fun"]}_fixed_20',
+                f'{path}/{FLAGS.agent}/{FLAGS.env}_{lr}_fixed_20',
                 f'test{i}')
 
             offline_runner = FixedReplayRunner(
