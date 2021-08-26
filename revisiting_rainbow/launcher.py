@@ -50,7 +50,7 @@ def main(_):
             # add_instruction,
         ],
         path='.',
-        entrypoint=xm.ModuleName('main_offline_experiments'),
+        entrypoint=xm.ModuleName('xmanager_exp'),
     )
 
     [executable] = experiment.package([
@@ -64,27 +64,28 @@ def main(_):
         ),
     ])
 
-    batch_sizes = [64, 1024]
-    learning_rates = [0.1, 0.001]
+    agents = ["dqn", "rainbow"]
+    environments = ["cartpole"]
     trials = list(
-        dict([('batch_size', bs), ('learning_rate', lr)])
-        for (bs, lr) in itertools.product(batch_sizes, learning_rates))
+        dict([('agent', ag), ('env', env)])
+        for (ag, env) in itertools.product(agents, environments))
 
     tensorboard = FLAGS.tensorboard
     if not tensorboard:
-      tensorboard = caip.client().create_tensorboard('cifar10') # TODO add meaningful name
+      tensorboard = caip.client().create_tensorboard('rainbow_test') # TODO add meaningful name
       tensorboard = asyncio.get_event_loop().run_until_complete(tensorboard)
+    
     output_dir = os.environ['GOOGLE_CLOUD_BUCKET_NAME']
     output_dir = os.path.join(output_dir, str(experiment.experiment_id))
     tensorboard_capability = xm_local.TensorboardCapability(
         name=tensorboard, base_output_directory=output_dir)
-    work_units = []
+    
     for hyperparameters in trials:
       hyperparameters = dict(hyperparameters)
       experiment.add(
         xm.Job(
             executable=executable,
-            executor=xm_local.Caip(xm.JobRequirements(t4=FLAGS.gpus_per_node), 
+            executor=xm_local.Caip(xm.JobRequirements(cpu=1), 
               tensorboard=tensorboard_capability),
             args=hyperparameters,
         ))
