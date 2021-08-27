@@ -16,6 +16,7 @@ gin.constant('minatar_env.DTYPE', jnp.float64)
 
 
 class MinAtarEnv(object):
+
     def __init__(self, game_name):
         self.env = minatar.Environment(env_name=game_name)
         self.env.n = self.env.num_actions()

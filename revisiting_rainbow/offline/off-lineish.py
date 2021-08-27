@@ -46,13 +46,10 @@ for agent in ags:
         gin_file = f'./Configs/{agent}_cartpole.gin'
         gin.parse_config_file(gin_file)
 
-        exp_data = checkpointer.Checkpointer(path)._load_data_from_file(
-            ckpt_path)
-        trained_agent = JaxRainbowAgentNew(num_actions=env.action_space.n,
-                                           eval_mode=True)
+        exp_data = checkpointer.Checkpointer(path)._load_data_from_file(ckpt_path)
+        trained_agent = JaxRainbowAgentNew(num_actions=env.action_space.n, eval_mode=True)
         trained_agent.unbundle(ckpt_path, 29, exp_data)
-        agent_runner = OffRunner(LOG_PATH, create_agent,
-                                 gym_lib.create_gym_environment, trained_agent)
+        agent_runner = OffRunner(LOG_PATH, create_agent, gym_lib.create_gym_environment, trained_agent)
         print(f'Training agent {i+1}, please be patient, may be a while...')
         agent_runner.run_experiment()
         print('Done training!')

@@ -40,8 +40,7 @@ for agent in ags:
             def create_agent(sess, environment, summary_writer=None):
                 return ags[agent](num_actions=environment.action_space.n)
 
-            LOG_PATH = os.path.join(path,
-                                    f'../../test_joao/{agent}/{width}_test10')
+            LOG_PATH = os.path.join(path, f'../../test_joao/{agent}/{width}_test10')
             sys.path.append(path)
 
             gin_file = f'./Configs/{agent}_{env}.gin'
@@ -50,7 +49,6 @@ for agent in ags:
 
             agent_runner = run_experiment.TrainRunner(LOG_PATH, create_agent)
 
-            print(
-                f'Training agent {i+1}, please be patient, may be a while...')
+            print(f'Training agent {i+1}, please be patient, may be a while...')
             agent_runner.run_experiment()
             print('Done training!')
