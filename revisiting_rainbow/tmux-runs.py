@@ -1,7 +1,7 @@
 import os
 import itertools
 
-agents = ["rainbow"]
+agents = ["dqn"]
 environments = ["acrobot", "cartpole", "lunarlander", "mountaincar"]
 trials = list(dict([('agent', ag), ('env', env)]) for (ag, env) in itertools.product(agents, environments))
 
