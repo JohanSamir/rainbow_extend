@@ -35,14 +35,14 @@ variance_scaling.scale=1
 variance_scaling.mode='fan_avg'
 variance_scaling.distribution='uniform'
 
-JaxDQNAgentNew.layer_funct = 'relu'#'relu'#'gelu'
+JaxDQNAgentNew.layer_funct = 'relu'
 JaxDQNAgentNew.normalization = 'non_normalization'
 
-JaxDQNAgentNew.network = @networks_new.DQNNetwork
-JaxDQNAgentNew.epsilon_fn = @dqn_agent.identity_epsilon
 JaxDQNAgentNew.tau = 100
 JaxDQNAgentNew.alpha = 1
 JaxDQNAgentNew.clip_value_min = -1e3
+JaxDQNAgentNew.network = @networks_new.DQNNetwork
+JaxDQNAgentNew.epsilon_fn = @dqn_agent.identity_epsilon
 
 create_optimizer = @dqn_agent.create_optimizer
 create_optimizer.learning_rate = 0.001

@@ -185,7 +185,7 @@ class DQNNetwork(nn.Module):
 
         for _ in range(self.hidden_layer):
             x = net(x, features=self.neurons, rng=rng)
-            if self.normalization is None:
+            if self.normalization == 'non_normalization':
                 if self.layer_funct != 'non_activation':
                     x = layer_funct_inf[self.layer_funct](x)
             elif self.normalization == 'BatchNorm':

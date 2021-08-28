@@ -46,7 +46,7 @@ def main(_):
                             },
                             reinit=True)
         with run:
-            LOG_PATH = os.path.join(".", f'../../test_joao/{FLAGS.agent}/{FLAGS.env}/baseline')
+            LOG_PATH = os.path.join(".", f'../../test_joao/baseline/{FLAGS.agent}/{FLAGS.env}')
             gin_file = f'./Configs/{FLAGS.agent}_{FLAGS.env}.gin'
             gin_bindings = [f"{agent_name}.seed={i}"]
             gin.clear_config()
