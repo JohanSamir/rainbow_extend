@@ -57,3 +57,7 @@ class FixedReplayRunner(run_experiment.Runner):
             tf.Summary.Value(tag='Eval/AverageReturns', simple_value=average_reward_eval)
         ])
         self._summary_writer.add_summary(summary, iteration)
+        wandb.log({
+            'Eval/NumEpisodes': num_episodes_eval,
+            'Eval/AverageReturns': average_reward_eval
+        })
