@@ -61,7 +61,7 @@ def main(_):
                 # initializer = inits[init]['function'].__name__
                 # layer_fun = "'" + activations[act]['layer_fun'] + "'"
 
-                LOG_PATH = os.path.join(".", f'../../test_joao/{FLAGS.agent}/{FLAGS.env}/baseline')
+                LOG_PATH = os.path.join(".", f'../../test_joao/baseline/{FLAGS.agent}/{FLAGS.env}')
                 sys.path.append(path)
                 gin_file = f'Configs/{FLAGS.agent}_{FLAGS.env}.gin'
 
@@ -84,7 +84,7 @@ def main(_):
                                                 training_steps=1000,
                                                 evaluation_steps=200,
                                                 create_environment_fn=gym_lib.create_gym_environment)
-                print(f'Training fixed agent {i+1}, please be patient, may be a while...')
+                print(f'Training fixed agent {i}, please be patient, may be a while...')
                 offline_runner.run_experiment()
                 print('Done fixed training!')
             print('Finished!')
