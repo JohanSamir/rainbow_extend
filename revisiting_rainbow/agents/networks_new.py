@@ -185,16 +185,16 @@ class DQNNetwork(nn.Module):
 
         for _ in range(self.hidden_layer):
             x = net(x, features=self.neurons, rng=rng)
-            if self.normalization[0] == None:
-                if self.layer_funct[0] != 'non_activation':
-                    x = layer_funct_inf[self.layer_funct[0]](x)
-            elif self.normalization[0] == 'BatchNorm':
-                if self.layer_funct[0] != 'non_activation':
+            if self.normalization is None:
+                if self.layer_funct != 'non_activation':
+                    x = layer_funct_inf[self.layer_funct](x)
+            elif self.normalization == 'BatchNorm':
+                if self.layer_funct != 'non_activation':
                     x = nn.BatchNorm(use_running_average=True)(x)
-                    x = layer_funct_inf[self.layer_funct[0]](x)
-            elif self.normalization[0] == 'LayerNorm':
-                if self.layer_funct[0] != 'non_activation':
-                    x = layer_funct_inf[self.layer_funct[0]](x)
+                    x = layer_funct_inf[self.layer_funct](x)
+            elif self.normalization == 'LayerNorm':
+                if self.layer_funct != 'non_activation':
+                    x = layer_funct_inf[self.layer_funct](x)
                     x = nn.LayerNorm()(x)
             else:
                 print('error: Choose a correct Normalization Module')

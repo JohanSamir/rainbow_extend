@@ -180,7 +180,7 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
                  layer_funct='relu',
                  normalization=None,
                  target_opt=0,
-                 mse_inf=False,
+                 mse_inf=True,
                  network=networks.NatureDQNNetwork,
                  optimizer='adam',
                  epsilon_fn=dqn_agent.linearly_decaying_epsilon,
