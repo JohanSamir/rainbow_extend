@@ -255,11 +255,15 @@ class RainbowDQN(nn.Module):
           print('norm:',self.normalization, 'activ:',self.layer_funct)
           x = layer_funct_inf[self.layer_funct](x)
       elif self.normalization == 'BatchNorm':
+        print('norm:',self.normalization, 'activ:',self.layer_funct)
         if self.layer_funct != 'non_activation':
+          print('norm:',self.normalization, 'activ:',self.layer_funct)
           x = nn.BatchNorm(use_running_average=True)(x)
           x = layer_funct_inf[self.layer_funct](x)
       elif self.normalization == 'LayerNorm':
-        if self.layer_funct != 'non_activation': 
+        print('norm:',self.normalization, 'activ:',self.layer_funct)
+        if self.layer_funct != 'non_activation':
+          print('norm:',self.normalization, 'activ:',self.layer_funct) 
           x = layer_funct_inf[self.layer_funct](x)
           x = nn.LayerNorm()(x)
       else:
