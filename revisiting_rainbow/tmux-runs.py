@@ -11,4 +11,4 @@ for hyperparameters in trials:
     env = hyperparameters["env"]
     seed = hyperparameters["seed"]
     agent = hyperparameters["agent"]
-    os.system(f'tmux new-session -d -s {env}_{agent}_{seed} sh -c "conda activate rain; python baseline.py --env={env} --agent={agent} --initial_seed={seed}"')
+    os.system(f'tmux new-session -d -s {env}_{agent}_{seed} sh -c "conda activate rain; python main_offline_experiments.py --env={env} --agent={agent} --initial_seed={seed}"')
