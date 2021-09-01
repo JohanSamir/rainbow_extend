@@ -100,6 +100,28 @@ inits = {
     }
 }
 
+def get_init_bidings(agent_name, init, seed=None):
+    initializer = inits[init]['function'].__name__
+    if init == 'zeros' or init == 'ones':
+        gin_bindings = [f"{agent_name}.seed={seed}",
+                        f"{agent_name}.initzer = @{initializer}"]
+
+    elif init == "orthogonal":
+        gin_bindings = [f"{agent_name}.seed={seed}",
+                        f"{agent_name}.initzer = @{initializer}()",
+                        f"{initializer}.scale = 1"]
+    else:
+        mode = '"'+inits[init]['mode']+'"'
+        scale = inits[init]['scale']
+        distribution = '"'+inits[init]['distribution']+'"'
+        gin_bindings = [f"{agent_name}.seed={seed}",
+                        f"{agent_name}.initzer = @{initializer}()",
+                        f"{initializer}.scale = {scale}",
+                        f"{initializer}.mode = {mode}",
+                        f"{initializer}.distribution = {distribution}"
+                        ]
+    return gin_bindings
+
 activations = {
     'conf_0_non_activation': {
         'layer_fun': 'non_activation'
