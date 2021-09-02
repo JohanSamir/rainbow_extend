@@ -10,6 +10,8 @@ agents = {
     'implicit': JaxImplicitQuantileAgentNew,
 }
 
+normalizations = ["non_normalization", 'BatchNorm', 'LayerNorm']
+
 inits = {
     'orthogonal': {
         'function': jax.nn.initializers.orthogonal
