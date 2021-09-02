@@ -19,7 +19,7 @@ from agents.quantile_agent_new import *
 from agents.implicit_quantile_agent_new import *
 from replay_runner import FixedReplayRunner
 
-from constants import agents, epsilons
+from constants import agents, inits, get_init_bidings
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string("env", "cartpole", "the environment the experiment will be run in")
@@ -31,7 +31,7 @@ flags.DEFINE_integer("initial_seed", "1", "the program will run seeds [initial_s
 num_runs = 1  #7
 # `path=os.environ['AIP_TENSORBOARD_LOG_DIR']`
 
-path = "../../tests_joao/offline_last_pct/epsilons"  #TODO point to cloud bucket
+path = "../../tests_joao/offline_last_pct/initializations"  #TODO point to cloud bucket
 
 
 def main(_):
@@ -44,7 +44,7 @@ def main(_):
             # ag._replay.add_count = 0 # only for first x%
         return ag
 
-    for eps in epsilons:
+    for init in inits:
         # layer_fun = "'" + activations[act]['layer_fun'] + "'"
         for i in range(FLAGS.initial_seed, FLAGS.initial_seed + num_runs):
             run = wandb.init(project="extending-rainbow",
@@ -53,8 +53,8 @@ def main(_):
                                 "random seed": i,
                                 "agent": FLAGS.agent,
                                 "environment": FLAGS.env,
-                                "epsilon": eps, 
-                                "varying": "epsilon"
+                                "initialization": init, 
+                                "varying": "initialization"
                             },
                             reinit=True)
             with run:
@@ -64,7 +64,7 @@ def main(_):
                 sys.path.append(path)
                 gin_file = f'Configs/{FLAGS.agent}_{FLAGS.env}.gin'
 
-                gin_bindings = [f"{agent_name}.seed={FLAGS.initial_seed}", f"create_optimizer.eps = {eps}"]
+                gin_bindings = get_init_bidings(agent_name, init, FLAGS.initial_seed)
 
                 gin.clear_config()
                 gin.parse_config_files_and_bindings([gin_file], gin_bindings, skip_unknown=False)
@@ -72,7 +72,7 @@ def main(_):
 
                 print(f'Loaded trained {FLAGS.agent} in {FLAGS.env}')
                 
-                LOG_PATH = os.path.join(f'{path}/{FLAGS.agent}/{FLAGS.env}_{eps}_fixed_20', f'test{i}')
+                LOG_PATH = os.path.join(f'{path}/{FLAGS.agent}/{FLAGS.env}_{init}_fixed_20', f'test{i}')
 
                 offline_runner = FixedReplayRunner(base_dir=LOG_PATH,
                                                 create_agent_fn=functools.partial(
