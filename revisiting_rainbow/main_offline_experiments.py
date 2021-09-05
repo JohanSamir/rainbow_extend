@@ -72,7 +72,7 @@ def main(_):
 
                 print(f'Loaded trained {FLAGS.agent} in {FLAGS.env}')
                 
-                LOG_PATH = os.path.join(f'{path}/{FLAGS.agent}/{F   LAGS.env}_{width}_fixed_20', f'test{i}')
+                LOG_PATH = os.path.join(f'{path}/{FLAGS.agent}/{FLAGS.env}_{width}_fixed_20', f'test{i}')
 
                 offline_runner = FixedReplayRunner(base_dir=LOG_PATH,
                                                 create_agent_fn=functools.partial(
