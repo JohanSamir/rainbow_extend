@@ -18,6 +18,7 @@ from agents.rainbow_agent_new import *
 from agents.quantile_agent_new import *
 from agents.implicit_quantile_agent_new import *
 
+from wandb_runner import WandBRunner
 from constants import agents, epsilons
 
 FLAGS = flags.FLAGS
@@ -41,7 +42,7 @@ def main(_):
     for eps in epsilons:
         # layer_fun = "'" + activations[act]['layer_fun'] + "'"
         for i in range(FLAGS.initial_seed, FLAGS.initial_seed + num_runs):
-            name = "online"
+            
             run = wandb.init(project="extending-rainbow",
                             entity="ext-rain",
                             config={
@@ -50,14 +51,14 @@ def main(_):
                                 "environment": FLAGS.env,
                                 "epsilon": eps, 
                                 "varying": "epsilon",
+                                "online": True,
 
                             },
-                            name=name,
                             reinit=True)
             with run:
                 agent_name = agents[FLAGS.agent].__name__
 
-                LOG_PATH = os.path.join(".", f'../../ExperimentsInitializer/epsilons/{FLAGS.agent}/{FLAGS.env}')
+                LOG_PATH = os.path.join(os.path.join(f'{path}/{FLAGS.agent}/{FLAGS.env}_{eps}_online', f'test{i}'))
                 sys.path.append(path)
                 gin_file = f'Configs/{FLAGS.agent}_{FLAGS.env}.gin'
 
@@ -65,7 +66,7 @@ def main(_):
 
                 gin.clear_config()
                 gin.parse_config_files_and_bindings([gin_file], gin_bindings, skip_unknown=False)
-                agent_runner = run_experiment.TrainRunner(LOG_PATH, create_agent)
+                agent_runner = WandBRunner(LOG_PATH, create_agent, gym_lib.create_gym_environment)
 
                 print(f'Training fixed agent {i}, please be patient, may be a while...')
                 agent_runner.run_experiment()
