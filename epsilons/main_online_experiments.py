@@ -19,7 +19,7 @@ from agents.quantile_agent_new import *
 from agents.implicit_quantile_agent_new import *
 
 from wandb_runner import WandBRunner
-from constants import agents, epsilons
+from constants import agents, epsilons, learning_rates, widths, depths, normalizations, inits, activations, get_init_bidings
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string("env", "cartpole", "the environment the experiment will be run in")
@@ -28,10 +28,25 @@ flags.DEFINE_string("agent", "dqn", "the agent used in the experiment")
 
 flags.DEFINE_integer("initial_seed", "1", "the program will run seeds [initial_seed, initial_seed + 5)")
 
+flags.DEFINE_string("experiment", "epsilons", "the experiment will be run in")
+
+flags.DEFINE_boolean("weights_biases", "False", "the program won't use weights&biases")
+
+experiments = {
+        "epsilons": epsilons,
+        "learning_rates":learning_rates,
+        "widths":widths,
+        "depths":depths,
+        "normalizations":normalizations,
+        "inits":inits,
+        "activations":activations,
+}
+    
+
 num_runs = 1  #7
 # `path=os.environ['AIP_TENSORBOARD_LOG_DIR']`
 
-path = "../../ExperimentsInitializer/epsilons"  #TODO point to cloud bucket
+path = "../../ExperimentsInitializer/epsilons"  #TODO
 
 def main(_):
 
@@ -39,8 +54,9 @@ def main(_):
         ag = agents[FLAGS.agent](num_actions=environment.action_space.n)
         return ag
 
-    for eps in epsilons:
-        # layer_fun = "'" + activations[act]['layer_fun'] + "'"
+    for eps in experiments[FLAGS.exp]:
+        if FLAGS.exp=="activations":
+            eps = "'" + activations[act]['layer_fun'] + "'"
         for i in range(FLAGS.initial_seed, FLAGS.initial_seed + num_runs):
             
             run = wandb.init(project="extending-rainbow",
@@ -49,8 +65,8 @@ def main(_):
                                 "random seed": i,
                                 "agent": FLAGS.agent,
                                 "environment": FLAGS.env,
-                                "epsilon": eps, 
-                                "varying": "epsilon",
+                                f'{FLAGS.exp}': eps, 
+                                "varying": FLAGS.exp,
                                 "online": True,
 
                             },
@@ -58,15 +74,41 @@ def main(_):
             with run:
                 agent_name = agents[FLAGS.agent].__name__
 
-                LOG_PATH = os.path.join(os.path.join(f'{path}/{FLAGS.agent}/{FLAGS.env}_{eps}_online', f'test{i}'))
+                LOG_PATH = os.path.join(os.path.join(f'{path}/{FLAGS.agent}/{FLAGS.env}/{FLAGS.exp}_{eps}_online', f'test{i}'))
                 sys.path.append(path)
                 gin_file = f'Configs/{FLAGS.agent}_{FLAGS.env}.gin'
 
-                gin_bindings = [f"{agent_name}.seed={FLAGS.initial_seed}", f"create_optimizer.eps = {eps}"]
+                if FLAGS.exp == "epsilons":
+                    gin_bindings = [f"{agent_name}.seed={FLAGS.initial_seed}", f"create_optimizer.eps = {eps}"]
+
+                elif FLAGS.exp == "learning_rates":
+                    gin_bindings = [f"{agent_name}.seed={i}", f"create_optimizer.learning_rate = {eps}"]
+
+                elif FLAGS.exp == "widths":
+                    gin_bindings = [f"{agent_name}.seed={FLAGS.initial_seed}", f"{agent_name}.neurons = {eps}"]
+
+                elif FLAGS.exp == "depths":
+                    gin_bindings = [f"{agent_name}.seed={FLAGS.initial_seed}", f"{agent_name}.hidden_layer = {eps}"]
+
+                elif FLAGS.exp == "normalizations":
+                    gin_bindings = [f"{agent_name}.seed={FLAGS.initial_seed}", f"{agent_name}.normalization = '{eps}'"]
+
+                elif FLAGS.exp == "inits":
+                    gin_bindings = get_init_bidings(agent_name, eps, FLAGS.initial_seed)
+
+                elif FLAGS.exp == "activations":
+                    gin_bindings = [f"{agent_name}.seed={i}", f"{agent_name}.layer_funct = {eps}"]
+
+                else:
+                    print("Error! Check the kind of experiment")
 
                 gin.clear_config()
                 gin.parse_config_files_and_bindings([gin_file], gin_bindings, skip_unknown=False)
-                agent_runner = WandBRunner(LOG_PATH, create_agent, gym_lib.create_gym_environment)
+
+                if FLAGS.wb == False :
+                    agent_runner = run_experiment.TrainRunner(LOG_PATH, create_agent, gym_lib.create_gym_environment)
+                else:
+                    agent_runner = WandBRunner(LOG_PATH, create_agent, gym_lib.create_gym_environment)
 
                 print(f'Training fixed agent {i}, please be patient, may be a while...')
                 agent_runner.run_experiment()
