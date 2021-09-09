@@ -58,62 +58,63 @@ def main(_):
         if FLAGS.exp=="activations":
             eps = "'" + activations[act]['layer_fun'] + "'"
         for i in range(FLAGS.initial_seed, FLAGS.initial_seed + num_runs):
-            
-            run = wandb.init(project="extending-rainbow",
-                            entity="ext-rain",
-                            config={
-                                "random seed": i,
-                                "agent": FLAGS.agent,
-                                "environment": FLAGS.env,
-                                f'{FLAGS.exp}': eps, 
-                                "varying": FLAGS.exp,
-                                "online": True,
+            FLAGS.wb:
+                run = wandb.init(project="extending-rainbow",
+                                entity="ext-rain",
+                                config={
+                                    "random seed": i,
+                                    "agent": FLAGS.agent,
+                                    "environment": FLAGS.env,
+                                    f'{FLAGS.exp}': eps, 
+                                    "varying": FLAGS.exp,
+                                    "online": True,
 
-                            },
-                            reinit=True)
-            with run:
-                agent_name = agents[FLAGS.agent].__name__
+                                },
+                                reinit=True)
+           agent_name = agents[FLAGS.agent].__name__
 
-                LOG_PATH = os.path.join(os.path.join(f'{path}/{FLAGS.agent}/{FLAGS.env}/{FLAGS.exp}_{eps}_online', f'test{i}'))
-                sys.path.append(path)
-                gin_file = f'Configs/{FLAGS.agent}_{FLAGS.env}.gin'
+           LOG_PATH = os.path.join(os.path.join(f'{path}/{FLAGS.agent}/{FLAGS.env}/{FLAGS.exp}_{eps}_online', f'test{i}'))
+           sys.path.append(path)
+           gin_file = f'Configs/{FLAGS.agent}_{FLAGS.env}.gin'
 
-                if FLAGS.exp == "epsilons":
-                    gin_bindings = [f"{agent_name}.seed={FLAGS.initial_seed}", f"create_optimizer.eps = {eps}"]
+           if FLAGS.exp == "epsilons":
+                gin_bindings = [f"{agent_name}.seed={FLAGS.initial_seed}", f"create_optimizer.eps = {eps}"]
 
-                elif FLAGS.exp == "learning_rates":
-                    gin_bindings = [f"{agent_name}.seed={i}", f"create_optimizer.learning_rate = {eps}"]
+           elif FLAGS.exp == "learning_rates":
+                gin_bindings = [f"{agent_name}.seed={i}", f"create_optimizer.learning_rate = {eps}"]
 
-                elif FLAGS.exp == "widths":
-                    gin_bindings = [f"{agent_name}.seed={FLAGS.initial_seed}", f"{agent_name}.neurons = {eps}"]
+           elif FLAGS.exp == "widths":
+                gin_bindings = [f"{agent_name}.seed={FLAGS.initial_seed}", f"{agent_name}.neurons = {eps}"]
 
-                elif FLAGS.exp == "depths":
-                    gin_bindings = [f"{agent_name}.seed={FLAGS.initial_seed}", f"{agent_name}.hidden_layer = {eps}"]
+           elif FLAGS.exp == "depths":
+                gin_bindings = [f"{agent_name}.seed={FLAGS.initial_seed}", f"{agent_name}.hidden_layer = {eps}"]
 
-                elif FLAGS.exp == "normalizations":
-                    gin_bindings = [f"{agent_name}.seed={FLAGS.initial_seed}", f"{agent_name}.normalization = '{eps}'"]
+           elif FLAGS.exp == "normalizations":
+                gin_bindings = [f"{agent_name}.seed={FLAGS.initial_seed}", f"{agent_name}.normalization = '{eps}'"]
 
-                elif FLAGS.exp == "inits":
-                    gin_bindings = get_init_bidings(agent_name, eps, FLAGS.initial_seed)
+           elif FLAGS.exp == "inits":
+                gin_bindings = get_init_bidings(agent_name, eps, FLAGS.initial_seed)
 
-                elif FLAGS.exp == "activations":
-                    gin_bindings = [f"{agent_name}.seed={i}", f"{agent_name}.layer_funct = {eps}"]
+           elif FLAGS.exp == "activations":
+                gin_bindings = [f"{agent_name}.seed={i}", f"{agent_name}.layer_funct = {eps}"]
 
-                else:
-                    print("Error! Check the kind of experiment")
+           else:
+                print("Error! Check the kind of experiment")
 
-                gin.clear_config()
-                gin.parse_config_files_and_bindings([gin_file], gin_bindings, skip_unknown=False)
+           gin.clear_config()
+           gin.parse_config_files_and_bindings([gin_file], gin_bindings, skip_unknown=False)
 
-                if FLAGS.wb == False :
-                    agent_runner = run_experiment.TrainRunner(LOG_PATH, create_agent, gym_lib.create_gym_environment)
-                else:
-                    agent_runner = WandBRunner(LOG_PATH, create_agent, gym_lib.create_gym_environment)
+           if FLAGS.wb:
+              agent_runner = WandBRunner(LOG_PATH, create_agent, gym_lib.create_gym_environment)
+           else:
+              agent_runner = run_experiment.TrainRunner(LOG_PATH, create_agent, gym_lib.create_gym_environment)
 
-                print(f'Training fixed agent {i}, please be patient, may be a while...')
-                agent_runner.run_experiment()
-                print('Done training!')
-            print('Finished!')
+           print(f'Training fixed agent {i}, please be patient, may be a while...')
+           agent_runner.run_experiment()
+           print('Done training!')
+           if FLAGS.wb:
+              run.finish()
+    print('Finished!')
 
 
 if __name__ == "__main__":
