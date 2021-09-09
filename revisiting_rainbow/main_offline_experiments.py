@@ -19,7 +19,7 @@ from agents.quantile_agent_new import *
 from agents.implicit_quantile_agent_new import *
 from replay_runner import FixedReplayRunner
 
-from constants import agents, depths
+from constants import agents, widths
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string("env", "cartpole", "the environment the experiment will be run in")
@@ -31,7 +31,7 @@ flags.DEFINE_integer("initial_seed", "1", "the program will run seeds [initial_s
 num_runs = 1  #7
 # `path=os.environ['AIP_TENSORBOARD_LOG_DIR']`
 
-path = "../../tests_joao/offline_last_pct/depths"  #TODO point to cloud bucket
+path = "../../tests_joao/offline_last_pct/widths"  #TODO point to cloud bucket
 
 
 def main(_):
@@ -44,7 +44,7 @@ def main(_):
             # ag._replay.add_count = 0 # only for first x%
         return ag
 
-    for depth in depths:
+    for width in widths:
         # layer_fun = "'" + activations[act]['layer_fun'] + "'"
         for i in range(FLAGS.initial_seed, FLAGS.initial_seed + num_runs):
             run = wandb.init(project="extending-rainbow",
@@ -53,8 +53,8 @@ def main(_):
                                 "random seed": i,
                                 "agent": FLAGS.agent,
                                 "environment": FLAGS.env,
-                                "depth": depth, 
-                                "varying": "depth"
+                                "width": width, 
+                                "varying": "width"
                             },
                             reinit=True)
             with run:
@@ -64,7 +64,7 @@ def main(_):
                 sys.path.append(path)
                 gin_file = f'Configs/{FLAGS.agent}_{FLAGS.env}.gin'
 
-                gin_bindings = [f"{agent_name}.seed={FLAGS.initial_seed}", f"{agent_name}.hidden_layer = {depth}"]
+                gin_bindings = [f"{agent_name}.seed={FLAGS.initial_seed}", f"{agent_name}.neurons = {width}"]
 
                 gin.clear_config()
                 gin.parse_config_files_and_bindings([gin_file], gin_bindings, skip_unknown=False)
@@ -72,7 +72,7 @@ def main(_):
 
                 print(f'Loaded trained {FLAGS.agent} in {FLAGS.env}')
                 
-                LOG_PATH = os.path.join(f'{path}/{FLAGS.agent}/{FLAGS.env}_{depth}_fixed_20', f'test{i}')
+                LOG_PATH = os.path.join(f'{path}/{FLAGS.agent}/{FLAGS.env}_{width}_fixed_20', f'test{i}')
 
                 offline_runner = FixedReplayRunner(base_dir=LOG_PATH,
                                                 create_agent_fn=functools.partial(

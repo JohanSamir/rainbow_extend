@@ -3,7 +3,7 @@ import itertools
 
 agents = ["dqn"]
 seeds = list(range(1, 11))
-environments = ["acrobot", "cartpole", "lunarlander"]
+environments = ["mountaincar"]
 trials = list(dict([('agent', ag), ('env', env), ('seed', seed)]) for (ag, env, seed) in itertools.product(agents, environments, seeds))
 
 for hyperparameters in trials:
@@ -11,4 +11,4 @@ for hyperparameters in trials:
     env = hyperparameters["env"]
     seed = hyperparameters["seed"]
     agent = hyperparameters["agent"]
-    os.system(f'tmux new-session -d -s {env}_{agent}_{seed} sh -c "conda activate rain; python main_offline_experiments.py --env={env} --agent={agent} --initial_seed={seed}"')
+    os.system(f'tmux new-session -d -s {env}_{agent}_{seed}_w sh -c "conda activate rain; python main_offline_experiments.py --env={env} --agent={agent} --initial_seed={seed}"')
