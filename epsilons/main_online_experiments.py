@@ -28,7 +28,7 @@ flags.DEFINE_string("agent", "dqn", "the agent used in the experiment")
 
 flags.DEFINE_integer("initial_seed", "1", "the program will run seeds [initial_seed, initial_seed + 5)")
 
-flags.DEFINE_string("experiment", "1", "the experiment will be run in")
+flags.DEFINE_string("experiment", "epsilons", "the experiment will be run in")
 
 flags.DEFINE_boolean("weights_biases", "False", "the program won't use weights&biases")
 
@@ -37,9 +37,9 @@ experiments = {
         "learning_rates":learning_rates,
         "widths":widths,
         "depths":depths,
-        "normalizations":normalizations
-        "inits":inits
-        "activations":activations
+        "normalizations":normalizations,
+        "inits":inits,
+        "activations":activations,
 }
     
 
