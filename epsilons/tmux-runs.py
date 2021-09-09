@@ -7,7 +7,7 @@ environments = ["acrobot", "cartpole", "lunarlander", "mountaincar"]
 experiments = ["epsilon"]
 weights_biases = [False]
 
-trials = list(dict([('agent', ag), ('env', env), ('seed', seed), ('experiment', exp)]) for (ag, env, seed, exp, wb) in itertools.product(agents, environments, seeds, experiments))
+trials = list(dict([('agent', ag), ('env', env), ('seed', seed), ('experiment', exp)]) for (ag, env, seed, exp) in itertools.product(agents, environments, seeds, experiments))
 
 for hyperparameters in trials:
     hyperparameters = dict(hyperparameters)
