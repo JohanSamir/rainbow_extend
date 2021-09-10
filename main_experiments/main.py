@@ -19,7 +19,7 @@ from agents.quantile_agent_new import *
 from agents.implicit_quantile_agent_new import *
 from replay_runner import FixedReplayRunner
 
-from constants import agents, epsilons, learning_rates, widths, depths, normalizations, inits, activations, get_gin_bindings
+from constants import agents, epsilons, learning_rates, widths, depths, normalizations, inits, update_period, activations, get_gin_bindings
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string("env", "cartpole", "the environment the experiment will be run in")
@@ -42,6 +42,7 @@ experiments = {
         "normalization":normalizations,
         "init":inits,
         "activation":activations,
+        "update_period":update_period, 
 }
 num_runs = 1  #7
 # `path=os.environ['AIP_TENSORBOARD_LOG_DIR']`
@@ -78,6 +79,7 @@ def main(_):
                                     "online": False,
                                 },
                                 reinit=True)
+                
             agent_name = agents[FLAGS.agent].__name__
 
             gin_file = f'Configs/{FLAGS.agent}_{FLAGS.env}.gin'
