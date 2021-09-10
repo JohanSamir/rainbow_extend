@@ -28,7 +28,7 @@ flags.DEFINE_string("agent", "dqn", "the agent used in the experiment")
 
 flags.DEFINE_integer("initial_seed", "1", "the program will run seeds [initial_seed, initial_seed + 5)")
 
-flags.DEFINE_string("exp", "normalizations", "the experiment will be run in")
+flags.DEFINE_string("exp", "normalization", "the experiment will be run in")
 
 flags.DEFINE_boolean("wb", "False", "the program won't use weights&biases")
 
@@ -78,7 +78,7 @@ def main(_):
                                 reinit=True)
             agent_name = agents[FLAGS.agent].__name__
 
-            LOG_PATH = os.path.join(os.path.join(f'{path}/{FLAGS.agent}/{FLAGS.env}/{FLAGS.exp}_{eps}_online', f'test{i}'))
+            LOG_PATH = os.path.join(path, f'baselines/{FLAGS.agent}/{FLAGS.env}')
             sys.path.append(path)
             gin_file = f'Configs/{FLAGS.agent}_{FLAGS.env}.gin'
 
