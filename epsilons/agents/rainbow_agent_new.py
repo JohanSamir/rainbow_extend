@@ -124,7 +124,7 @@ class JaxRainbowAgentNew(dqn_agent.JaxDQNAgent):
 
   def __init__(self,
                num_actions,
-               
+               update_period=4,
                noisy = False,
                dueling = False,
                initzer = 'variance_scaling',
@@ -202,6 +202,7 @@ class JaxRainbowAgentNew(dqn_agent.JaxDQNAgent):
 
     super(JaxRainbowAgentNew, self).__init__(
         num_actions=num_actions,
+        update_period=update_period,
         network=functools.partial(network,
                                 num_atoms=num_atoms,
                                 net_conf=self._net_conf,
