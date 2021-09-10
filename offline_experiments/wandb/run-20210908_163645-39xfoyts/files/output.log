@@ -1,0 +1,707 @@
+
+Training agent, please be patient, may be a while...
+WARNING:tensorflow:From /home/joaoguilhermearujo/miniconda3/envs/rain/lib/python3.6/site-packages/tensorflow/python/compat/v2_compat.py:101: disable_resource_variables (from tensorflow.python.ops.variable_scope) is deprecated and will be removed in a future version.
+Instructions for updating:
+non-resource variables are not supported in the long term
+W0908 16:36:50.032761 140311693346816 deprecation.py:345] From /home/joaoguilhermearujo/miniconda3/envs/rain/lib/python3.6/site-packages/tensorflow/python/compat/v2_compat.py:101: disable_resource_variables (from tensorflow.python.ops.variable_scope) is deprecated and will be removed in a future version.
+Instructions for updating:
+non-resource variables are not supported in the long term
+2021-09-08 16:36:50.037156: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+I0908 16:36:50.082025 140311693346816 dqn_agent.py:271] Creating JaxDQNAgentNew agent with the following parameters:
+I0908 16:36:50.082731 140311693346816 dqn_agent.py:272] 	 gamma: 0.990000
+I0908 16:36:50.082800 140311693346816 dqn_agent.py:273] 	 update_horizon: 1.000000
+I0908 16:36:50.082852 140311693346816 dqn_agent.py:274] 	 min_replay_history: 500
+I0908 16:36:50.082900 140311693346816 dqn_agent.py:275] 	 update_period: 4
+I0908 16:36:50.083021 140311693346816 dqn_agent.py:276] 	 target_update_period: 100
+I0908 16:36:50.083081 140311693346816 dqn_agent.py:277] 	 epsilon_train: 0.010000
+I0908 16:36:50.083143 140311693346816 dqn_agent.py:278] 	 epsilon_eval: 0.001000
+I0908 16:36:50.083188 140311693346816 dqn_agent.py:279] 	 epsilon_decay_period: 250000
+I0908 16:36:50.083233 140311693346816 dqn_agent.py:280] 	 optimizer: adam
+I0908 16:36:50.083294 140311693346816 dqn_agent.py:282] 	 max_tf_checkpoints_to_keep: 4
+I0908 16:36:50.083353 140311693346816 dqn_agent.py:283] 	 seed: 1631119010081982
+I0908 16:36:50.084738 140311693346816 circular_replay_buffer.py:155] Creating a OutOfGraphPrioritizedReplayBuffer replay memory with the following parameters:
+I0908 16:36:50.084849 140311693346816 circular_replay_buffer.py:156] 	 observation_shape: (2, 1)
+I0908 16:36:50.084913 140311693346816 circular_replay_buffer.py:157] 	 observation_dtype: <class 'jax._src.numpy.lax_numpy.float64'>
+I0908 16:36:50.084974 140311693346816 circular_replay_buffer.py:158] 	 terminal_dtype: <class 'numpy.uint8'>
+I0908 16:36:50.085022 140311693346816 circular_replay_buffer.py:159] 	 stack_size: 1
+I0908 16:36:50.085109 140311693346816 circular_replay_buffer.py:160] 	 replay_capacity: 50000
+I0908 16:36:50.085170 140311693346816 circular_replay_buffer.py:161] 	 batch_size: 128
+I0908 16:36:50.085230 140311693346816 circular_replay_buffer.py:162] 	 update_horizon: 1
+I0908 16:36:50.085274 140311693346816 circular_replay_buffer.py:163] 	 gamma: 0.990000
+I0908 16:36:51.268978 140311693346816 dqn_agent.py:70] Creating Adam optimizer with settings lr=0.010000, beta1=0.900000, beta2=0.999000, eps=0.000313
+I0908 16:36:51.335220 140311693346816 run_experiment.py:516] Beginning training...
+I0908 16:36:51.335378 140311693346816 run_experiment.py:447] Starting iteration 0
+Steps executed: 600 Episode length: 600 Return: -600.0
+
+Steps executed: 1200 Episode length: 600 Return: -600.0
+W0908 16:36:55.395598 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:36:55.395960 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 124800 Episode length: 600 Return: -600.0
+I0908 16:37:25.746765 140311693346816 run_experiment.py:428] Average undiscounted return per evaluation episode: -600.00
+
+Steps executed: 125400 Episode length: 600 Return: -600.0
+
+Steps executed: 600 Episode length: 600 Return: -600.00.0
+W0908 16:37:30.272245 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:37:30.272616 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 117600 Episode length: 600 Return: -600.0
+I0908 16:37:59.543541 140311693346816 run_experiment.py:428] Average undiscounted return per evaluation episode: -600.00
+
+Steps executed: 125400 Episode length: 600 Return: -600.0
+
+Steps executed: 600 Episode length: 600 Return: -600.00.0
+W0908 16:38:03.981023 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:38:03.981378 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 118800 Episode length: 600 Return: -600.0
+I0908 16:38:33.491326 140311693346816 run_experiment.py:428] Average undiscounted return per evaluation episode: -600.00
+
+Steps executed: 125400 Episode length: 600 Return: -600.0
+
+Steps executed: 600 Episode length: 600 Return: -600.00.0
+W0908 16:38:37.982074 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:38:37.982575 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 119400 Episode length: 600 Return: -600.0
+I0908 16:39:07.304917 140311693346816 run_experiment.py:428] Average undiscounted return per evaluation episode: -600.00
+
+Steps executed: 125400 Episode length: 600 Return: -600.0
+
+Steps executed: 600 Episode length: 600 Return: -600.00.0
+W0908 16:39:11.761524 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:39:11.761828 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 118200 Episode length: 600 Return: -600.0
+I0908 16:39:41.902782 140311693346816 run_experiment.py:428] Average undiscounted return per evaluation episode: -600.00
+
+Steps executed: 125400 Episode length: 600 Return: -600.0
+
+Steps executed: 600 Episode length: 600 Return: -600.00.0
+W0908 16:39:46.446963 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:39:46.447330 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 117600 Episode length: 600 Return: -600.0
+I0908 16:40:15.944196 140311693346816 run_experiment.py:428] Average undiscounted return per evaluation episode: -600.00
+
+
+Steps executed: 600 Episode length: 600 Return: -600.00.0
+W0908 16:40:18.210300 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+W0908 16:40:20.410336 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:40:20.410707 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 125400 Episode length: 600 Return: -600.0
+I0908 16:40:50.252530 140311693346816 run_experiment.py:428] Average undiscounted return per evaluation episode: -600.00
+I0908 16:40:50.313762 140311693346816 run_experiment.py:447] Starting iteration 7
+
+Steps executed: 600 Episode length: 600 Return: -600.00.0
+W0908 16:40:54.798937 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:40:54.799260 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 123000 Episode length: 600 Return: -600.0
+I0908 16:41:24.979034 140311693346816 run_experiment.py:428] Average undiscounted return per evaluation episode: -600.00
+
+Steps executed: 125400 Episode length: 600 Return: -600.0
+
+Steps executed: 600 Episode length: 600 Return: -600.00.0
+W0908 16:41:29.426118 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:41:29.426462 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 120000 Episode length: 600 Return: -600.0
+I0908 16:41:59.366348 140311693346816 run_experiment.py:428] Average undiscounted return per evaluation episode: -600.00
+
+Steps executed: 125400 Episode length: 600 Return: -600.0
+
+Steps executed: 600 Episode length: 600 Return: -600.00.0
+W0908 16:42:03.865292 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:42:03.865592 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 122400 Episode length: 600 Return: -600.0
+I0908 16:42:32.861924 140311693346816 run_experiment.py:428] Average undiscounted return per evaluation episode: -600.00
+
+Steps executed: 125400 Episode length: 600 Return: -600.0
+
+Steps executed: 600 Episode length: 600 Return: -600.00.0
+W0908 16:42:37.396189 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:42:37.396550 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 121800 Episode length: 600 Return: -600.0
+I0908 16:43:07.243557 140311693346816 run_experiment.py:428] Average undiscounted return per evaluation episode: -600.00
+
+Steps executed: 125400 Episode length: 600 Return: -600.0
+
+Steps executed: 600 Episode length: 600 Return: -600.00.0
+W0908 16:43:11.752889 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:43:11.753348 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 124200 Episode length: 600 Return: -600.0
+I0908 16:43:40.721410 140311693346816 run_experiment.py:428] Average undiscounted return per evaluation episode: -600.00
+
+Steps executed: 125400 Episode length: 600 Return: -600.0
+
+Steps executed: 600 Episode length: 600 Return: -600.00.0
+W0908 16:43:45.224620 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:43:45.224934 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 123000 Episode length: 600 Return: -600.0
+I0908 16:44:15.129492 140311693346816 run_experiment.py:428] Average undiscounted return per evaluation episode: -600.00
+
+Steps executed: 125400 Episode length: 600 Return: -600.0
+
+Steps executed: 600 Episode length: 600 Return: -600.00.0
+W0908 16:44:19.630049 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:44:19.630516 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 125400 Episode length: 600 Return: -600.0
+I0908 16:44:48.690156 140311693346816 run_experiment.py:428] Average undiscounted return per evaluation episode: -600.00
+I0908 16:44:48.757858 140311693346816 run_experiment.py:447] Starting iteration 14
+
+Steps executed: 600 Episode length: 600 Return: -600.00.0
+W0908 16:44:53.308126 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:44:53.308529 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 124200 Episode length: 600 Return: -600.0
+I0908 16:45:23.092395 140311693346816 run_experiment.py:428] Average undiscounted return per evaluation episode: -600.00
+
+Steps executed: 125400 Episode length: 600 Return: -600.0
+
+Steps executed: 600 Episode length: 600 Return: -600.00.0
+W0908 16:45:27.626195 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:45:27.626542 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 124800 Episode length: 600 Return: -600.0
+I0908 16:45:57.094506 140311693346816 run_experiment.py:428] Average undiscounted return per evaluation episode: -600.00
+
+Steps executed: 125400 Episode length: 600 Return: -600.0
+
+Steps executed: 600 Episode length: 600 Return: -600.00.0
+W0908 16:46:01.631793 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:46:01.632341 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 121800 Episode length: 600 Return: -600.0
+I0908 16:46:31.423707 140311693346816 run_experiment.py:428] Average undiscounted return per evaluation episode: -600.00
+
+Steps executed: 125400 Episode length: 600 Return: -600.0
+
+Steps executed: 600 Episode length: 600 Return: -600.00.0
+W0908 16:46:36.031242 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:46:36.031549 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 122400 Episode length: 600 Return: -600.0
+I0908 16:47:05.378446 140311693346816 run_experiment.py:428] Average undiscounted return per evaluation episode: -600.00
+
+Steps executed: 125400 Episode length: 600 Return: -600.0
+
+Steps executed: 600 Episode length: 600 Return: -600.00.0
+W0908 16:47:09.880178 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:47:09.880487 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 125400 Episode length: 600 Return: -600.0
+I0908 16:47:38.874233 140311693346816 run_experiment.py:428] Average undiscounted return per evaluation episode: -600.00
+I0908 16:47:38.946991 140311693346816 run_experiment.py:447] Starting iteration 19
+
+Steps executed: 600 Episode length: 600 Return: -600.00.0
+W0908 16:47:43.366211 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:47:43.366529 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 125400 Episode length: 600 Return: -600.0
+I0908 16:48:12.992670 140311693346816 run_experiment.py:428] Average undiscounted return per evaluation episode: -600.00
+I0908 16:48:13.067894 140311693346816 run_experiment.py:447] Starting iteration 20
+
+Steps executed: 600 Episode length: 600 Return: -600.00.0
+W0908 16:48:17.533921 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:48:17.534305 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 125400 Episode length: 600 Return: -600.0
+I0908 16:48:46.836346 140311693346816 run_experiment.py:428] Average undiscounted return per evaluation episode: -600.00
+
+Steps executed: 600 Episode length: 600 Return: -600.00.0
+W0908 16:48:49.123132 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+W0908 16:48:51.397630 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:48:51.398007 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 125400 Episode length: 600 Return: -600.0
+I0908 16:49:21.185625 140311693346816 run_experiment.py:428] Average undiscounted return per evaluation episode: -600.00
+I0908 16:49:21.262238 140311693346816 run_experiment.py:447] Starting iteration 22
+
+Steps executed: 600 Episode length: 600 Return: -600.00.0
+W0908 16:49:25.750933 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:49:25.751318 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 118800 Episode length: 600 Return: -600.0
+
+Steps executed: 125400 Episode length: 600 Return: -600.0
+
+Steps executed: 600 Episode length: 600 Return: -600.00.0
+W0908 16:49:57.171778 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+W0908 16:49:59.421591 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:49:59.422020 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 125400 Episode length: 600 Return: -600.0
+I0908 16:50:29.088637 140311693346816 run_experiment.py:428] Average undiscounted return per evaluation episode: -600.00
+
+Steps executed: 600 Episode length: 600 Return: -600.00.0
+W0908 16:50:31.337346 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+W0908 16:50:33.564928 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:50:33.565262 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 119400 Episode length: 600 Return: -600.0
+I0908 16:51:04.433237 140311693346816 run_experiment.py:428] Average undiscounted return per evaluation episode: -600.00
+
+Steps executed: 125400 Episode length: 600 Return: -600.0
+
+Steps executed: 600 Episode length: 600 Return: -600.00.0
+W0908 16:51:08.951840 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:51:08.952187 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 121800 Episode length: 600 Return: -600.0
+I0908 16:51:37.973645 140311693346816 run_experiment.py:428] Average undiscounted return per evaluation episode: -600.00
+
+Steps executed: 125400 Episode length: 600 Return: -600.0
+
+Steps executed: 600 Episode length: 600 Return: -600.00.0
+W0908 16:51:42.526167 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:51:42.526524 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 124800 Episode length: 600 Return: -600.0
+I0908 16:52:11.483988 140311693346816 run_experiment.py:428] Average undiscounted return per evaluation episode: -600.00
+
+Steps executed: 125400 Episode length: 600 Return: -600.0
+
+Steps executed: 600 Episode length: 600 Return: -600.00.0
+W0908 16:52:16.013014 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:52:16.013408 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 119400 Episode length: 600 Return: -600.0
+I0908 16:52:44.774464 140311693346816 run_experiment.py:428] Average undiscounted return per evaluation episode: -600.00
+
+Steps executed: 125400 Episode length: 600 Return: -600.0
+
+Steps executed: 600 Episode length: 600 Return: -600.00.0
+W0908 16:52:49.291854 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:52:49.292211 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 122400 Episode length: 600 Return: -600.0
+I0908 16:53:18.234342 140311693346816 run_experiment.py:428] Average undiscounted return per evaluation episode: -600.00
+
+Steps executed: 125400 Episode length: 600 Return: -600.0
+
+Steps executed: 600 Episode length: 600 Return: -600.00.0
+W0908 16:53:22.735945 140311693346816 dqn_agent.py:453] _store_transition function doesn't have episode_end arg.
+I0908 16:53:22.736252 140311693346816 run_experiment.py:406] Average undiscounted return per training episode: -600.00
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Steps executed: 117600 Episode length: 600 Return: -600.0
+
+Done training!: 125400 Episode length: 600 Return: -600.0

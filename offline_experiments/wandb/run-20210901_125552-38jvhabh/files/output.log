@@ -1,0 +1,234 @@
+Loaded trained dqn in lunarlander
+Training fixed agent 1, please be patient, may be a while...
+I0901 12:55:59.144808 139809518303232 run_experiment.py:549] Creating TrainRunner ...
+I0901 12:55:59.156497 139809518303232 dqn_agent.py:271] Creating JaxDQNAgentNew agent with the following parameters:
+I0901 12:55:59.156772 139809518303232 dqn_agent.py:272] 	 gamma: 0.990000
+I0901 12:55:59.156935 139809518303232 dqn_agent.py:273] 	 update_horizon: 1.000000
+I0901 12:55:59.157082 139809518303232 dqn_agent.py:274] 	 min_replay_history: 500
+I0901 12:55:59.157211 139809518303232 dqn_agent.py:275] 	 update_period: 4
+I0901 12:55:59.157337 139809518303232 dqn_agent.py:276] 	 target_update_period: 300
+I0901 12:55:59.157455 139809518303232 dqn_agent.py:277] 	 epsilon_train: 0.010000
+I0901 12:55:59.157582 139809518303232 dqn_agent.py:278] 	 epsilon_eval: 0.001000
+I0901 12:55:59.157676 139809518303232 dqn_agent.py:279] 	 epsilon_decay_period: 250000
+I0901 12:55:59.157817 139809518303232 dqn_agent.py:280] 	 optimizer: adam
+I0901 12:55:59.158044 139809518303232 dqn_agent.py:282] 	 max_tf_checkpoints_to_keep: 4
+I0901 12:55:59.158197 139809518303232 dqn_agent.py:283] 	 seed: 1630500959156352
+I0901 12:55:59.162720 139809518303232 circular_replay_buffer.py:155] Creating a OutOfGraphPrioritizedReplayBuffer replay memory with the following parameters:
+I0901 12:55:59.163034 139809518303232 circular_replay_buffer.py:156] 	 observation_shape: (8, 1)
+I0901 12:55:59.163156 139809518303232 circular_replay_buffer.py:157] 	 observation_dtype: <class 'jax._src.numpy.lax_numpy.float64'>
+I0901 12:55:59.163245 139809518303232 circular_replay_buffer.py:158] 	 terminal_dtype: <class 'numpy.uint8'>
+I0901 12:55:59.163320 139809518303232 circular_replay_buffer.py:159] 	 stack_size: 1
+I0901 12:55:59.163413 139809518303232 circular_replay_buffer.py:160] 	 replay_capacity: 50000
+I0901 12:55:59.163558 139809518303232 circular_replay_buffer.py:161] 	 batch_size: 128
+I0901 12:55:59.163674 139809518303232 circular_replay_buffer.py:162] 	 update_horizon: 1
+I0901 12:55:59.163791 139809518303232 circular_replay_buffer.py:163] 	 gamma: 0.990000
+I0901 12:55:59.233788 139809518303232 dqn_agent.py:70] Creating Adam optimizer with settings lr=0.001000, beta1=0.900000, beta2=0.999000, eps=0.000313
+I0901 12:55:59.665337 139809518303232 dqn_agent.py:70] Creating Adam optimizer with settings lr=0.001000, beta1=0.900000, beta2=0.999000, eps=0.000313
+I0901 12:55:59.681986 139809518303232 run_experiment.py:269] Reloaded checkpoint and will start from iteration 30
+I0901 12:55:59.692998 139809518303232 dqn_agent.py:271] Creating JaxDQNAgentNew agent with the following parameters:
+I0901 12:55:59.693273 139809518303232 dqn_agent.py:272] 	 gamma: 0.990000
+I0901 12:55:59.693465 139809518303232 dqn_agent.py:273] 	 update_horizon: 1.000000
+I0901 12:55:59.693577 139809518303232 dqn_agent.py:274] 	 min_replay_history: 500
+I0901 12:55:59.693713 139809518303232 dqn_agent.py:275] 	 update_period: 4
+I0901 12:55:59.693858 139809518303232 dqn_agent.py:276] 	 target_update_period: 300
+I0901 12:55:59.694015 139809518303232 dqn_agent.py:277] 	 epsilon_train: 0.010000
+I0901 12:55:59.694180 139809518303232 dqn_agent.py:278] 	 epsilon_eval: 0.001000
+I0901 12:55:59.694328 139809518303232 dqn_agent.py:279] 	 epsilon_decay_period: 250000
+I0901 12:55:59.694411 139809518303232 dqn_agent.py:280] 	 optimizer: adam
+I0901 12:55:59.694535 139809518303232 dqn_agent.py:282] 	 max_tf_checkpoints_to_keep: 4
+I0901 12:55:59.694613 139809518303232 dqn_agent.py:283] 	 seed: 1630500959692939
+I0901 12:55:59.697231 139809518303232 circular_replay_buffer.py:155] Creating a OutOfGraphPrioritizedReplayBuffer replay memory with the following parameters:
+I0901 12:55:59.697404 139809518303232 circular_replay_buffer.py:156] 	 observation_shape: (8, 1)
+I0901 12:55:59.697590 139809518303232 circular_replay_buffer.py:157] 	 observation_dtype: <class 'jax._src.numpy.lax_numpy.float64'>
+I0901 12:55:59.697748 139809518303232 circular_replay_buffer.py:158] 	 terminal_dtype: <class 'numpy.uint8'>
+I0901 12:55:59.697874 139809518303232 circular_replay_buffer.py:159] 	 stack_size: 1
+I0901 12:55:59.697977 139809518303232 circular_replay_buffer.py:160] 	 replay_capacity: 50000
+I0901 12:55:59.698250 139809518303232 circular_replay_buffer.py:161] 	 batch_size: 128
+I0901 12:55:59.698457 139809518303232 circular_replay_buffer.py:162] 	 update_horizon: 1
+I0901 12:55:59.698601 139809518303232 circular_replay_buffer.py:163] 	 gamma: 0.990000
+I0901 12:55:59.734641 139809518303232 dqn_agent.py:70] Creating Adam optimizer with settings lr=0.001000, beta1=0.900000, beta2=0.999000, eps=0.000313
+I0901 12:55:59.757755 139809518303232 run_experiment.py:516] Beginning training...
+INFO:tensorflow:Starting iteration 0
+I0901 12:55:59.757993 139809518303232 replay_runner.py:41] Starting iteration 0
+INFO:tensorflow:Average training steps per second: 154.32
+I0901 12:56:06.238084 139809518303232 replay_runner.py:36] Average training steps per second: 154.32
+Steps executed: 217 Episode length: 83 Return: -159.48844739392032
+I0901 12:56:07.789180 139809518303232 run_experiment.py:428] Average undiscounted return per evaluation episode: -152.06
+INFO:tensorflow:Starting iteration 1
+I0901 12:56:12.058920 139809518303232 replay_runner.py:41] Starting iteration 1
+INFO:tensorflow:Average training steps per second: 218.80
+
+Steps executed: 292 Episode length: 117 Return: -520.0604906160866
+I0901 12:56:16.963338 139809518303232 run_experiment.py:428] Average undiscounted return per evaluation episode: -666.09
+INFO:tensorflow:Starting iteration 2
+
+Steps executed: 477 Episode length: 282 Return: -127.03346293348756
+INFO:tensorflow:Average training steps per second: 214.17
+I0901 12:56:26.121695 139809518303232 replay_runner.py:36] Average training steps per second: 214.17
+I0901 12:56:26.631433 139809518303232 run_experiment.py:428] Average undiscounted return per evaluation episode: -421.81
+INFO:tensorflow:Starting iteration 3
+
+Steps executed: 241 Episode length: 135 Return: -247.15973825171744
+INFO:tensorflow:Average training steps per second: 222.02
+I0901 12:56:35.382154 139809518303232 replay_runner.py:36] Average training steps per second: 222.02
+I0901 12:56:35.598501 139809518303232 run_experiment.py:428] Average undiscounted return per evaluation episode: -259.14
+INFO:tensorflow:Starting iteration 4
+
+Steps executed: 255 Episode length: 166 Return: -19.878839130995928
+INFO:tensorflow:Average training steps per second: 219.01
+I0901 12:56:44.607876 139809518303232 replay_runner.py:36] Average training steps per second: 219.01
+I0901 12:56:44.838345 139809518303232 run_experiment.py:428] Average undiscounted return per evaluation episode: -100.10
+INFO:tensorflow:Starting iteration 5
+
+Steps executed: 258 Episode length: 103 Return: -649.16780552889024
+INFO:tensorflow:Average training steps per second: 221.74
+I0901 12:56:53.677834 139809518303232 replay_runner.py:36] Average training steps per second: 221.74
+I0901 12:56:53.963776 139809518303232 run_experiment.py:428] Average undiscounted return per evaluation episode: -534.02
+INFO:tensorflow:Starting iteration 6
+
+Steps executed: 128 Episode length: 128 Return: -397.46526808640596
+INFO:tensorflow:Average training steps per second: 220.02
+I0901 12:57:02.822249 139809518303232 replay_runner.py:36] Average training steps per second: 220.02
+
+Steps executed: 236 Episode length: 108 Return: -603.46081900449466
+INFO:tensorflow:Starting iteration 7
+
+Steps executed: 404 Episode length: 314 Return: 190.549919734971766
+INFO:tensorflow:Average training steps per second: 216.05
+I0901 12:57:11.946392 139809518303232 replay_runner.py:36] Average training steps per second: 216.05
+I0901 12:57:12.460876 139809518303232 run_experiment.py:428] Average undiscounted return per evaluation episode: -20.20
+INFO:tensorflow:Starting iteration 8
+
+Steps executed: 235 Episode length: 113 Return: -330.48825540852376
+INFO:tensorflow:Average training steps per second: 223.84
+I0901 12:57:21.327270 139809518303232 replay_runner.py:36] Average training steps per second: 223.84
+I0901 12:57:21.551836 139809518303232 run_experiment.py:428] Average undiscounted return per evaluation episode: -285.81
+INFO:tensorflow:Starting iteration 9
+
+Steps executed: 238 Episode length: 130 Return: -407.37987275063996
+INFO:tensorflow:Average training steps per second: 216.45
+I0901 12:57:30.567737 139809518303232 replay_runner.py:36] Average training steps per second: 216.45
+I0901 12:57:30.801203 139809518303232 run_experiment.py:428] Average undiscounted return per evaluation episode: -481.37
+INFO:tensorflow:Starting iteration 10
+
+Steps executed: 309 Episode length: 174 Return: -406.00335793577246
+INFO:tensorflow:Average training steps per second: 217.48
+I0901 12:57:39.874442 139809518303232 replay_runner.py:36] Average training steps per second: 217.48
+I0901 12:57:40.219271 139809518303232 run_experiment.py:428] Average undiscounted return per evaluation episode: -345.54
+INFO:tensorflow:Starting iteration 11
+
+Steps executed: 89 Episode length: 89 Return: -615.4944182547379246
+INFO:tensorflow:Average training steps per second: 225.20
+
+Steps executed: 330 Episode length: 241 Return: -9.2128960727794346
+I0901 12:57:49.343004 139809518303232 run_experiment.py:428] Average undiscounted return per evaluation episode: -312.35
+INFO:tensorflow:Starting iteration 12
+
+Steps executed: 267 Episode length: 88 Return: -116.621332095366686
+INFO:tensorflow:Average training steps per second: 219.26
+I0901 12:57:58.342709 139809518303232 replay_runner.py:36] Average training steps per second: 219.26
+I0901 12:57:58.587768 139809518303232 run_experiment.py:428] Average undiscounted return per evaluation episode: -486.58
+INFO:tensorflow:Starting iteration 13
+
+Steps executed: 229 Episode length: 134 Return: -35.101118306792036
+INFO:tensorflow:Average training steps per second: 218.64
+I0901 12:58:07.635191 139809518303232 replay_runner.py:36] Average training steps per second: 218.64
+I0901 12:58:07.842814 139809518303232 run_experiment.py:428] Average undiscounted return per evaluation episode: -90.17
+INFO:tensorflow:Starting iteration 14
+I0901 12:58:12.330939 139809518303232 replay_runner.py:41] Starting iteration 14
+INFO:tensorflow:Average training steps per second: 215.66
+I0901 12:58:16.968346 139809518303232 replay_runner.py:36] Average training steps per second: 215.66
+
+Steps executed: 298 Episode length: 298 Return: 195.333260798027136
+INFO:tensorflow:Starting iteration 15
+
+Steps executed: 254 Episode length: 137 Return: -125.14617191352342
+INFO:tensorflow:Average training steps per second: 217.41
+I0901 12:58:26.424906 139809518303232 replay_runner.py:36] Average training steps per second: 217.41
+I0901 12:58:26.645122 139809518303232 run_experiment.py:428] Average undiscounted return per evaluation episode: -94.05
+INFO:tensorflow:Starting iteration 16
+
+Steps executed: 232 Episode length: 144 Return: -89.674863287094382
+INFO:tensorflow:Average training steps per second: 219.51
+I0901 12:58:35.600685 139809518303232 replay_runner.py:36] Average training steps per second: 219.51
+I0901 12:58:35.796714 139809518303232 run_experiment.py:428] Average undiscounted return per evaluation episode: -129.90
+INFO:tensorflow:Starting iteration 17
+
+Steps executed: 214 Episode length: 123 Return: -357.83841004986952
+INFO:tensorflow:Average training steps per second: 221.28
+I0901 12:58:44.790280 139809518303232 replay_runner.py:36] Average training steps per second: 221.28
+I0901 12:58:44.980604 139809518303232 run_experiment.py:428] Average undiscounted return per evaluation episode: -368.22
+INFO:tensorflow:Starting iteration 18
+
+Steps executed: 333 Episode length: 197 Return: -67.837503448598622
+INFO:tensorflow:Average training steps per second: 214.36
+I0901 12:58:54.157662 139809518303232 replay_runner.py:36] Average training steps per second: 214.36
+I0901 12:58:54.477800 139809518303232 run_experiment.py:428] Average undiscounted return per evaluation episode: -208.26
+INFO:tensorflow:Starting iteration 19
+
+Steps executed: 287 Episode length: 102 Return: -240.31081706442927
+INFO:tensorflow:Average training steps per second: 209.50
+I0901 12:59:03.697602 139809518303232 replay_runner.py:36] Average training steps per second: 209.50
+I0901 12:59:03.940950 139809518303232 run_experiment.py:428] Average undiscounted return per evaluation episode: -382.21
+INFO:tensorflow:Starting iteration 20
+I0901 12:59:08.438757 139809518303232 replay_runner.py:41] Starting iteration 20
+INFO:tensorflow:Average training steps per second: 210.68
+
+Steps executed: 357 Episode length: 357 Return: 202.603579275712067
+I0901 12:59:13.686958 139809518303232 run_experiment.py:428] Average undiscounted return per evaluation episode: 202.60
+INFO:tensorflow:Starting iteration 21
+
+Steps executed: 205 Episode length: 90 Return: -246.458356105760467
+INFO:tensorflow:Average training steps per second: 213.29
+I0901 12:59:22.814442 139809518303232 replay_runner.py:36] Average training steps per second: 213.29
+I0901 12:59:22.996475 139809518303232 run_experiment.py:428] Average undiscounted return per evaluation episode: -272.85
+INFO:tensorflow:Starting iteration 22
+
+Steps executed: 141 Episode length: 141 Return: -176.34565348576078
+INFO:tensorflow:Average training steps per second: 211.63
+
+Steps executed: 699 Episode length: 558 Return: 190.625067066175158
+I0901 12:59:33.431655 139809518303232 run_experiment.py:428] Average undiscounted return per evaluation episode: 7.14
+INFO:tensorflow:Starting iteration 23
+
+Steps executed: 284 Episode length: 106 Return: -412.92479249843245
+INFO:tensorflow:Average training steps per second: 212.98
+I0901 12:59:42.490010 139809518303232 replay_runner.py:36] Average training steps per second: 212.98
+I0901 12:59:42.748651 139809518303232 run_experiment.py:428] Average undiscounted return per evaluation episode: -296.93
+INFO:tensorflow:Starting iteration 24
+
+Steps executed: 229 Episode length: 167 Return: -37.474279495318615
+INFO:tensorflow:Average training steps per second: 216.40
+I0901 12:59:51.591544 139809518303232 replay_runner.py:36] Average training steps per second: 216.40
+I0901 12:59:51.804653 139809518303232 run_experiment.py:428] Average undiscounted return per evaluation episode: -253.45
+INFO:tensorflow:Starting iteration 25
+
+Steps executed: 236 Episode length: 91 Return: -327.430495742182715
+INFO:tensorflow:Average training steps per second: 224.85
+I0901 13:00:00.721888 139809518303232 replay_runner.py:36] Average training steps per second: 224.85
+I0901 13:00:00.907614 139809518303232 run_experiment.py:428] Average undiscounted return per evaluation episode: -297.36
+INFO:tensorflow:Starting iteration 26
+
+Steps executed: 328 Episode length: 130 Return: -286.61174359296524
+INFO:tensorflow:Average training steps per second: 208.40
+I0901 13:00:10.206630 139809518303232 replay_runner.py:36] Average training steps per second: 208.40
+I0901 13:00:10.491573 139809518303232 run_experiment.py:428] Average undiscounted return per evaluation episode: -192.74
+INFO:tensorflow:Starting iteration 27
+I0901 13:00:14.822694 139809518303232 replay_runner.py:41] Starting iteration 27
+INFO:tensorflow:Average training steps per second: 209.89
+
+Steps executed: 243 Episode length: 65 Return: -488.505534454341564
+I0901 13:00:19.810797 139809518303232 run_experiment.py:428] Average undiscounted return per evaluation episode: -559.12
+INFO:tensorflow:Starting iteration 28
+
+Steps executed: 215 Episode length: 90 Return: -363.487522166195527
+INFO:tensorflow:Average training steps per second: 207.81
+I0901 13:00:29.061107 139809518303232 replay_runner.py:36] Average training steps per second: 207.81
+I0901 13:00:29.256808 139809518303232 run_experiment.py:428] Average undiscounted return per evaluation episode: -273.91
+INFO:tensorflow:Starting iteration 29
+
+Steps executed: 258 Episode length: 92 Return: -205.290338467206967
+INFO:tensorflow:Average training steps per second: 215.89
+I0901 13:00:38.338158 139809518303232 replay_runner.py:36] Average training steps per second: 215.89
+
+Done fixed training!Episode length: 92 Return: -205.290338467206967

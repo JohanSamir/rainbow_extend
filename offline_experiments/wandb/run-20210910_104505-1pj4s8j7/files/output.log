@@ -1,0 +1,76 @@
+Loaded trained dqn in cartpole
+Training fixed agent 1, please be patient, may be a while...
+I0910 10:45:10.072777 139777383393280 run_experiment.py:549] Creating TrainRunner ...
+WARNING:tensorflow:From /home/joaoguilhermearujo/miniconda3/envs/rain/lib/python3.6/site-packages/tensorflow/python/compat/v2_compat.py:101: disable_resource_variables (from tensorflow.python.ops.variable_scope) is deprecated and will be removed in a future version.
+Instructions for updating:
+non-resource variables are not supported in the long term
+W0910 10:45:10.073175 139777383393280 deprecation.py:345] From /home/joaoguilhermearujo/miniconda3/envs/rain/lib/python3.6/site-packages/tensorflow/python/compat/v2_compat.py:101: disable_resource_variables (from tensorflow.python.ops.variable_scope) is deprecated and will be removed in a future version.
+Instructions for updating:
+non-resource variables are not supported in the long term
+I0910 10:45:10.121950 139777383393280 dqn_agent.py:271] Creating JaxDQNAgentNew agent with the following parameters:
+I0910 10:45:10.122675 139777383393280 dqn_agent.py:272] 	 gamma: 0.990000
+I0910 10:45:10.122733 139777383393280 dqn_agent.py:273] 	 update_horizon: 1.000000
+I0910 10:45:10.122799 139777383393280 dqn_agent.py:274] 	 min_replay_history: 500
+I0910 10:45:10.122848 139777383393280 dqn_agent.py:275] 	 update_period: 4
+I0910 10:45:10.122920 139777383393280 dqn_agent.py:276] 	 target_update_period: 100
+I0910 10:45:10.122964 139777383393280 dqn_agent.py:277] 	 epsilon_train: 0.010000
+I0910 10:45:10.123012 139777383393280 dqn_agent.py:278] 	 epsilon_eval: 0.001000
+I0910 10:45:10.123174 139777383393280 dqn_agent.py:279] 	 epsilon_decay_period: 250000
+I0910 10:45:10.123226 139777383393280 dqn_agent.py:280] 	 optimizer: adam
+I0910 10:45:10.123290 139777383393280 dqn_agent.py:282] 	 max_tf_checkpoints_to_keep: 4
+I0910 10:45:10.123362 139777383393280 dqn_agent.py:283] 	 seed: 1631270710121914
+I0910 10:45:10.124623 139777383393280 circular_replay_buffer.py:155] Creating a OutOfGraphPrioritizedReplayBuffer replay memory with the following parameters:
+I0910 10:45:10.124745 139777383393280 circular_replay_buffer.py:156] 	 observation_shape: (4, 1)
+I0910 10:45:10.124811 139777383393280 circular_replay_buffer.py:157] 	 observation_dtype: <class 'jax._src.numpy.lax_numpy.float64'>
+I0910 10:45:10.124864 139777383393280 circular_replay_buffer.py:158] 	 terminal_dtype: <class 'numpy.uint8'>
+I0910 10:45:10.124912 139777383393280 circular_replay_buffer.py:159] 	 stack_size: 1
+I0910 10:45:10.124961 139777383393280 circular_replay_buffer.py:160] 	 replay_capacity: 50000
+I0910 10:45:10.125029 139777383393280 circular_replay_buffer.py:161] 	 batch_size: 128
+I0910 10:45:10.125106 139777383393280 circular_replay_buffer.py:162] 	 update_horizon: 1
+I0910 10:45:10.125152 139777383393280 circular_replay_buffer.py:163] 	 gamma: 0.990000
+I0910 10:45:11.346281 139777383393280 dqn_agent.py:70] Creating Adam optimizer with settings lr=0.001000, beta1=0.900000, beta2=0.999000, eps=0.000313
+I0910 10:45:11.420858 139777383393280 dqn_agent.py:271] Creating JaxDQNAgentNew agent with the following parameters:
+I0910 10:45:11.421007 139777383393280 dqn_agent.py:272] 	 gamma: 0.990000
+I0910 10:45:11.421071 139777383393280 dqn_agent.py:273] 	 update_horizon: 1.000000
+I0910 10:45:11.421125 139777383393280 dqn_agent.py:274] 	 min_replay_history: 500
+I0910 10:45:11.421174 139777383393280 dqn_agent.py:275] 	 update_period: 4
+I0910 10:45:11.421217 139777383393280 dqn_agent.py:276] 	 target_update_period: 100
+I0910 10:45:11.421259 139777383393280 dqn_agent.py:277] 	 epsilon_train: 0.010000
+I0910 10:45:11.421324 139777383393280 dqn_agent.py:278] 	 epsilon_eval: 0.001000
+I0910 10:45:11.421416 139777383393280 dqn_agent.py:279] 	 epsilon_decay_period: 250000
+I0910 10:45:11.421474 139777383393280 dqn_agent.py:280] 	 optimizer: adam
+I0910 10:45:11.421527 139777383393280 dqn_agent.py:282] 	 max_tf_checkpoints_to_keep: 4
+I0910 10:45:11.421592 139777383393280 dqn_agent.py:283] 	 seed: 1631270711420823
+I0910 10:45:11.422961 139777383393280 circular_replay_buffer.py:155] Creating a OutOfGraphPrioritizedReplayBuffer replay memory with the following parameters:
+I0910 10:45:11.423099 139777383393280 circular_replay_buffer.py:156] 	 observation_shape: (4, 1)
+I0910 10:45:11.423181 139777383393280 circular_replay_buffer.py:157] 	 observation_dtype: <class 'jax._src.numpy.lax_numpy.float64'>
+I0910 10:45:11.423236 139777383393280 circular_replay_buffer.py:158] 	 terminal_dtype: <class 'numpy.uint8'>
+I0910 10:45:11.423287 139777383393280 circular_replay_buffer.py:159] 	 stack_size: 1
+I0910 10:45:11.423359 139777383393280 circular_replay_buffer.py:160] 	 replay_capacity: 50000
+I0910 10:45:11.423420 139777383393280 circular_replay_buffer.py:161] 	 batch_size: 128
+I0910 10:45:11.423472 139777383393280 circular_replay_buffer.py:162] 	 update_horizon: 1
+I0910 10:45:11.423534 139777383393280 circular_replay_buffer.py:163] 	 gamma: 0.990000
+I0910 10:45:11.441708 139777383393280 dqn_agent.py:70] Creating Adam optimizer with settings lr=0.001000, beta1=0.900000, beta2=0.999000, eps=0.000313
+I0910 10:45:11.451997 139777383393280 run_experiment.py:516] Beginning training...
+INFO:tensorflow:Starting iteration 0
+I0910 10:45:11.452121 139777383393280 replay_runner.py:43] Starting iteration 0
+INFO:tensorflow:Average training steps per second: 977693.24
+I0910 10:45:11.453269 139777383393280 replay_runner.py:38] Average training steps per second: 977693.24
+Steps executed: 208 Episode length: 13 Return: 13.0
+I0910 10:45:12.015552 139777383393280 run_experiment.py:428] Average undiscounted return per evaluation episode: 10.40
+Traceback (most recent call last):
+  File "main_offline_experiments.py", line 133, in <module>
+    app.run(main)
+  File "/home/joaoguilhermearujo/miniconda3/envs/rain/lib/python3.6/site-packages/absl/app.py", line 312, in run
+    _run_main(main, args)
+  File "/home/joaoguilhermearujo/miniconda3/envs/rain/lib/python3.6/site-packages/absl/app.py", line 258, in _run_main
+    sys.exit(main(argv))
+  File "main_offline_experiments.py", line 125, in main
+    offline_runner.run_experiment()
+  File "/home/joaoguilhermearujo/miniconda3/envs/rain/lib/python3.6/site-packages/dopamine/discrete_domains/run_experiment.py", line 523, in run_experiment
+    statistics = self._run_one_iteration(iteration)
+  File "/home/joaoguilhermearujo/rainbow_extend/revisiting_rainbow/replay_runner.py", line 48, in _run_one_iteration
+    self._save_tensorboard_summaries(iteration, num_episodes_eval, average_reward_eval)
+  File "/home/joaoguilhermearujo/rainbow_extend/revisiting_rainbow/replay_runner.py", line 64, in _save_tensorboard_summaries
+    wandb.log({
+NameError: name 'wandb' is not defined
