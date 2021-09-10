@@ -46,9 +46,7 @@ experiments = {
 }
 num_runs = 1  #7
 # `path=os.environ['AIP_TENSORBOARD_LOG_DIR']`
-
 path = "../../extending_rainbow_exps/"  #TODO point to cloud bucket
-
 
 def main(_):
 
@@ -88,7 +86,7 @@ def main(_):
             gin.clear_config()
             gin.parse_config_file(gin_file, skip_unknown=False)
             
-            if FLAGS.type == "offline"
+            if FLAGS.type == "offline":
                 BASELINE_PATH = os.path.join("../../extending_rainbow_exps/baselines", f'{FLAGS.agent}/{FLAGS.env}')
                 trained_agent = run_experiment.TrainRunner(BASELINE_PATH, create_agent)
                 trained_agent.run_experiment() #make sure the agent is trained
