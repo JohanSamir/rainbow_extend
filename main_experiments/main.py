@@ -80,19 +80,19 @@ def main(_):
                                 reinit=True)
             agent_name = agents[FLAGS.agent].__name__
 
-            LOG_PATH = os.path.join(path, f'baselines/{FLAGS.agent}/{FLAGS.env}')
-            sys.path.append(path)
             gin_file = f'Configs/{FLAGS.agent}_{FLAGS.env}.gin'
 
             gin_bindings = get_gin_bindings(FLAGS.exp, agent_name, FLAGS.initial_seed, eps)
             gin.clear_config()
-            gin.parse_config_files_and_bindings([gin_file], gin_bindings, skip_unknown=False)
+            gin.parse_config_file(gin_file, skip_unknown=False)
             
             if FLAGS.type == "offline"
-                trained_agent = run_experiment.TrainRunner(LOG_PATH, create_agent)
 
+                trained_agent = run_experiment.TrainRunner(LOG_PATH, create_agent)
+                trained_agent.run_experiment() #make sure the agent is trained
                 print(f'Loaded trained {FLAGS.agent} in {FLAGS.env}')
                     
+                gin.parse_config(gin_bindings)
                 LOG_PATH = os.path.join(f'{path}/{FLAGS.agent}/{FLAGS.env}/{FLAGS.exp}_{eps}_offline', f'test{i}')
                 agent_runner = FixedReplayRunner(base_dir=LOG_PATH,
                                                     create_agent_fn=functools.partial(
@@ -105,10 +105,13 @@ def main(_):
                                                     evaluation_steps=200,
                                                     create_environment_fn=gym_lib.create_gym_environment)
             else:
+                gin.parse_config(gin_bindings)
+                LOG_PATH = os.path.join(f'{path}/{FLAGS.agent}/{FLAGS.env}/{FLAGS.exp}_{eps}_offline', f'test{i}')
+                
                 if FLAGS.wb:
-              agent_runner = WandBRunner(LOG_PATH, create_agent, gym_lib.create_gym_environment)
-            else:
-              agent_runner = run_experiment.TrainRunner(LOG_PATH, create_agent, gym_lib.create_gym_environment)
+                    agent_runner = WandBRunner(LOG_PATH, create_agent, gym_lib.create_gym_environment)
+                else:
+                    agent_runner = run_experiment.TrainRunner(LOG_PATH, create_agent, gym_lib.create_gym_environment)
 
             print(f'Training agent {i}, please be patient, may be a while...')
             agent_runner.run_experiment()
