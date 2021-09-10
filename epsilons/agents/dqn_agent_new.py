@@ -167,6 +167,7 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
                  num_actions,
                  tau,
                  alpha=1,
+                 update_period=4,
                  clip_value_min=-10,
                  net_conf=None,
                  env="CartPole",
@@ -242,6 +243,7 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
         self._rng = jax.random.PRNGKey(seed)
         super(JaxDQNAgentNew,
               self).__init__(num_actions=num_actions,
+                             update_period=update_period,
                              network=functools.partial(network,
                                                        num_actions=num_actions,
                                                        net_conf=self._net_conf,
