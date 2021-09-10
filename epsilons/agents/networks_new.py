@@ -50,26 +50,6 @@ layer_funct_inf = {
     'gelu': jax.nn.gelu,
     'glu': jax.nn.glu
 }
-'''
-layer_funct_inf = {relu: jax.nn.relu, 
-                   relu6:jax.nn.relu6,
-                   sigmoid:jax.nn.sigmoid,
-                   softplus:jax.nn.softplus,
-                   soft_sign:jax.nn.soft_sign,
-                   silu:jax.nn.silu,
-                   swish:jax.nn.swish,
-                   log_sigmoid:jax.nn.log_sigmoid,
-                   hard_sigmoid:jax.nn.hard_sigmoid,
-                   hard_silu:jax.nn.hard_silu,
-                   hard_swish:jax.nn.hard_swish,
-                   hard_tanh:jax.nn.hard_tanh,
-                   elu:jax.nn.elu,
-                   celu:jax.nn.celu,
-                   selu:jax.nn.selu,
-                   gelu:jax.nn.gelu,
-                   glu:jax.nn.glu }
-'''
-
 
 #---------------------------------------------------------------------------------------------------------------------
 class NoisyNetwork(nn.Module):
