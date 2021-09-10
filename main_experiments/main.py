@@ -108,7 +108,7 @@ def main(_):
                                                     create_environment_fn=gym_lib.create_gym_environment)
             else:
                 gin.parse_config(gin_bindings)
-                LOG_PATH = os.path.join(f'{path}/{FLAGS.agent}/{FLAGS.env}/{FLAGS.exp}_{eps}_offline', f'test{i}')
+                LOG_PATH = os.path.join(f'{path}/{FLAGS.agent}/{FLAGS.env}/{FLAGS.exp}_{eps}_online', f'test{i}')
                 
                 if FLAGS.wb:
                     agent_runner = WandBRunner(LOG_PATH, create_agent, gym_lib.create_gym_environment)
