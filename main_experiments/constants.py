@@ -196,7 +196,7 @@ def get_gin_bindings(exp, agent_name, initial_seed, eps):
         gin_bindings = [f"{agent_name}.seed={initial_seed}", f"create_optimizer.eps = {eps}"]
 
     elif exp == "learning_rate":
-        gin_bindings = [f"{agent_name}.seed={i}", f"create_optimizer.learning_rate = {eps}"]
+        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"create_optimizer.learning_rate = {eps}"]
 
     elif exp == "width":
         gin_bindings = [f"{agent_name}.seed={initial_seed}", f"{agent_name}.neurons = {eps}"]
@@ -211,10 +211,10 @@ def get_gin_bindings(exp, agent_name, initial_seed, eps):
         gin_bindings = get_init_bidings(agent_name, eps, initial_seed)
 
     elif exp == "activation":
-        gin_bindings = [f"{agent_name}.seed={i}", f"{agent_name}.layer_funct = {eps}"]
+        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"{agent_name}.layer_funct = {eps}"]
 
     elif exp == "update_period":
-        gin_bindings = [f"{agent_name}.seed={i}", f"{agent_name}.update_period = {eps}"]
+        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"{agent_name}.update_period = {eps}"]
 
     else:
         print("Error! Check the kind of experiment")
