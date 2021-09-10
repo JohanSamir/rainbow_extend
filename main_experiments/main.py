@@ -89,8 +89,8 @@ def main(_):
             gin.parse_config_file(gin_file, skip_unknown=False)
             
             if FLAGS.type == "offline"
-
-                trained_agent = run_experiment.TrainRunner(LOG_PATH, create_agent)
+                BASELINE_PATH = os.path.join("../../extending_rainbow_exps/baselines", f'{FLAGS.agent}/{FLAGS.env}')
+                trained_agent = run_experiment.TrainRunner(BASELINE_PATH, create_agent)
                 trained_agent.run_experiment() #make sure the agent is trained
                 print(f'Loaded trained {FLAGS.agent} in {FLAGS.env}')
                     
