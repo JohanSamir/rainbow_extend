@@ -3,8 +3,9 @@ import dopamine.jax.networks
 import dopamine.discrete_domains.gym_lib
 import dopamine.discrete_domains.run_experiment
 import dopamine.replay_memory.prioritized_replay_buffer
+
 import agents.networks_new
-import agents.dqn_agent_new
+import agents.rainbow_agent_new
 import agents.external_configurations
 
 JaxDQNAgent.observation_shape = %gym_lib.CARTPOLE_OBSERVATION_SHAPE
@@ -14,9 +15,9 @@ JaxDQNAgent.stack_size = %gym_lib.CARTPOLE_STACK_SIZE
 JaxDQNAgent.gamma = 0.99
 JaxDQNAgent.update_horizon = 3 # Rainbow
 JaxDQNAgent.min_replay_history = 500
-JaxDQNAgent.update_period = 4 
 JaxDQNAgent.target_update_period = 100
 
+JaxRainbowAgentNew.update_period = 4
 JaxRainbowAgentNew.optimizer = 'adam'
 JaxRainbowAgentNew.noisy = True
 JaxRainbowAgentNew.dueling = True
@@ -25,7 +26,7 @@ variance_scaling.scale=1
 variance_scaling.mode='fan_avg'
 variance_scaling.distribution='uniform'
 
-JaxRainbowAgentNew.layer_funct = 'relu'#'relu'#'gelu'
+JaxRainbowAgentNew.layer_funct = 'relu'
 JaxRainbowAgentNew.normalization = 'non_normalization'
 
 JaxRainbowAgentNew.double_dqn = True

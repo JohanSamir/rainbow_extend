@@ -4,8 +4,7 @@ import itertools
 agents = ["dqn", "rainbow"]
 seeds = list(range(1, 11))
 environments = ["acrobot", "cartpole", "lunarlander", "mountaincar"]
-experiments = ["activation", "depth", "epsilon", "init", "learning_rate", "normalization", "width"]
-weights_biases = [False]
+experiments = ["activation", "depth", "epsilon", "init", "learning_rate", "normalization", "width", "update_period"]
 
 trials = list(dict([('agent', ag), ('env', env), ('seed', seed), ('experiment', exp)]) for (ag, env, seed, exp) in itertools.product(agents, environments, seeds, experiments))
 

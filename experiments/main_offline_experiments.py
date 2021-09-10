@@ -19,7 +19,7 @@ from agents.quantile_agent_new import *
 from agents.implicit_quantile_agent_new import *
 from replay_runner import FixedReplayRunner
 
-from constants import agents, epsilons, learning_rates, widths, depths, normalizations, inits, activations, get_init_bidings
+from constants import agents, epsilons, learning_rates, widths, depths, normalizations, inits, update_period, activations, get_init_bidings
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string("env", "cartpole", "the environment the experiment will be run in")
@@ -40,6 +40,7 @@ experiments = {
         "normalization":normalizations,
         "init":inits,
         "activation":activations,
+        "update_period":update_period, 
 }
 num_runs = 1  #7
 # `path=os.environ['AIP_TENSORBOARD_LOG_DIR']`
@@ -102,6 +103,9 @@ def main(_):
 
             elif FLAGS.exp == "activation":
                 gin_bindings = [f"{agent_name}.seed={i}", f"{agent_name}.layer_funct = {eps}"]
+
+            elif FLAGS.exp == "update_period":
+              gin_bindings = [f"{agent_name}.seed={i}", f"{agent_name}.update_period = {eps}"]
 
             else:
                 print("Error! Check the kind of experiment")
