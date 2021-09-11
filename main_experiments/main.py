@@ -105,14 +105,11 @@ def main(_):
                                                         memory=trained_agent._agent._replay,
                                                     ),
                                                     use_wb=FLAGS.wb,
-                                                    # num_iterations=30,
-                                                    # training_steps=1000,
-                                                    # evaluation_steps=200,
                                                     create_environment_fn=gym_lib.create_gym_environment)
             else:
                 gin.parse_config(gin_bindings)
                 LOG_PATH = os.path.join(f'{path}/{FLAGS.agent}/{FLAGS.env}/{FLAGS.exp}_{eps}_online', f'test{i}')
-                
+                print(f"Saving data at {LOG_PATH}")
                 if FLAGS.wb:
                     agent_runner = WandBRunner(LOG_PATH, create_agent, gym_lib.create_gym_environment)
                 else:

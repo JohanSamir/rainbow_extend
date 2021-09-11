@@ -19,11 +19,11 @@ class FixedReplayRunner(run_experiment.Runner):
     """Object that handles running Dopamine experiments with fixed replay buffer."""
 
     def __init__(self, base_dir, create_agent_fn, use_wb, create_environment_fn, num_iterations, training_steps,
-                 evaluation_steps):
+                 max_steps_per_episode):
         super().__init__(base_dir, create_agent_fn, create_environment_fn)
         self._num_iterations = num_iterations
         self._training_steps = training_steps
-        self._evaluation_steps = evaluation_steps
+        self._max_steps_per_episode = max_steps_per_episode
         self.use_wb = use_wb
         if use_wb: 
             import wandb
