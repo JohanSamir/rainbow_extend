@@ -10,8 +10,6 @@ agents = {
     'implicit': JaxImplicitQuantileAgentNew,
 }
 
-normalizations = ["non_normalization", 'BatchNorm', 'LayerNorm']
-
 inits = {
     'orthogonal': {
         'function': jax.nn.initializers.orthogonal
@@ -102,28 +100,6 @@ inits = {
     }
 }
 
-def get_init_bidings(agent_name, init, seed=None):
-    initializer = inits[init]['function'].__name__
-    if init == 'zeros' or init == 'ones':
-        gin_bindings = [f"{agent_name}.seed={seed}",
-                        f"{agent_name}.initzer = @{initializer}"]
-
-    elif init == "orthogonal":
-        gin_bindings = [f"{agent_name}.seed={seed}",
-                        f"{agent_name}.initzer = @{initializer}()",
-                        f"{initializer}.scale = 1"]
-    else:
-        mode = '"'+inits[init]['mode']+'"'
-        scale = inits[init]['scale']
-        distribution = '"'+inits[init]['distribution']+'"'
-        gin_bindings = [f"{agent_name}.seed={seed}",
-                        f"{agent_name}.initzer = @{initializer}()",
-                        f"{initializer}.scale = {scale}",
-                        f"{initializer}.mode = {mode}",
-                        f"{initializer}.distribution = {distribution}"
-                        ]
-    return gin_bindings
-
 activations = {
     'conf_0_non_activation': {
         'layer_fun': 'non_activation'
@@ -181,6 +157,8 @@ activations = {
     }
 }
 
+normalizations = ["non_normalization", 'BatchNorm', 'LayerNorm']
+
 learning_rates = [10, 5, 2, 1, 0.1, 0.01, 0.001, 0.0001, 0.00001]
 
 epsilons = [ 10, 5, 2, 1, 0.5, 0.3125, 0.03125, 0.003125, 0.0003125, 0.00003125]
@@ -189,7 +167,37 @@ widths = [32, 64, 128, 256, 512, 1024]
 
 depths = [1, 2, 3, 4]
 
-update_period = [1 ,2 ,3, 4, 8, 10, 12]
+update_periods = [1 ,2 ,3, 4, 8, 10, 12]
+
+target_update_periods = [10, 25, 50, 100, 200, 400, 800, 1600]
+
+gammas = [0.1, 0.5, 0.9, 0.99, 0.995, 0.999]
+
+min_replay_historys = [125, 250, 375, 500, 625, 750, 875, 1000]
+
+num_atoms = [11, 21, 31, 41, 51, 61, 71, 81]
+
+def get_init_bidings(agent_name, init, seed=None):
+    initializer = inits[init]['function'].__name__
+    if init == 'zeros' or init == 'ones':
+        gin_bindings = [f"{agent_name}.seed={seed}",
+                        f"{agent_name}.initzer = @{initializer}"]
+
+    elif init == "orthogonal":
+        gin_bindings = [f"{agent_name}.seed={seed}",
+                        f"{agent_name}.initzer = @{initializer}()",
+                        f"{initializer}.scale = 1"]
+    else:
+        mode = '"'+inits[init]['mode']+'"'
+        scale = inits[init]['scale']
+        distribution = '"'+inits[init]['distribution']+'"'
+        gin_bindings = [f"{agent_name}.seed={seed}",
+                        f"{agent_name}.initzer = @{initializer}()",
+                        f"{initializer}.scale = {scale}",
+                        f"{initializer}.mode = {mode}",
+                        f"{initializer}.distribution = {distribution}"
+                        ]
+    return gin_bindings
 
 def get_gin_bindings(exp, agent_name, initial_seed, eps):
     if exp == "epsilon":
@@ -215,6 +223,18 @@ def get_gin_bindings(exp, agent_name, initial_seed, eps):
 
     elif exp == "update_period":
         gin_bindings = [f"{agent_name}.seed={initial_seed}", f"{agent_name}.update_period = {eps}"]
+
+    elif exp == "target_update_period":
+        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"{agent_name}.target_update_period = {eps}"]
+    
+    elif exp == "gamma":
+        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"{agent_name}.gamma = {eps}"]
+    
+    elif exp == "min_replay_history":
+        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"{agent_name}.min_replay_history = {eps}"]
+
+    elif exp == "num_atoms":
+        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"{agent_name}.num_atoms = {eps}"]
 
     else:
         print("Error! Check the kind of experiment")

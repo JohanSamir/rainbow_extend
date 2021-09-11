@@ -19,7 +19,7 @@ from agents.quantile_agent_new import *
 from agents.implicit_quantile_agent_new import *
 from replay_runner import FixedReplayRunner
 
-from constants import agents, epsilons, learning_rates, widths, depths, normalizations, inits, update_period, activations, get_gin_bindings
+from constants import *
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string("env", "cartpole", "the environment the experiment will be run in")
@@ -36,13 +36,18 @@ flags.DEFINE_string("type", "online", "Whether the experiment is online or offli
 
 experiments = {
         "epsilon": epsilons,
-        "learning_rate":learning_rates,
-        "width":widths,
-        "depth":depths,
-        "normalization":normalizations,
-        "init":inits,
-        "activation":activations,
-        "update_period":update_period, 
+        "learning_rate": learning_rates,
+        "width": widths,
+        "depth": depths,
+        "normalization": normalizations,
+        "init": inits,
+        "activation": activations,
+        "update_period": update_periods,
+        "target_update_period": target_update_periods,
+        "gamma": gammas,
+        "min_replay_history": min_replay_historys,
+        "num_atoms": num_atoms
+
 }
 num_runs = 1  #7
 # `path=os.environ['AIP_TENSORBOARD_LOG_DIR']`
@@ -100,9 +105,9 @@ def main(_):
                                                         memory=trained_agent._agent._replay,
                                                     ),
                                                     use_wb=FLAGS.wb,
-                                                    num_iterations=30,
-                                                    training_steps=1000,
-                                                    evaluation_steps=200,
+                                                    # num_iterations=30,
+                                                    # training_steps=1000,
+                                                    # evaluation_steps=200,
                                                     create_environment_fn=gym_lib.create_gym_environment)
             else:
                 gin.parse_config(gin_bindings)
