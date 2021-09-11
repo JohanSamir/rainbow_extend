@@ -19,7 +19,7 @@ from agents.quantile_agent_new import *
 from agents.implicit_quantile_agent_new import *
 from replay_runner import FixedReplayRunner
 
-from constants import *
+from utils import *
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string("env", "cartpole", "the environment the experiment will be run in")
@@ -46,8 +46,8 @@ experiments = {
         "target_update_period": target_update_periods,
         "gamma": gammas,
         "min_replay_history": min_replay_historys,
-        "num_atoms": num_atoms
-
+        "num_atoms": num_atoms,
+        "clip_rewards": clip_rewards,
 }
 num_runs = 1  #7
 # `path=os.environ['AIP_TENSORBOARD_LOG_DIR']`
@@ -87,7 +87,7 @@ def main(_):
 
             gin_file = f'Configs/{FLAGS.agent}_{FLAGS.env}.gin'
 
-            gin_bindings = get_gin_bindings(FLAGS.exp, agent_name, FLAGS.initial_seed, eps)
+            gin_bindings = get_gin_bindings(FLAGS.exp, agent_name, FLAGS.initial_seed, eps, FLAGS.type)
             gin.clear_config()
             gin.parse_config_file(gin_file, skip_unknown=False)
             

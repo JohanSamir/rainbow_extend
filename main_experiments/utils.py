@@ -177,6 +177,8 @@ min_replay_historys = [125, 250, 375, 500, 625, 750, 875, 1000]
 
 num_atoms = [11, 21, 31, 41, 51, 61, 71, 81]
 
+clip_rewards = ["True", "False"]
+
 def get_init_bidings(agent_name, init, seed=None):
     initializer = inits[init]['function'].__name__
     if init == 'zeros' or init == 'ones':
@@ -199,7 +201,7 @@ def get_init_bidings(agent_name, init, seed=None):
                         ]
     return gin_bindings
 
-def get_gin_bindings(exp, agent_name, initial_seed, eps):
+def get_gin_bindings(exp, agent_name, initial_seed, eps, typ):
     if exp == "epsilon":
         gin_bindings = [f"{agent_name}.seed={initial_seed}", f"create_optimizer.eps = {eps}"]
 
@@ -235,6 +237,12 @@ def get_gin_bindings(exp, agent_name, initial_seed, eps):
 
     elif exp == "num_atoms":
         gin_bindings = [f"{agent_name}.seed={initial_seed}", f"{agent_name}.num_atoms = {eps}"]
+
+    elif exp == "clip_rewards":
+        if typ == "online":
+            gin_bindings = [f"{agent_name}.seed={initial_seed}", f"Runner.clip_rewards = {eps}"]
+        else:
+            gin_bindings = [f"{agent_name}.seed={initial_seed}", f"FixedReplayRunner.clip_rewards = {eps}"]
 
     else:
         print("Error! Check the kind of experiment")
