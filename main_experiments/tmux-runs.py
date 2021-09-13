@@ -28,4 +28,4 @@ for hyperparameters in trials:
     if exp == "num_atoms" and agent == "dqn":
         continue
     #os.system(f'tmux new-session -d -s {env}_{agent}_{seed} sh -c "conda activate rain; python3 main_online_experiments.py --env={env} --agent={agent} --initial_seed={seed}"')
-    os.system(f'tmux new-session -d -s {typ}_{env}_{agent}_{seed}_{exp} sh -c "python3 main.py --env={env} --agent={agent} --initial_seed={seed} --experiment={exp} --type={typ}"')
+    os.system(f'tmux new-session -d -s {typ}_{env}_{agent}_{seed}_{exp} sh -c "python3 main.py --env={env} --agent={agent} --initial_seed={seed} --exp={exp} --type={typ}"')

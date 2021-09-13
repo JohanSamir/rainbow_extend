@@ -169,13 +169,13 @@ class DQNNetwork(nn.Module):
                 if self.layer_funct != 'non_activation':
                     x = layer_funct_inf[self.layer_funct](x)
             elif self.normalization == 'BatchNorm':
-                if self.layer_funct != 'non_activation':
-                    x = nn.BatchNorm(use_running_average=True)(x)
+                x = nn.BatchNorm(use_running_average=True)(x)
+                if self.layer_funct != 'non_activation':                    
                     x = layer_funct_inf[self.layer_funct](x)
             elif self.normalization == 'LayerNorm':
                 if self.layer_funct != 'non_activation':
                     x = layer_funct_inf[self.layer_funct](x)
-                    x = nn.LayerNorm()(x)
+                x = nn.LayerNorm()(x)
             else:
                 print('error: Choose a correct Normalization Module')
 
@@ -251,18 +251,18 @@ class RainbowDQN(nn.Module):
         for _ in range(self.hidden_layer):
             x = net(x, features=self.neurons, rng=rng)
             if self.normalization == 'non_normalization':
-                print('norm:', self.normalization, 'activ:', self.layer_funct)
+                #print('norm:', self.normalization, 'activ:', self.layer_funct)
                 if self.layer_funct != 'non_activation':
-                    print('norm:', self.normalization, 'activ:', self.layer_funct)
+                    #print('norm--:', self.normalization, 'activ:', self.layer_funct)
                     x = layer_funct_inf[self.layer_funct](x)
             elif self.normalization == 'BatchNorm':
+                x = nn.BatchNorm(use_running_average=True)(x)
                 if self.layer_funct != 'non_activation':
-                    x = nn.BatchNorm(use_running_average=True)(x)
                     x = layer_funct_inf[self.layer_funct](x)
             elif self.normalization == 'LayerNorm':
                 if self.layer_funct != 'non_activation':
                     x = layer_funct_inf[self.layer_funct](x)
-                    x = nn.LayerNorm()(x)
+                x = nn.LayerNorm()(x)
             else:
                 print('error: Choose a correct Normalization Module')
 

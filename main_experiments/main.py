@@ -51,7 +51,7 @@ experiments = {
 }
 num_runs = 1  #7
 # `path=os.environ['AIP_TENSORBOARD_LOG_DIR']`
-path = "../../extending_rainbow_exps/"  #TODO point to cloud bucket
+path = "../../extending_rainbow_exps/" #TODO point to cloud bucket
 
 def main(_):
 
@@ -63,8 +63,8 @@ def main(_):
         return ag
 
     for eps in experiments[FLAGS.exp]:
-        if FLAGS.exp=="activation":
-            eps = "'" + activations[eps]['layer_fun'] + "'"
+        #if FLAGS.exp=="activation":
+        #    eps = "'" + activations[eps]['layer_fun'] + "'"
         for i in range(FLAGS.initial_seed, FLAGS.initial_seed + num_runs):
             if FLAGS.wb:
                 if FLAGS.exp == "learning_rate":
@@ -92,13 +92,13 @@ def main(_):
             gin.parse_config_file(gin_file, skip_unknown=False)
             
             if FLAGS.type == "offline":
-                BASELINE_PATH = os.path.join("../../extending_rainbow_exps/baselines", f'{FLAGS.agent}/{FLAGS.env}')
+                BASELINE_PATH = os.path.join("../../extending_rainbow_exps/baselines/", f'{FLAGS.agent}/{FLAGS.env}')
                 trained_agent = run_experiment.TrainRunner(BASELINE_PATH, create_agent)
                 trained_agent.run_experiment() #make sure the agent is trained
                 print(f'Loaded trained {FLAGS.agent} in {FLAGS.env}')
                     
                 gin.parse_config(gin_bindings)
-                LOG_PATH = os.path.join(f'{path}/{FLAGS.agent}/{FLAGS.env}/{FLAGS.exp}_{eps}_offline', f'test{i}')
+                LOG_PATH = os.path.join(f'{path}/{FLAGS.agent}/{FLAGS.env}/{FLAGS.exp}_{eps_modi}_offline', f'test{i}')
                 agent_runner = FixedReplayRunner(base_dir=LOG_PATH,
                                                     create_agent_fn=functools.partial(
                                                         create_agent,
@@ -108,7 +108,7 @@ def main(_):
                                                     create_environment_fn=gym_lib.create_gym_environment)
             else:
                 gin.parse_config(gin_bindings)
-                LOG_PATH = os.path.join(f'{path}/{FLAGS.agent}/{FLAGS.env}/{FLAGS.exp}_{eps}_online', f'test{i}')
+                LOG_PATH = os.path.join(f'{path}/{FLAGS.agent}/{FLAGS.env}/{FLAGS.exp}_{eps_modi}_online', f'test{i}')
                 print(f"Saving data at {LOG_PATH}")
                 if FLAGS.wb:
                     agent_runner = WandBRunner(LOG_PATH, create_agent, gym_lib.create_gym_environment)
