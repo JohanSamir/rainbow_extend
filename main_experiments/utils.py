@@ -124,6 +124,23 @@ num_atoms = [11, 21, 31, 41, 51, 61, 71, 81]
 
 clip_rewards = ["True", "False"]
 
+experiments = {
+        "epsilon": epsilons,
+        "learning_rate": learning_rates,
+        "width": widths,
+        "depth": depths,
+        "normalization": normalizations,
+        "init": inits,
+        "activation": activations,
+        "update_period": update_periods,
+        "target_update_period": target_update_periods,
+        "gamma": gammas,
+        "min_replay_history": min_replay_historys,
+        "num_atoms": num_atoms,
+        "clip_rewards": clip_rewards,
+}
+
+
 def get_init_bidings(agent_name, init, seed=None):
     initializer = inits[init]['function'].__name__
     if init == 'zeros' or init == 'ones':
