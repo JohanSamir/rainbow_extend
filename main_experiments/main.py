@@ -63,7 +63,6 @@ def main(_):
         return ag
 
     for eps in experiments[FLAGS.exp]:
-        for i in range(FLAGS.initial_seed, FLAGS.initial_seed + num_runs):
             if FLAGS.wb:
                 if FLAGS.exp == "learning_rate":
                     rep = "learning rate"
