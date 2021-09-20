@@ -71,17 +71,18 @@ def main(_):
 
     gin_file = f'Configs/{FLAGS.agent}_{FLAGS.env}.gin'
 
-    gin_bindings = get_gin_bindings(exp, agent_name, FLAGS.seed, value, FLAGS.type)
     gin.clear_config()
-    gin.parse_config_file(gin_file, skip_unknown=False)
+    gin_bindings = get_gin_bindings(exp, agent_name, FLAGS.seed, value, FLAGS.type)
+    gin.parse_config_files_and_bindings([gin_file], None, skip_unknown=False)
     
     if FLAGS.type == "offline":
         BASELINE_PATH = os.path.join(FLAGS.base_path, "baselines/", f'{FLAGS.agent}/{FLAGS.env}')
         trained_agent = run_experiment.TrainRunner(BASELINE_PATH, create_agent)
         trained_agent.run_experiment() #make sure the agent is trained
         print(f'Loaded trained {FLAGS.agent} in {FLAGS.env}')
-            
-        gin.parse_config(gin_bindings)
+        
+        gin.clear_config()
+        gin.parse_config_files_and_bindings([gin_file], gin_bindings, skip_unknown=False)
         LOG_PATH = os.path.join(f'{FLAGS.base_path}/{FLAGS.agent}/{FLAGS.env}/{exp}_{value}_offline', f'test{FLAGS.seed}')
         agent_runner = FixedReplayRunner(base_dir=LOG_PATH,
                                             create_agent_fn=functools.partial(
