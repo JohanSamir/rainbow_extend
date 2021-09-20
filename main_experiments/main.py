@@ -34,7 +34,7 @@ flags.DEFINE_boolean("wb", "False", "the program won't use weights&biases")
 
 flags.DEFINE_string("type", "online", "Whether the experiment is online or offline")
 
-flags.DEFINE_string("../../extending_rainbow_exps/", "online", "The base path for saving runs")
+flags.DEFINE_string("base_path", "../../extending_rainbow_exps/", "The base path for saving runs")
 
 
 # `path=os.environ['AIP_TENSORBOARD_LOG_DIR']`
