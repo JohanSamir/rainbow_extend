@@ -121,6 +121,8 @@ min_replay_historys = [125, 250, 375, 500, 625, 750, 875, 1000]
 
 num_atoms = [11, 21, 31, 41, 51, 61, 71, 81]
 
+update_horizon = [1, 2, 3, 4, 5, 8, 10]
+
 clip_rewards = ["True", "False"]
 
 experiments = {
@@ -136,6 +138,7 @@ experiments = {
         "gamma": gammas,
         "min_replay_history": min_replay_historys,
         "num_atoms": num_atoms,
+        "update_horizon": update_horizon,
         "clip_rewards": clip_rewards,
 }
 
@@ -198,6 +201,9 @@ def get_gin_bindings(exp, agent_name, initial_seed, eps, typ):
 
     elif exp == "num_atoms":
         gin_bindings = [f"{agent_name}.seed={initial_seed}", f"{agent_name}.num_atoms = {eps}"]
+
+    elif exp == "update_horizon":
+        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"{agent_name}.update_horizon = {eps}"]
 
     elif exp == "clip_rewards":
         if typ == "online":

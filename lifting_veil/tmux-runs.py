@@ -8,7 +8,7 @@ environments = ["acrobot", "cartpole", "lunarlander", "mountaincar"]
 experiments = ["activation", "depth", "epsilon", "init", 
                 "learning_rate", "normalization", "width", 
                 "update_period", "target_update_period","gamma",
-                "min_replay_history", "num_atoms", "clip_rewards"]
+                "min_replay_history", "num_atoms", "update_horizon", "clip_rewards"]
 
 trials = list(dict([('agent', ag), 
                     ('env', env), 
