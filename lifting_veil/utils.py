@@ -1,7 +1,6 @@
 from agents.dqn_agent_new import *
 from agents.rainbow_agent_new import *
-from agents.quantile_agent_new import *
-from agents.implicit_quantile_agent_new import *
+import jax.numpy as jnp
 
 agents = {
     'dqn': JaxDQNAgentNew,

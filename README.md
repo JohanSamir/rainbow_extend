@@ -1,21 +1,13 @@
-# Revisiting Rainbow: Promoting more insightful and inclusive deep reinforcement learning research
+# Lifting veil
 
-In this work we argue that, despite the community’s emphasis on large-scale environments, the traditional small-scale environments can
-still yield valuable scientific insights and can help reduce the barriers to entry for underprivileged communities. To substantiate our claims, we empirically revisit the paper which introduced the Rainbow algorithm [Hessel et al., 2018][fortunato] and present some new insights into the algorithms used by Rainbow.
+# How to run all experiments
+1. Install the dependencies with `pip install requirements.txt`
+2. Generate baselines for the offline experiments with `python3 get_baselines.py`
+3. Run all experiments with `python3 tmux-runs.py`
+4. To test: python3 main.py --env="acrobot" --agent="rainbow" --initial_seed="1" --exp="clip_rewards" --type="online"
 
-Our rainbow agent implements three addittional components to the rainbow agent proposed by Dopamine. ([Pablo Samuel Castro et al., 2018][castro])
 
-* Noisy nets ([Meire Fortunato et al., 2018][fortunato])
-* Dueling networks  ([Hado van Hasselt et al., 2016][wang])
-* Double Q-learning ([Ziyu Wang et al., 2016][hasselt])
-* Munchausen Reinforcement Learning ([Nino Vieillard et al., 2020][Vieillard])
-
-if you are interested to know more about Revisiting Rainbow, considering check the following resources:
-
-* **Paper:** [arxiv.org/abs/2011.14826][arXiv_rev] 
-* **Blog:** [https://psc-g.github.io/posts/...][blog]
-* **Video:** [https://slideslive.com/38941329/...][video]
-
+In this work we argue ...
 
 ## Quick Start
 To use the algorithms proposed in the Revisiting Rainbow paper, you need python3 installed, make sure pip is also up to date.  If you want to run the MinAtar experiments you should install it. To install MinAtar, please check the following paper ([Young et al., 2019][young]) and repositore ([github][young_repo]): 

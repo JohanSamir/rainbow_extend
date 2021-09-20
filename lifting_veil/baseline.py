@@ -15,10 +15,8 @@ sys.path.append(".")
 
 from agents.dqn_agent_new import *
 from agents.rainbow_agent_new import *
-from agents.quantile_agent_new import *
-from agents.implicit_quantile_agent_new import *
 
-from constants import agents, inits, activations, learning_rates
+from utils import agents, inits, activations, learning_rates
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string("env", "cartpole", "the environment the experiment will be run in")
