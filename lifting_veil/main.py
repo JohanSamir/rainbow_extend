@@ -9,7 +9,6 @@ from dopamine.discrete_domains import gym_lib
 from dopamine.discrete_domains import run_experiment
 from absl import flags, app
 import sys
-import wandb
 
 sys.path.append(".")
 
@@ -28,7 +27,7 @@ flags.DEFINE_integer("seed", "1", "the program PRNG seed")
 
 flags.DEFINE_string("experiment", "normalization=non_normalization", "the experiment will be run in")
 
-flags.DEFINE_boolean("wb", "False", "the program won't use weights&biases")
+flags.DEFINE_boolean("test", "False", "wether it's a test run")
 
 flags.DEFINE_string("type", "online", "Whether the experiment is online or offline")
 
@@ -47,30 +46,13 @@ def main(_):
         return ag
     
     exp, value = FLAGS.experiment.split('=')
-    
-    if FLAGS.wb:
-        if exp == "learning_rate":
-            rep = "learning rate"
-        else:
-            rep = exp
-        run = wandb.init(project="extending-rainbow",
-                        entity="ext-rain",
-                        config={
-                            "random seed": i,
-                            "agent": FLAGS.agent,
-                            "environment": FLAGS.env,
-                            rep: value, 
-                            "varying": rep,
-                            "online": False,
-                        },
-                        reinit=True)
         
     agent_name = agents[FLAGS.agent].__name__
 
     gin_file = f'Configs/{FLAGS.agent}_{FLAGS.env}.gin'
 
     gin.clear_config()
-    gin_bindings = get_gin_bindings(exp, agent_name, FLAGS.seed, value, FLAGS.type)
+    gin_bindings = get_gin_bindings(exp, agent_name, FLAGS.seed, value, FLAGS.type, FLAGS.test)
     gin.parse_config_files_and_bindings([gin_file], None, skip_unknown=False)
     
     if FLAGS.type == "offline":
@@ -87,24 +69,22 @@ def main(_):
                                                 create_agent,
                                                 memory=trained_agent._agent._replay,
                                             ),
-                                            use_wb=FLAGS.wb,
                                             create_environment_fn=gym_lib.create_gym_environment)
     else:
-        gin.parse_config(gin_bindings)
+        gin.clear_config()
+        gin.parse_config_files_and_bindings([gin_file], gin_bindings, skip_unknown=False)
         LOG_PATH = os.path.join(f'{FLAGS.base_path}/{FLAGS.agent}/{FLAGS.env}/{exp}_{value}_online', f'test{FLAGS.seed}')
         print(f"Saving data at {LOG_PATH}")
-        if FLAGS.wb:
-            agent_runner = WandBRunner(LOG_PATH, create_agent, gym_lib.create_gym_environment)
-        else:
-            agent_runner = run_experiment.TrainRunner(LOG_PATH, create_agent, gym_lib.create_gym_environment)
+        agent_runner = run_experiment.TrainRunner(LOG_PATH, create_agent, gym_lib.create_gym_environment)
 
     print(f'Training agent {FLAGS.seed}, please be patient, may be a while...')
     agent_runner.run_experiment()
     print('Done training!')
-    if FLAGS.wb:
-        run.finish()
-    print('Finished!')
-
+    if FLAGS.test:
+        from datetime import datetime
+        dt = datetime.now().strftime("%H-%M-%d-%m")
+        os.makedirs(f"test_logs/{dt}")
+        open(f"test_logs/{dt}/{FLAGS.env}_{FLAGS.agent}_{exp}_{FLAGS.type}", 'x').close()
 
 if __name__ == "__main__":
     app.run(main)
