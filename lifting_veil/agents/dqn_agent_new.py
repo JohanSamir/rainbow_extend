@@ -273,7 +273,7 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
         self.online_params = self.network_def.init(rng, x=self.state, rng=self._rng)
         self.optimizer = create_optimizer(self._optimizer_name)
         self.optimizer_state = self.optimizer.init(self.online_params)
-        self.target_network_params = copy.deepcopy(self.online_params)
+        self.target_network_params = self.online_params
 
     def _build_replay_buffer(self):
         """Creates the prioritized replay buffer used by the agent."""

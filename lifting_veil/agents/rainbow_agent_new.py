@@ -235,7 +235,7 @@ class JaxRainbowAgentNew(dqn_agent.JaxDQNAgent):
                                                rng=self._rng)
     self.optimizer = dqn_agent.create_optimizer(self._optimizer_name)
     self.optimizer_state = self.optimizer.init(self.online_params)
-    self.target_network_params = copy.deepcopy(self.online_params)
+    self.target_network_params = self.online_params
 
 
   def _build_replay_buffer(self):
