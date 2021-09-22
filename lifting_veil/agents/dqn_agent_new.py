@@ -31,17 +31,16 @@ import numpy as onp
 import tensorflow as tf
 import jax.scipy.special as scp
 from flax import linen as nn
-
+import optax
 
 def mse_loss(targets, predictions):
     return jnp.mean(jnp.power((targets - (predictions)), 2))
 
 
-@functools.partial(jax.jit, static_argnums=(0, 9, 10, 11, 12, 13, 14))
-def train(network_def, target_params, optimizer, states, actions, next_states, rewards, terminals, loss_weights,
+@functools.partial(jax.jit, static_argnums=(0, 3, 11, 12, 13, 14, 15, 16))
+def train(network_def, online_params, target_params, optimizer, optimizer_state, states, actions, next_states, rewards, terminals, loss_weights,
           cumulative_gamma, target_opt, mse_inf, tau, alpha, clip_value_min, rng):
     """Run the training step."""
-    online_params = optimizer.target
 
     def loss_fn(params, rng_input, target, loss_multipliers):
 
@@ -83,8 +82,9 @@ def train(network_def, target_params, optimizer, states, actions, next_states, r
 
     grad_fn = jax.value_and_grad(loss_fn, has_aux=True)
     (mean_loss, loss), grad = grad_fn(online_params, rng3, target, loss_weights)
-    optimizer = optimizer.apply_gradient(grad)
-    return optimizer, loss, mean_loss
+    updates, optimizer_state = optimizer.update(grad, optimizer_state)
+    online_params = optax.apply_updates(online_params, updates)
+    return optimizer_state, online_params, loss
 
 
 def target_DDQN(model, target_network, next_states, rewards, terminals, cumulative_gamma):
@@ -270,10 +270,10 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
 
     def _build_networks_and_optimizer(self):
         self._rng, rng = jax.random.split(self._rng)
-        online_network_params = self.network_def.init(rng, x=self.state, rng=self._rng)
-        optimizer_def = dqn_agent.create_optimizer(self._optimizer_name)
-        self.optimizer = optimizer_def.create(online_network_params)
-        self.target_network_params = copy.deepcopy(online_network_params)
+        self.online_params = self.network_def.init(rng, x=self.state, rng=self._rng)
+        self.optimizer = create_optimizer(self._optimizer_name)
+        self.optimizer_state = self.optimizer.init(self.online_params)
+        self.target_network_params = copy.deepcopy(self.online_params)
 
     def _build_replay_buffer(self):
         """Creates the prioritized replay buffer used by the agent."""
@@ -311,11 +311,25 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
                 else:
                     loss_weights = jnp.ones(self.replay_elements['state'].shape[0])
 
-                self.optimizer, loss, mean_loss = train(
-                    self.network_def, self.target_network_params, self.optimizer, self.replay_elements['state'],
-                    self.replay_elements['action'], self.replay_elements['next_state'], self.replay_elements['reward'],
-                    self.replay_elements['terminal'], loss_weights, self.cumulative_gamma, self._target_opt,
-                    self._mse_inf, self._tau, self._alpha, self._clip_value_min, self._rng)
+                self.optimizer_state, self.online_params, loss = train(
+                    self.network_def,
+                    self.online_params,
+                    self.target_network_params,
+                    self.optimizer,
+                    self.optimizer_state, 
+                    self.replay_elements['state'],
+                    self.replay_elements['action'],
+                    self.replay_elements['next_state'],
+                    self.replay_elements['reward'],
+                    self.replay_elements['terminal'],
+                    loss_weights,
+                    self.cumulative_gamma,
+                    self._target_opt,
+                    self._mse_inf,
+                    self._tau,
+                    self._alpha,
+                    self._clip_value_min,
+                    self._rng)
 
                 if self._replay_scheme == 'prioritized':
                     # Rainbow and prioritized replay are parametrized by an exponent
