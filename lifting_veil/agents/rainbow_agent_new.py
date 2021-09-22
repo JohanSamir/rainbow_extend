@@ -26,14 +26,9 @@ import numpy as onp
 import tensorflow as tf
 import optax
 
-#@functools.partial(jax.jit, static_argnums=(0, 10, 11))
-#def train(network_def, target_params, optimizer, states, actions, next_states, rewards,
-#          terminals, loss_weights, support, cumulative_gamma, double_dqn, rng):
-
 @functools.partial(jax.jit, static_argnums=(0, 3, 12, 13))
 def train(network_def, online_params, target_params, optimizer, optimizer_state, states, actions, next_states, rewards,
           terminals, loss_weights, support, cumulative_gamma, double_dqn, rng):
-  """Run a training step."""
   """Run a training step."""
 
   def loss_fn(params, rng_input, target, loss_multipliers):
@@ -68,7 +63,6 @@ def train(network_def, online_params, target_params, optimizer, optimizer_state,
   (mean_loss, loss), grad = grad_fn(online_params, rng3, target, loss_weights)
   updates, optimizer_state = optimizer.update(grad, optimizer_state)
   online_params = optax.apply_updates(online_params, updates)
-  optimizer = optimizer.apply_gradient(grad)
   return optimizer_state, online_params, loss, mean_loss
 
 
@@ -331,7 +325,7 @@ class JaxRainbowAgentNew(dqn_agent.JaxDQNAgent):
         else:
           loss_weights = jnp.ones(self.replay_elements['state'].shape[0])
 
-        (self.optimizer_state, self.online_params, loss, mean_loss) = train(
+        self.optimizer_state, self.online_params, loss, mean_loss = train(
             self.network_def,
             self.online_params,
             self.target_network_params,

@@ -37,10 +37,6 @@ def mse_loss(targets, predictions):
     return jnp.mean(jnp.power((targets - (predictions)), 2))
 
 
-#@functools.partial(jax.jit, static_argnums=(0, 9, 10, 11, 12, 13, 14))
-#def train(network_def, target_params, optimizer, states, actions, next_states, rewards, terminals, loss_weights,
-#          cumulative_gamma, target_opt, mse_inf, tau, alpha, clip_value_min, rng):
-
 @functools.partial(jax.jit, static_argnums=(0, 3, 11, 12, 13, 14, 15, 16))
 def train(network_def, online_params, target_params, optimizer, optimizer_state, states, actions, next_states, rewards, terminals, loss_weights,
           cumulative_gamma, target_opt, mse_inf, tau, alpha, clip_value_min, rng):
@@ -319,6 +315,7 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
                     self.network_def,
                     self.online_params,
                     self.target_network_params,
+                    self.optimizer,
                     self.optimizer_state, 
                     self.replay_elements['state'],
                     self.replay_elements['action'],
