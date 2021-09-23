@@ -19,7 +19,6 @@ Details in:
 
 """
 import time
-import copy
 import functools
 from dopamine.jax import networks
 from dopamine.jax.agents.dqn import dqn_agent
@@ -271,7 +270,7 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
     def _build_networks_and_optimizer(self):
         self._rng, rng = jax.random.split(self._rng)
         self.online_params = self.network_def.init(rng, x=self.state, rng=self._rng)
-        self.optimizer = create_optimizer(self._optimizer_name)
+        self.optimizer = dqn_agent.create_optimizer(self._optimizer_name)
         self.optimizer_state = self.optimizer.init(self.online_params)
         self.target_network_params = self.online_params
 

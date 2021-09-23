@@ -24,6 +24,7 @@ import jax.numpy as jnp
 import numpy as onp
 import tensorflow as tf
 import optax
+from dopamine.jax import losses
 
 @functools.partial(jax.jit, static_argnums=(0, 3, 12, 13))
 def train(network_def, online_params, target_params, optimizer, optimizer_state, states, actions, next_states, rewards,
@@ -38,7 +39,7 @@ def train(network_def, online_params, target_params, optimizer, optimizer_state,
     # Fetch the logits for its selected action. We use vmap to perform this
     # indexing across the batch.
     chosen_action_logits = jax.vmap(lambda x, y: x[y])(logits, actions)
-    loss = jax.vmap(networks.softmax_cross_entropy_loss_with_logits)(target,  chosen_action_logits)
+    loss = jax.vmap(losses.softmax_cross_entropy_loss_with_logits)(target,  chosen_action_logits)
 
     mean_loss = jnp.mean(loss_multipliers * loss)
     return mean_loss, loss
