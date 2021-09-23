@@ -12,7 +12,6 @@ Specifically, we implement the following components from Rainbow:
 Details in "Rainbow: Combining Improvements in Deep Reinforcement Learning" by
 Hessel et al. (2018).
 """
-import copy
 import time
 import functools
 from dopamine.jax import networks
