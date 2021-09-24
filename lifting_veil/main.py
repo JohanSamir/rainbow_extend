@@ -57,18 +57,19 @@ def main(_):
     gin.parse_config_files_and_bindings([gin_file], None, skip_unknown=False)
     
     if FLAGS.type == "offline":
+        if FLAGS.env in ["acrobot", "cartpole", "lunarlander", "mountaincar"]:
+            create_environment_fn = gym_lib.create_gym_environment 
+        else:
+            create_environment_fn = minatar_env.create_minatar_env 
         BASELINE_PATH = os.path.join(FLAGS.base_path, "baselines/", f'{FLAGS.agent}/{FLAGS.env}')
-        trained_agent = run_experiment.TrainRunner(BASELINE_PATH, create_agent)
+        trained_agent = run_experiment.TrainRunner(BASELINE_PATH, create_agent, 
+                                                create_environment_fn=create_environment_fn)
         trained_agent.run_experiment() #make sure the agent is trained
         print(f'Loaded trained {FLAGS.agent} in {FLAGS.env}')
         
         gin.clear_config()
         gin.parse_config_files_and_bindings([gin_file], gin_bindings, skip_unknown=False)
         LOG_PATH = os.path.join(f'{FLAGS.base_path}/{FLAGS.agent}/{FLAGS.env}/{exp}_{value}_offline', f'test{FLAGS.seed}')
-        if FLAGS.env in ["acrobot", "cartpole", "lunarlander", "mountaincar"]:
-            create_environment_fn = gym_lib.create_gym_environment 
-        else:
-            create_environment_fn = minatar_env.create_minatar_env 
         agent_runner = FixedReplayRunner(base_dir=LOG_PATH,
                                             create_agent_fn=functools.partial(
                                                 create_agent,
