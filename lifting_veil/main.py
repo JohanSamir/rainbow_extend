@@ -83,7 +83,7 @@ def main(_):
     if FLAGS.test:
         from datetime import datetime
         dt = datetime.now().strftime("%H-%M-%d-%m")
-        os.makedirs(f"test_logs/{dt}")
+        os.makedirs(f"test_logs/{dt}", exist_ok=True)
         open(f"test_logs/{dt}/{FLAGS.env}_{FLAGS.agent}_{exp}_{FLAGS.type}", 'x').close()
 
 if __name__ == "__main__":
