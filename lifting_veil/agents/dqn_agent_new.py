@@ -20,6 +20,7 @@ Details in:
 """
 import time
 import functools
+from dopamine.jax import losses
 from dopamine.jax import networks
 from dopamine.jax.agents.dqn import dqn_agent
 from dopamine.replay_memory import prioritized_replay_buffer
@@ -31,9 +32,6 @@ import tensorflow as tf
 import jax.scipy.special as scp
 from flax import linen as nn
 import optax
-
-def mse_loss(targets, predictions):
-    return jnp.mean(jnp.power((targets - (predictions)), 2))
 
 
 @functools.partial(jax.jit, static_argnums=(0, 3, 11, 12, 13, 14, 15, 16))
@@ -51,9 +49,9 @@ def train(network_def, online_params, target_params, optimizer, optimizer_state,
         replay_chosen_q = jax.vmap(lambda x, y: x[y])(q_values, actions)
 
         if mse_inf:
-            loss = jax.vmap(mse_loss)(target, replay_chosen_q)
+            loss = jax.vmap(losses.mse_loss)(target, replay_chosen_q)
         else:
-            loss = jax.vmap(dqn_agent.huber_loss)(target, replay_chosen_q)
+            loss = jax.vmap(losses.huber_loss)(target, replay_chosen_q)
 
         mean_loss = jnp.mean(loss_multipliers * loss)
         return mean_loss, loss
