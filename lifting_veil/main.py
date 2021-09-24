@@ -14,6 +14,7 @@ sys.path.append(".")
 
 from agents.dqn_agent_new import *
 from agents.rainbow_agent_new import *
+from agents import minatar_env
 from replay_runner import FixedReplayRunner
 
 from utils import *
@@ -64,18 +65,22 @@ def main(_):
         gin.clear_config()
         gin.parse_config_files_and_bindings([gin_file], gin_bindings, skip_unknown=False)
         LOG_PATH = os.path.join(f'{FLAGS.base_path}/{FLAGS.agent}/{FLAGS.env}/{exp}_{value}_offline', f'test{FLAGS.seed}')
+        if FLAGS.env in ["acrobot", "cartpole", "lunarlander", "mountaincar"]:
+            create_environment_fn = gym_lib.create_gym_environment 
+        else:
+            create_environment_fn = minatar_env.create_minatar_env 
         agent_runner = FixedReplayRunner(base_dir=LOG_PATH,
                                             create_agent_fn=functools.partial(
                                                 create_agent,
                                                 memory=trained_agent._agent._replay,
                                             ),
-                                            create_environment_fn=gym_lib.create_gym_environment)
+                                            create_environment_fn=create_environment_fn)
     else:
         gin.clear_config()
         gin.parse_config_files_and_bindings([gin_file], gin_bindings, skip_unknown=False)
         LOG_PATH = os.path.join(f'{FLAGS.base_path}/{FLAGS.agent}/{FLAGS.env}/{exp}_{value}_online', f'test{FLAGS.seed}')
         print(f"Saving data at {LOG_PATH}")
-        agent_runner = run_experiment.TrainRunner(LOG_PATH, create_agent, gym_lib.create_gym_environment)
+        agent_runner = run_experiment.TrainRunner(LOG_PATH, create_agent)
 
     print(f'Training agent {FLAGS.seed}, please be patient, may be a while...')
     agent_runner.run_experiment()

@@ -4,7 +4,7 @@ import itertools
 agents = ["rainbow"]
 types = ["online", "offline"]
 seeds = [0]
-environments = ["lunarlander"]
+environments = ["breakout"]
 experiments = ["activation=relu", "depth=1", "epsilon=0.00003", "init=orthogonal", 
                 "learning_rate=0.001", "normalization=non_normalization", "width=64", 
                 "update_period=2", "target_update_period=50","gamma=0.99",
