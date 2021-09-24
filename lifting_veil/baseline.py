@@ -23,6 +23,8 @@ flags.DEFINE_string("env", "cartpole", "the environment the experiment will be r
 
 flags.DEFINE_string("agent", "dqn", "the agent used in the experiment")
 
+flags.DEFINE_string("base_path", "../../extending_rainbow_exps/", "The base path for saving runs")
+
 num_runs = 1
 def main(_):
     agent_name = utils.agents[FLAGS.agent].__name__
@@ -30,7 +32,7 @@ def main(_):
     def create_agent(sess, environment, summary_writer=None):
             return utils.agents[FLAGS.agent](num_actions=environment.action_space.n)
 
-    LOG_PATH = os.path.join("../../extending_rainbow_exps/baselines", f'{FLAGS.agent}/{FLAGS.env}')
+    LOG_PATH = os.path.join(FLAGS.base_path, "baselines", f'{FLAGS.agent}/{FLAGS.env}')
     gin_file = f'./Configs/{FLAGS.agent}_{FLAGS.env}.gin'
     gin_bindings = [f"{agent_name}.seed=1729"]
     gin.clear_config()
