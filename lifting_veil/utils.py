@@ -57,7 +57,7 @@ inits = {
     },
     'variance_baseline': {
         'function': jax.nn.initializers.variance_scaling,
-        'scale': 1.0 / jnp.sqrt(3.0),
+        'scale': 0.5773502691896258,  # 1.0 / jnp.sqrt(3.0)
         'mode': 'fan_in',
         'distribution': 'uniform'
     },
