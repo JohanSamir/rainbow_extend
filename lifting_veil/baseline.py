@@ -16,7 +16,7 @@ sys.path.append(".")
 from agents.dqn_agent_new import *
 from agents.rainbow_agent_new import *
 
-from utils import agents, inits, activations, learning_rates
+import utils
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string("env", "cartpole", "the environment the experiment will be run in")
@@ -25,10 +25,10 @@ flags.DEFINE_string("agent", "dqn", "the agent used in the experiment")
 
 num_runs = 1
 def main(_):
-    agent_name = agents[FLAGS.agent].__name__
+    agent_name = utils.agents[FLAGS.agent].__name__
 
     def create_agent(sess, environment, summary_writer=None):
-            return agents[FLAGS.agent](num_actions=environment.action_space.n)
+            return utils.agents[FLAGS.agent](num_actions=environment.action_space.n)
 
     LOG_PATH = os.path.join("../../extending_rainbow_exps/baselines", f'{FLAGS.agent}/{FLAGS.env}')
     gin_file = f'./Configs/{FLAGS.agent}_{FLAGS.env}.gin'
