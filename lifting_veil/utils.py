@@ -1,6 +1,6 @@
 from agents.dqn_agent_new import *
 from agents.rainbow_agent_new import *
-import jax.numpy as jnp
+import numpy as np
 
 agents = {
     'dqn': JaxDQNAgentNew,
@@ -57,7 +57,7 @@ inits = {
     },
     'variance_baseline': {
         'function': jax.nn.initializers.variance_scaling,
-        'scale': 1.0 / jnp.sqrt(3.0),
+        'scale': 1.0 / np.sqrt(3.0),
         'mode': 'fan_in',
         'distribution': 'uniform'
     },
