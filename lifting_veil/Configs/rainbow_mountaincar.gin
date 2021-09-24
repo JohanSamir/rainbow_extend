@@ -7,6 +7,7 @@ import dopamine.replay_memory.prioritized_replay_buffer
 import agents.networks_new
 import agents.rainbow_agent_new
 import agents.external_configurations
+import replay_runner
 
 JaxDQNAgent.observation_shape = %gym_lib.MOUNTAINCAR_OBSERVATION_SHAPE
 JaxDQNAgent.observation_dtype = %jax_networks.MOUNTAINCAR_OBSERVATION_DTYPE
@@ -52,9 +53,9 @@ Runner.training_steps = 1000
 Runner.max_steps_per_episode = 600  # Default max episode length.
 
 FixedReplayRunner.num_iterations = 30
-FixedReplayRunner.training_steps = 4000
-FixedReplayRunner.max_steps_per_episode = 1000
-FixedReplayRunner.evaluation_steps = 4000
+FixedReplayRunner.training_steps = 1000
+FixedReplayRunner.max_steps_per_episode = 600
+FixedReplayRunner.evaluation_steps = 1000
 
 OutOfGraphPrioritizedReplayBuffer.replay_capacity = 50000
 OutOfGraphPrioritizedReplayBuffer.batch_size = 128

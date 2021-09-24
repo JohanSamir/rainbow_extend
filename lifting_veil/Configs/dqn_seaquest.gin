@@ -10,6 +10,7 @@ import agents.networks_new
 import agents.dqn_agent_new
 import agents.external_configurations
 import agents.minatar_env
+import replay_runner
 
 JaxDQNAgent.observation_shape = %minatar_env.SEAQUEST_SHAPE
 JaxDQNAgent.observation_dtype = %minatar_env.DTYPE 
@@ -53,6 +54,11 @@ TrainRunner.create_environment_fn =  @minatar_env.create_minatar_env
 Runner.num_iterations = 10
 Runner.training_steps = 1000000
 Runner.max_steps_per_episode = 100000000
+
+FixedReplayRunner.num_iterations = 10
+FixedReplayRunner.training_steps = 1000000
+FixedReplayRunner.max_steps_per_episode = 100000000
+FixedReplayRunner.evaluation_steps = 1000000
 
 OutOfGraphPrioritizedReplayBuffer.replay_capacity = 100000
 OutOfGraphPrioritizedReplayBuffer.batch_size = 32
