@@ -167,7 +167,7 @@ def get_init_bidings(agent_name, init, seed=None):
 
 def get_gin_bindings(exp, agent_name, initial_seed, value, typ, test):
     if exp == "epsilon":
-        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"create_optimizer.value = {value}"]
+        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"create_optimizer.eps = {value}"]
 
     elif exp == "learning_rate":
         gin_bindings = [f"{agent_name}.seed={initial_seed}", f"create_optimizer.learning_rate = {value}"]
