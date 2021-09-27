@@ -128,7 +128,7 @@ class DQNNetwork(nn.Module):
             x = x.astype(jnp.float32)
             x = nn.Conv(features=16, kernel_size=(3, 3), strides=(1, 1), kernel_init=self.initzer)(x)
             x = jax.nn.relu(x)
-            x = x.reshape((x.shape[0], -1))
+            x = x.reshape((-1))
 
         elif self.net_conf == 'atari':
             # We need to add a "batch dimension" as nn.Conv expects it, yet vmap will
