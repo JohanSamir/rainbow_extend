@@ -2,8 +2,6 @@ import numpy as np
 import os
 import jax
 
-jax.config.update('jax_platform_name', 'cpu')
-
 import dopamine
 from dopamine.discrete_domains import gym_lib
 from dopamine.discrete_domains import run_experiment, checkpointer
@@ -38,7 +36,7 @@ def main(_):
     gin.clear_config()
     gin.parse_config_files_and_bindings([gin_file], gin_bindings, skip_unknown=False)
 
-    agent_runner = run_experiment.TrainRunner(LOG_PATH, create_agent, gym_lib.create_gym_environment)
+    agent_runner = run_experiment.TrainRunner(LOG_PATH, create_agent)
     print(f'Training agent, please be patient, may be a while...')
     agent_runner.run_experiment()
     print('Done training!')
