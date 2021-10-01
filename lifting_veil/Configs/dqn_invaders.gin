@@ -38,6 +38,9 @@ variance_scaling.scale=1
 variance_scaling.mode='fan_avg'
 variance_scaling.distribution='uniform'
 
+JaxDQNAgentNew.layer_funct = 'relu'
+JaxDQNAgentNew.normalization = 'non_normalization'
+
 JaxDQNAgentNew.network = @networks_new.DQNNetwork
 JaxDQNAgentNew.epsilon_fn =  @jax.agents.dqn.dqn_agent.linearly_decaying_epsilon
 JaxDQNAgentNew.tau = 0.03
