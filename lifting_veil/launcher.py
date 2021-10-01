@@ -43,10 +43,13 @@ def main(_):
         # add_instruction = f'RUN wget -O ./{gin_file} {FLAGS.gin_file}'
         spec = xm.PythonContainer(
             docker_instructions=[
+                'RUN add-apt-repository -y ppa:ubuntu-toolchain-r/test',
+                'RUN apt update',
+                'RUN apt install libstdc++6 -y',
                 'RUN apt update && apt install -y python3-opencv',
                 'RUN pip install dopamine-rl',
                 'COPY . workdir',
-                'WORKDIR workdir',
+                'WORKDIR workdir/lifting_veil',
                 # add_instruction,
             ],
             path='.',
@@ -57,10 +60,6 @@ def main(_):
             xm.Packageable(
                 executable_spec=spec,
                 executor_spec=xm_local.Caip.Spec(),
-                args={
-                    'env': "cartpole",
-                    'agent': "dqn"
-                },
             ),
         ])
 

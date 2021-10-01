@@ -26,17 +26,15 @@ flags.DEFINE_integer("seed", "1", "the program PRNG seed")
 
 flags.DEFINE_string("experiment", "normalization=non_normalization", "the experiment will be run in")
 
-flags.DEFINE_string("base_path", "../../extending_rainbow_exps/", "The base path for saving runs")
+# flags.DEFINE_string("base_path", "../../extending_rainbow_exps/", "The base path for saving runs")
 
   
 
-path = os.environ['AIP_TENSORBOARD_LOG_DIR']
-
-# path = "../../tests_joao/offline_last_pct/" #TODO point to cloud bucket
+path = "." #os.environ['AIP_TENSORBOARD_LOG_DIR']
 
 
 def main(_):
-
+    print(path)
     def create_agent(sess, environment, summary_writer=None, memory=None):
         ag = agents[FLAGS.agent](num_actions=environment.action_space.n)
         if memory is not None:
@@ -49,14 +47,11 @@ def main(_):
     agent_name = agents[FLAGS.agent].__name__
 
     gin_file = f'Configs/{FLAGS.agent}_{FLAGS.env}.gin'
-
-    gin.clear_config()
-    gin_bindings = get_gin_bindings(exp, agent_name, FLAGS.seed, value, FLAGS.type, FLAGS.test)
-    gin.parse_config_files_and_bindings([gin_file], None, skip_unknown=False)
     
     gin.clear_config()
+    gin_bindings = get_gin_bindings(exp, agent_name, FLAGS.seed, value, "online", False)
     gin.parse_config_files_and_bindings([gin_file], gin_bindings, skip_unknown=False)
-    LOG_PATH = os.path.join(f'{FLAGS.base_path}/{FLAGS.agent}/{FLAGS.env}/{exp}_{value}_online', f'test{FLAGS.seed}')
+    LOG_PATH = os.path.join(f'{path}/{FLAGS.agent}/{FLAGS.env}/{exp}_{value}_online', f'test{FLAGS.seed}')
     print(f"Saving data at {LOG_PATH}")
     agent_runner = run_experiment.TrainRunner(LOG_PATH, create_agent)
 
