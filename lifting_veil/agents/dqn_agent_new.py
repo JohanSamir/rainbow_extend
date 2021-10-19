@@ -174,6 +174,7 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
                  env="CartPole",
                  normalize_obs=True,
                  hidden_layer=2,
+                 hidden_conv=0,
                  neurons=512,
                  replay_scheme='prioritized',
                  noisy=False,
@@ -230,6 +231,7 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
         self._env = env
         self._normalize_obs = normalize_obs
         self._hidden_layer = hidden_layer
+        self._hidden_conv = hidden_conv
         self._neurons = neurons
         self._noisy = noisy
         self._dueling = dueling
@@ -255,6 +257,7 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
                                                        env=self._env,
                                                        normalize_obs=self._normalize_obs,
                                                        hidden_layer=self._hidden_layer,
+                                                       hidden_conv=self._hidden_conv,
                                                        neurons=self._neurons,
                                                        noisy=self._noisy,
                                                        dueling=self._dueling,
