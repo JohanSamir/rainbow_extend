@@ -105,6 +105,8 @@ normalizations = ['non_normalization', 'BatchNorm', 'LayerNorm']
 
 learning_rates = [10, 5, 2, 1, 0.1, 0.01, 0.001, 0.0001, 0.00001]
 
+batch_sizes = [32, 64, 128, 256, 512]
+
 epsilons = [1, 0.5, 0.3125, 0.03125, 0.003125, 0.0003125, 0.00003125, 0.000003125]
 
 widths = [32, 64, 128, 256, 512, 1024]
