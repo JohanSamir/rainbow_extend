@@ -31,7 +31,7 @@ import numpy as onp
 import tensorflow as tf
 from flax import linen as nn
 import optax
-import opt_utils
+from agents import opt_utils
 
 
 @functools.partial(jax.jit, static_argnums=(0, 3, 11, 12, 13, 14, 15, 16))
@@ -271,7 +271,7 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
     def _build_networks_and_optimizer(self):
         self._rng, rng = jax.random.split(self._rng)
         self.online_params = self.network_def.init(rng, x=self.state, rng=self._rng)
-        self.optimizer = opt_utils.create_optimizer(self._optimizer_name)
+        self.optimizer = opt_utils.create_opt(self._optimizer_name)
         self.optimizer_state = self.optimizer.init(self.online_params)
         self.target_network_params = self.online_params
 

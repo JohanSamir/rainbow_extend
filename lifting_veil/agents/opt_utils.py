@@ -3,7 +3,7 @@ import optax
 from absl import logging
 
 @gin.configurable
-def create_optimizer(name='adamw', learning_rate=6.25e-5, beta1=0.9, beta2=0.999,
+def create_opt(name='adamw', learning_rate=6.25e-5, beta1=0.9, beta2=0.999,
                      eps=1.5e-4, weight_decay=0.0, centered=False):
   """Create an optimizer for training.
 

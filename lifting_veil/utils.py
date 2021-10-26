@@ -169,10 +169,10 @@ def get_init_bidings(agent_name, init, seed=None):
 
 def get_gin_bindings(exp, agent_name, initial_seed, value, typ, test):
     if exp == "epsilon":
-        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"create_optimizer.eps = {value}"]
+        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"create_opt.eps = {value}"]
 
     elif exp == "learning_rate":
-        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"create_optimizer.learning_rate = {value}"]
+        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"create_opt.learning_rate = {value}"]
 
     elif exp == "width":
         gin_bindings = [f"{agent_name}.seed={initial_seed}", f"{agent_name}.neurons = {value}"]

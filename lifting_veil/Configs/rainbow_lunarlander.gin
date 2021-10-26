@@ -42,8 +42,8 @@ JaxRainbowAgentNew.replay_scheme = 'prioritized'
 JaxRainbowAgentNew.network  = @networks_new.RainbowDQN 
 JaxRainbowAgentNew.epsilon_fn = @dqn_agent.identity_epsilon
 
-create_optimizer.learning_rate = 1e-3
-create_optimizer.eps = 3.125e-4
+create_opt.learning_rate = 1e-3
+create_opt.eps = 3.125e-4
 create_gym_environment.environment_name = 'LunarLander'
 create_gym_environment.version = 'v2'
 TrainRunner.create_environment_fn = @gym_lib.create_gym_environment

@@ -25,7 +25,7 @@ import numpy as onp
 import tensorflow as tf
 import optax
 from dopamine.jax import losses
-import opt_utils
+from agents import opt_utils
 
 @functools.partial(jax.jit, static_argnums=(0, 3, 12, 13))
 def train(network_def, online_params, target_params, optimizer, optimizer_state, states, actions, next_states, rewards,
@@ -237,7 +237,7 @@ class JaxRainbowAgentNew(dqn_agent.JaxDQNAgent):
     self.online_params = self.network_def.init(rng, x=self.state,
                                                support=self._support, 
                                                rng=self._rng)
-    self.optimizer = opt_utils.create_optimizer(self._optimizer_name)
+    self.optimizer = opt_utils.create_opt(self._optimizer_name)
     self.optimizer_state = self.optimizer.init(self.online_params)
     self.target_network_params = self.online_params
 
