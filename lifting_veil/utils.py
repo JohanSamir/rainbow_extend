@@ -167,7 +167,7 @@ def get_init_bidings(agent_name, init, seed=None):
                         ]
     return gin_bindings
 
-def get_gin_bindings(exp, agent_name, initial_seed, value, typ, test):
+def get_gin_bindings(exp, agent_name, initial_seed, value, test):
     if exp == "epsilon":
         gin_bindings = [f"{agent_name}.seed={initial_seed}", f"create_opt.eps = {value}"]
 
@@ -208,17 +208,12 @@ def get_gin_bindings(exp, agent_name, initial_seed, value, typ, test):
         gin_bindings = [f"{agent_name}.seed={initial_seed}", f"{agent_name}.update_horizon = {value}"]
 
     elif exp == "clip_rewards":
-        if typ == "online":
-            gin_bindings = [f"{agent_name}.seed={initial_seed}", f"Runner.clip_rewards = {value}"]
-        else:
-            gin_bindings = [f"{agent_name}.seed={initial_seed}", f"FixedReplayRunner.clip_rewards = {value}"]
-
+        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"Runner.clip_rewards = {value}"]
+        
     else:
         print("Error! Check the kind of experiment")
 
     if test:
-        if typ == "online":
-            gin_bindings.extend(["Runner.num_iterations=4", "Runner.training_steps=200"])
-        else:
-            gin_bindings.extend(["FixedReplayRunner.num_iterations=4", "FixedReplayRunner.training_steps=200"])
+        gin_bindings.extend(["Runner.num_iterations=4", "Runner.training_steps=200"])
+        
     return gin_bindings
