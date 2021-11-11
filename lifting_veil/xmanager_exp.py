@@ -30,7 +30,7 @@ flags.DEFINE_string("experiment", "normalization=non_normalization", "the experi
 
   
 
-path = "." #os.environ['AIP_TENSORBOARD_LOG_DIR']
+path = os.environ['AIP_TENSORBOARD_LOG_DIR']
 
 
 def main(_):
