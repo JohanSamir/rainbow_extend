@@ -43,8 +43,8 @@ JaxRainbowAgentNew.replay_scheme = 'prioritized'
 JaxRainbowAgentNew.network  = @networks_new.RainbowDQN 
 JaxRainbowAgentNew.epsilon_fn = @jax.agents.dqn.dqn_agent.linearly_decaying_epsilon
 
-create_optimizer.learning_rate = 0.0001
-create_optimizer.eps = 0.0003125
+create_opt.learning_rate = 0.0001
+create_opt.eps = 0.0003125
 
 create_minatar_env.game_name  = 'breakout'
 TrainRunner.create_environment_fn = @minatar_env.create_minatar_env

@@ -116,6 +116,7 @@ class DQNNetwork(nn.Module):
     dueling: bool
     initzer: str
     hidden_layer: int
+    hidden_conv: int
     neurons: int
     normalization: str
     layer_funct: str
@@ -126,8 +127,11 @@ class DQNNetwork(nn.Module):
         if self.net_conf == 'minatar':
             x = x.squeeze(3)
             x = x.astype(jnp.float32)
+            for _ in range(self.hidden_conv):
+                x = nn.Conv(features=16, kernel_size=(3, 3), strides=(1, 1), padding='SAME', kernel_init=self.initzer)(x)
+                x = layer_funct_inf[self.layer_funct](x)
             x = nn.Conv(features=16, kernel_size=(3, 3), strides=(1, 1), kernel_init=self.initzer)(x)
-            x = jax.nn.relu(x)
+            x = layer_funct_inf[self.layer_funct](x)
             x = x.reshape((-1))
 
         elif self.net_conf == 'atari':
@@ -135,11 +139,11 @@ class DQNNetwork(nn.Module):
             # have removed the true batch dimension.
             x = x.astype(jnp.float32) / 255.
             x = nn.Conv(features=32, kernel_size=(8, 8), strides=(4, 4), kernel_init=self.initzer)(x)
-            x = jax.nn.relu(x)
+            x = layer_funct_inf[self.layer_funct](x)
             x = nn.Conv(features=64, kernel_size=(4, 4), strides=(2, 2), kernel_init=self.initzer)(x)
-            x = jax.nn.relu(x)
+            x = layer_funct_inf[self.layer_funct](x)
             x = nn.Conv(features=64, kernel_size=(3, 3), strides=(1, 1), kernel_init=self.initzer)(x)
-            x = jax.nn.relu(x)
+            x = layer_funct_inf[self.layer_funct](x)
             x = x.reshape((-1))  # flatten
 
         elif self.net_conf == 'classic':
@@ -202,6 +206,7 @@ class RainbowDQN(nn.Module):
     initzer: str
     num_atoms: int
     hidden_layer: int
+    hidden_conv: int
     neurons: int
     normalization: str
     layer_funct: str
@@ -212,8 +217,11 @@ class RainbowDQN(nn.Module):
         if self.net_conf == 'minatar':
             x = x.squeeze(3)
             x = x.astype(jnp.float32)
+            for _ in range(self.hidden_conv):
+                x = nn.Conv(features=16, kernel_size=(3, 3), strides=(1, 1), padding='SAME', kernel_init=self.initzer)(x)
+                x = layer_funct_inf[self.layer_funct](x)
             x = nn.Conv(features=16, kernel_size=(3, 3), strides=(1, 1), kernel_init=self.initzer)(x)
-            x = jax.nn.relu(x)
+            x = layer_funct_inf[self.layer_funct](x)
             x = x.reshape((-1))
 
         elif self.net_conf == 'atari':
@@ -221,11 +229,11 @@ class RainbowDQN(nn.Module):
             # have removed the true batch dimension.
             x = x.astype(jnp.float32) / 255.
             x = nn.Conv(features=32, kernel_size=(8, 8), strides=(4, 4), kernel_init=self.initzer)(x)
-            x = jax.nn.relu(x)
+            x = layer_funct_inf[self.layer_funct](x)
             x = nn.Conv(features=64, kernel_size=(4, 4), strides=(2, 2), kernel_init=self.initzer)(x)
-            x = jax.nn.relu(x)
+            x = layer_funct_inf[self.layer_funct](x)
             x = nn.Conv(features=64, kernel_size=(3, 3), strides=(1, 1), kernel_init=self.initzer)(x)
-            x = jax.nn.relu(x)
+            x = layer_funct_inf[self.layer_funct](x)
             x = x.reshape((-1))  # flatten
 
         elif self.net_conf == 'classic':
@@ -249,9 +257,7 @@ class RainbowDQN(nn.Module):
         for _ in range(self.hidden_layer):
             x = net(x, features=self.neurons, rng=rng)
             if self.normalization == 'non_normalization':
-                #print('norm:', self.normalization, 'activ:', self.layer_funct)
                 if self.layer_funct != 'non_activation':
-                    #print('norm--:', self.normalization, 'activ:', self.layer_funct)
                     x = layer_funct_inf[self.layer_funct](x)
             elif self.normalization == 'BatchNorm':
                 x = nn.BatchNorm(use_running_average=True)(x)

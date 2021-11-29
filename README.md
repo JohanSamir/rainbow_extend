@@ -2,15 +2,14 @@
 
 # How to run all experiments
 1. Install the dependencies with `pip install requirements.txt`
-2. Generate baselines for the offline experiments with `python3 get_baselines.py`
-3. Run all experiments with `python3 tmux-runs.py`
-4. To test: python3 main.py --env="acrobot" --agent="rainbow" --initial_seed="1" --exp="clip_rewards" --type="online"
+2. Run all experiments with `python3 tmux-runs.py`
+3. To test: python3 main.py --env="acrobot" --agent="rainbow" --initial_seed="1" --exp="clip_rewards"
 
 
 In this work we argue ...
 
 ## Quick Start
-To use the algorithms proposed in the Revisiting Rainbow paper, you need python3 installed, make sure pip is also up to date.  If you want to run the MinAtar experiments you should install it. To install MinAtar, please check the following paper ([Young et al., 2019][young]) and repositore ([github][young_repo]): 
+To use the algorithms proposed in the Revisiting Rainbow paper, you need python3 installed, make sure pip is also up to date.  If you want to run the MinAtar experiments you should install it. To install MinAtar, please check the following paper ([Young et al., 2019][young]) and repository ([github][young_repo]): 
 
 1. Clone the repo: 
 ```bash
