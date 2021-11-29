@@ -5,6 +5,7 @@ import dopamine.jax.agents.dqn.dqn_agent
 import dopamine.replay_memory.prioritized_replay_buffer
 import jax
 import gin
+import agents.opt_utils
 import agents.networks_new
 import agents.dqn_agent_new
 import agents.external_configurations
@@ -45,9 +46,8 @@ JaxDQNAgentNew.tau = 100
 JaxDQNAgentNew.alpha = 1
 JaxDQNAgentNew.clip_value_min = -1e3
 
-create_optimizer = @dqn_agent.create_optimizer
-create_optimizer.learning_rate = 0.01
-create_optimizer.eps = 3.125e-4
+create_opt.learning_rate = 0.01
+create_opt.eps = 3.125e-4
 
 create_gym_environment.environment_name = 'MountainCar'
 create_gym_environment.version = 'v0'

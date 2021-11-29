@@ -6,6 +6,7 @@ import dopamine.replay_memory.prioritized_replay_buffer
 
 import jax
 import gin
+import agents.opt_utils
 import agents.networks_new
 import agents.dqn_agent_new
 import agents.external_configurations
@@ -47,9 +48,9 @@ JaxDQNAgentNew.tau = 0.03
 JaxDQNAgentNew.alpha = 0.9 
 JaxDQNAgentNew.clip_value_min = -1
 
-create_optimizer = @dqn_agent.create_optimizer
-create_optimizer.learning_rate = 0.00025#0.001
-create_optimizer.eps = 3.125e-4#0.01
+create_opt = @opt_utils.create_opt
+create_opt.learning_rate = 0.00025#0.001
+create_opt.eps = 3.125e-4#0.01
 
 create_minatar_env.game_name  = 'breakout'
 TrainRunner.create_environment_fn =  @minatar_env.create_minatar_env

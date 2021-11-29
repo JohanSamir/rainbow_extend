@@ -29,9 +29,9 @@ import jax
 import jax.numpy as jnp
 import numpy as onp
 import tensorflow as tf
-import jax.scipy.special as scp
 from flax import linen as nn
 import optax
+from agents import opt_utils
 
 
 @functools.partial(jax.jit, static_argnums=(0, 3, 11, 12, 13, 14, 15, 16))
@@ -174,6 +174,7 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
                  env="CartPole",
                  normalize_obs=True,
                  hidden_layer=2,
+                 hidden_conv=0,
                  neurons=512,
                  replay_scheme='prioritized',
                  noisy=False,
@@ -230,6 +231,7 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
         self._env = env
         self._normalize_obs = normalize_obs
         self._hidden_layer = hidden_layer
+        self._hidden_conv = hidden_conv
         self._neurons = neurons
         self._noisy = noisy
         self._dueling = dueling
@@ -255,6 +257,7 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
                                                        env=self._env,
                                                        normalize_obs=self._normalize_obs,
                                                        hidden_layer=self._hidden_layer,
+                                                       hidden_conv=self._hidden_conv,
                                                        neurons=self._neurons,
                                                        noisy=self._noisy,
                                                        dueling=self._dueling,
@@ -268,7 +271,7 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
     def _build_networks_and_optimizer(self):
         self._rng, rng = jax.random.split(self._rng)
         self.online_params = self.network_def.init(rng, x=self.state, rng=self._rng)
-        self.optimizer = dqn_agent.create_optimizer(self._optimizer_name)
+        self.optimizer = opt_utils.create_opt(self._optimizer_name)
         self.optimizer_state = self.optimizer.init(self.online_params)
         self.target_network_params = self.online_params
 
