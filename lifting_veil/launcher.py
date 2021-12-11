@@ -64,12 +64,15 @@ def main(_):
         ])
 
         agents = ["dqn", "rainbow"]
-        environments = ["cartpole"]
-        trials = list(dict([('agent', ag), ('env', env)]) for (ag, env) in itertools.product(agents, environments))
+        environments = ["acrobot", "cartpole", "lunarlander", "mountaincar"]
+        batch_sizes = [32, 64, 128, 256, 512]
+        seeds = list(range(1, 11))
+        experiments = [f"batch_size={bs}" for bs in batch_sizes] 
+        trials = list(dict([('agent', ag), ('env', env), ('experiment', exp), ('seed', sd)]) for (ag, env, exp, sd) in itertools.product(agents, environments, experiments, seeds))
 
         tensorboard = FLAGS.tensorboard
         if not tensorboard:
-            tensorboard = caip.client().create_tensorboard('rainbow_test')  # TODO add meaningful name
+            tensorboard = caip.client().create_tensorboard('batch_test')  # TODO add meaningful name
             tensorboard = asyncio.get_event_loop().run_until_complete(tensorboard)
 
         output_dir = os.environ['GOOGLE_CLOUD_BUCKET_NAME']

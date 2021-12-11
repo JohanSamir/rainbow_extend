@@ -209,7 +209,10 @@ def get_gin_bindings(exp, agent_name, initial_seed, value, test):
 
     elif exp == "clip_rewards":
         gin_bindings = [f"{agent_name}.seed={initial_seed}", f"Runner.clip_rewards = {value}"]
-        
+    
+    elif exp == "batch_size":   
+        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"OutOfGraphPrioritizedReplayBuffer.batch_size = {value}"]
+    
     else:
         print("Error! Check the kind of experiment")
 
