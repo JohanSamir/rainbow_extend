@@ -221,7 +221,7 @@ class JaxRainbowAgentNew(dqn_agent.JaxDQNAgent):
                                 env=self._env,
                                 normalize_obs=self._normalize_obs,
                                 hidden_layer=self._hidden_layer,
-                                hidden_conv=self.hidden_conv, 
+                                hidden_conv=self._hidden_conv, 
                                 neurons=self._neurons,
                                 noisy=self._noisy,
                                 dueling=self._dueling,
