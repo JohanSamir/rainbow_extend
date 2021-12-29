@@ -1,6 +1,8 @@
 from agents.dqn_agent_new import *
 from agents.rainbow_agent_new import *
 import numpy as np
+import itertools
+
 
 agents = {
     'dqn': JaxDQNAgentNew,
@@ -125,6 +127,8 @@ num_atoms = [11, 21, 31, 41, 51, 61]
 
 update_horizon = [1, 2, 3, 4, 5, 8, 10]
 
+noisy_net = [True, False]
+
 clip_rewards = ["True", "False"]
 
 experiments = {
@@ -143,6 +147,16 @@ experiments = {
         "update_horizon": update_horizon,
         "clip_rewards": clip_rewards,
 }
+
+groups = { "effective_horizon" : [update_periods, gammas],
+                "constancy_of_parameters" : [inits, update_periods, noisy_net],
+                "network_starting point" : [inits, activations, depths, normalizations],
+                "network_architecture" : [depths, widths, normalizations],
+                #"algorithmic_parameters" : [update_period", "gamma],
+                #"distribution_parameterization" : [update_period", "gamma],
+                "optimizer_parameters" : [learning_rates, epsilons, batch_sizes]
+                #"bellman_updates" : ["update_period", "gamma"]
+                }
 
 
 def get_init_bidings(agent_name, init, seed=None):
@@ -220,3 +234,11 @@ def get_gin_bindings(exp, agent_name, initial_seed, value, test):
         gin_bindings.extend(["Runner.num_iterations=4", "Runner.training_steps=200"])
         
     return gin_bindings
+
+
+def sample_group(grp, num=1):
+    total = list(itertools.product(*[exp for exp in groups[grp]]))
+    total = np.array(total)
+    indices = np.random.choice(len(total), num, replace=False)
+    sample = total[indices]
+    return sample

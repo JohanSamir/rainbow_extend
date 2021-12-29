@@ -27,6 +27,8 @@ from xmanager import xm
 from xmanager import xm_local
 from xmanager.cloud import caip
 
+import utils
+
 FLAGS = flags.FLAGS
 # flags.DEFINE_string(
 #     'gin_file',
@@ -37,10 +39,6 @@ flags.DEFINE_string('tensorboard', None, 'Tensorboard instance.')
 
 def main(_):
     with xm_local.create_experiment(experiment_title='rainbow-dqn') as experiment:
-        # gin_file = os.path.basename(FLAGS.gin_file)
-        # add_instruction = f'ADD {FLAGS.gin_file} {gin_file}'
-        # if FLAGS.gin_file.startswith('http'):
-        # add_instruction = f'RUN wget -O ./{gin_file} {FLAGS.gin_file}'
         spec = xm.PythonContainer(
             docker_instructions=[
                 'RUN add-apt-repository -y ppa:ubuntu-toolchain-r/test',
@@ -50,7 +48,6 @@ def main(_):
                 'RUN pip install dopamine-rl',
                 'COPY . workdir',
                 'WORKDIR workdir/lifting_veil',
-                # add_instruction,
             ],
             path='.',
             entrypoint=xm.ModuleName('xmanager_exp'),
@@ -64,12 +61,20 @@ def main(_):
         ])
 
         agents = ["dqn", "rainbow"]
-        environments = ["acrobot", "cartpole", "lunarlander", "mountaincar"]
-        batch_sizes = [32, 64, 128, 256, 512]
-        seeds = list(range(1, 11))
-        experiments = [f"batch_size={bs}" for bs in batch_sizes] 
-        trials = list(dict([('agent', ag), ('env', env), ('experiment', exp), ('seed', sd)]) for (ag, env, exp, sd) in itertools.product(agents, environments, experiments, seeds))
+        environments = ["acrobot", "cartpole"]#, "lunarlander", "mountaincar"]
+        seeds = list(range(1))
+        num_runs = 2
+        groups = ["effective_horizon"]#, "constancy_of_parameters", 
+                        #"network_starting point", "network_architecture",
+                        #"optimizer_parameters"]
+        experiments = []
+        for grp in groups:
+            values = utils.sample_group(grp, num_runs)
+            experiments.extend([f"{grp}=" + f"{tuple(val)}"[1:-1] for val in values])
 
+        trials = list({'agent': ag, 'env': env, 
+                        'experiment':exp, 
+                        'seed':sd} for (ag, env, exp, sd) in itertools.product(agents, environments, experiments, seeds))
         tensorboard = FLAGS.tensorboard
         if not tensorboard:
             tensorboard = caip.client().create_tensorboard('batch_test')  # TODO add meaningful name

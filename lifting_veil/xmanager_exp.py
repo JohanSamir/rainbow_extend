@@ -15,7 +15,7 @@ from agents.dqn_agent_new import *
 from agents.rainbow_agent_new import *
 # from agents import minatar_env
 
-from utils import *
+import utils
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string("env", "cartpole", "the environment the experiment will be run in")
@@ -36,22 +36,25 @@ path = 'gs://joao-experiments'
 def main(_):
     print(path)
     def create_agent(sess, environment, summary_writer=None, memory=None):
-        ag = agents[FLAGS.agent](num_actions=environment.action_space.n)
+        ag = utils.agents[FLAGS.agent](num_actions=environment.action_space.n)
         if memory is not None:
             ag._replay = memory
             ag._replay.replay_capacity = (50000 * 0.2)
         return ag
     
-    exp, value = FLAGS.experiment.split('=')
+    grp, values = FLAGS.experiment.split('=')
+    values = values.split(",")
         
-    agent_name = agents[FLAGS.agent].__name__
+    agent_name = utils.agents[FLAGS.agent].__name__
 
     gin_file = f'Configs/{FLAGS.agent}_{FLAGS.env}.gin'
     
     gin.clear_config()
-    gin_bindings = get_gin_bindings(exp, agent_name, FLAGS.seed, value, False)
+    gin_bindings = []
+    for exp, value in zip(utils.groups[grp], values):
+        gin_bindings.extend(utils.get_gin_bindings(exp, agent_name, FLAGS.seed, value, False))
     gin.parse_config_files_and_bindings([gin_file], gin_bindings, skip_unknown=False)
-    LOG_PATH = os.path.join(f'{path}/{FLAGS.agent}/{FLAGS.env}/{exp}_{value}', f'test{FLAGS.seed}')
+    LOG_PATH = os.path.join(f'{path}/{FLAGS.agent}/{FLAGS.env}/{grp}_{values}', f'test{FLAGS.seed}')
     print(f"Saving data at {LOG_PATH}")
     agent_runner = run_experiment.TrainRunner(LOG_PATH, create_agent)
 
