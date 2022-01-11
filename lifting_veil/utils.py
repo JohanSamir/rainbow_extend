@@ -148,14 +148,14 @@ experiments = {
         "clip_rewards": clip_rewards,
 }
 
-groups = { "effective_horizon" : [update_periods, gammas],
-                "constancy_of_parameters" : [inits, update_periods, noisy_net],
-                "network_starting point" : [inits, activations, depths, normalizations],
-                "network_architecture" : [depths, widths, normalizations],
-                #"algorithmic_parameters" : [update_period", "gamma],
-                #"distribution_parameterization" : [update_period", "gamma],
-                "optimizer_parameters" : [learning_rates, epsilons, batch_sizes]
-                #"bellman_updates" : ["update_period", "gamma"]
+groups = { "effective_horizon" : ["update_period", "gamma"],
+                "constancy_of_parameters" : ["init", "update_period", "noisy_net"],
+                "network_starting point" : ["init", "activations", "depths", "normalizations"],
+                "network_architecture" : ["depth", "widths", "normalizations"],
+                #"algorithmic_parameters" : ["update_period", "gamma],
+                #"distribution_parameterization" : ["update_period", "gamma],
+                "optimizer_parameters" : ["learning_rates", "epsilons", "batch_sizes"]
+                #"bellman_updates" : [""update_period", "gamma"]
                 }
 
 
@@ -237,7 +237,7 @@ def get_gin_bindings(exp, agent_name, initial_seed, value, test):
 
 
 def sample_group(grp, num=1):
-    total = list(itertools.product(*[exp for exp in groups[grp]]))
+    total = list(itertools.product(*[experiments[exp] for exp in groups[grp]]))
     total = np.array(total)
     indices = np.random.choice(len(total), num, replace=False)
     sample = total[indices]
