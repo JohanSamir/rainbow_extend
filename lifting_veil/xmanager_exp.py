@@ -37,14 +37,13 @@ def main(_):
     print(path)
     def create_agent(sess, environment, summary_writer=None, memory=None):
         ag = utils.agents[FLAGS.agent](num_actions=environment.action_space.n)
-        if memory is not None:
-            ag._replay = memory
-            ag._replay.replay_capacity = (50000 * 0.2)
         return ag
     
     grp, values = FLAGS.experiment.split('=')
+    grp = grp[1:] #deal with quotes
     values = values.split(",")
-        
+    values[-1] = values[-1][:-1] #deal with quotes
+
     agent_name = utils.agents[FLAGS.agent].__name__
 
     gin_file = f'Configs/{FLAGS.agent}_{FLAGS.env}.gin'
