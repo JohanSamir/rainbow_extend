@@ -13,7 +13,7 @@ sys.path.append(".")
 
 from agents.dqn_agent_new import *
 from agents.rainbow_agent_new import *
-# from agents import minatar_env
+from agents import minatar_env
 
 import utils
 
