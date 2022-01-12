@@ -26,19 +26,19 @@ flags.DEFINE_integer("seed", "1", "the program PRNG seed")
 
 flags.DEFINE_string("experiment", "normalization=non_normalization", "the experiment will be run in")
 
-# flags.DEFINE_string("base_path", "../../extending_rainbow_exps/", "The base path for saving runs")
+flags.DEFINE_string("base_path", "gs://joao-experiments", "The base path for saving runs")
 
   
 
-path = 'gs://joao-experiments'
+# path = 'gs://joao-experiments'
 
 
 def main(_):
-    print(path)
     def create_agent(sess, environment, summary_writer=None, memory=None):
         ag = utils.agents[FLAGS.agent](num_actions=environment.action_space.n)
         return ag
     
+    path = FLAGS.base_path
     grp, values = FLAGS.experiment.split('=')
     grp = grp[1:] #deal with quotes
     values = values.split(",")
