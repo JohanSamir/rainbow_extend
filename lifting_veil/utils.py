@@ -146,16 +146,17 @@ experiments = {
         "num_atoms": num_atoms,
         "update_horizon": update_horizon,
         "clip_rewards": clip_rewards,
+        "noisy_net": noisy_net,
 }
 
 groups = { "effective_horizon" : ["update_period", "gamma"],
                 "constancy_of_parameters" : ["init", "update_period", "noisy_net"],
-                "network_starting point" : ["init", "activations", "depths", "normalizations"],
-                "network_architecture" : ["depth", "widths", "normalizations"],
-                #"algorithmic_parameters" : ["update_period", "gamma],
-                #"distribution_parameterization" : ["update_period", "gamma],
-                "optimizer_parameters" : ["learning_rates", "epsilons", "batch_sizes"]
-                #"bellman_updates" : [""update_period", "gamma"]
+                "network_starting point" : ["init", "activation", "depth", "normalization"],
+                "network_architecture" : ["depth", "width", "normalization"],
+                "bellman_updates" : ["min_replay_history", "update_period", "target_update_period"],
+                "algorithmic_parameters" : ["clip_rewards", "gamma"],
+                "distribution_parameterization" : ["clip_rewards", "num_atoms"],
+                "optimizer_parameters" : ["learning_rate", "epsilon", "batch_size"],
                 }
 
 
