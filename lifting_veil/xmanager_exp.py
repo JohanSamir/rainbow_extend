@@ -5,7 +5,7 @@ jax.config.update('jax_platform_name', 'cpu')
 
 from dopamine.discrete_domains import gym_lib
 from dopamine.discrete_domains import run_experiment
-from absl import flags, app
+from absl import flags, app, logging
 import gin.tf
 import sys
 
@@ -13,7 +13,7 @@ sys.path.append(".")
 
 from agents.dqn_agent_new import *
 from agents.rainbow_agent_new import *
-from agents import minatar_env
+# from agents import minatar_env
 
 import utils
 
@@ -47,19 +47,19 @@ def main(_):
     agent_name = utils.agents[FLAGS.agent].__name__
 
     gin_file = f'Configs/{FLAGS.agent}_{FLAGS.env}.gin'
-    
+
     gin.clear_config()
     gin_bindings = []
     for exp, value in zip(utils.groups[grp], values):
         gin_bindings.extend(utils.get_gin_bindings(exp, agent_name, FLAGS.rl_seed, value, False))
     gin.parse_config_files_and_bindings([gin_file], gin_bindings, skip_unknown=False)
-    LOG_PATH = os.path.join(f'{path}/{FLAGS.agent}/{FLAGS.env}/{grp}_{utils.repr_values(values)}', f'test{FLAGS.rl_seed}')
-    print(f"Saving data at {LOG_PATH}")
+    LOG_PATH = os.path.join(f'{path}/{FLAGS.agent}/{FLAGS.env}/{FLAGS.sample_seed}_{grp}_{utils.repr_values(values)}', f'{FLAGS.rl_seed}')
+    logging.info(f"Saving data at {LOG_PATH}")
     agent_runner = run_experiment.TrainRunner(LOG_PATH, create_agent)
 
-    print(f'Training agent {FLAGS.rl_seed}, please be patient, may be a while...')
+    logging.info(f'Training agent {FLAGS.rl_seed}, please be patient, may be a while...')
     agent_runner.run_experiment()
-    print('Done training!')
+    logging.info('Done training!')
 
 if __name__ == "__main__":
     app.run(main)

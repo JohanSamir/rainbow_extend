@@ -1,5 +1,6 @@
 from agents.dqn_agent_new import *
 from agents.rainbow_agent_new import *
+from absl import logging
 import numpy as np
 import itertools
 
@@ -229,7 +230,7 @@ def get_gin_bindings(exp, agent_name, initial_seed, value, test):
         gin_bindings = [f"{agent_name}.seed={initial_seed}", f"OutOfGraphPrioritizedReplayBuffer.batch_size = {value}"]
     
     else:
-        print("Error! Check the kind of experiment")
+        logging.error("Error! Check the kind of experiment")
 
     if test:
         gin_bindings.extend(["Runner.num_iterations=4", "Runner.training_steps=200"])
