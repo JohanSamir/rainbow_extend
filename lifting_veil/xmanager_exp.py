@@ -24,7 +24,7 @@ flags.DEFINE_string("agent", "dqn", "the agent used in the experiment")
 
 flags.DEFINE_integer("seed", "1", "the program PRNG seed")
 
-flags.DEFINE_string("experiment", "normalization=non_normalization", "the experiment will be run in")
+flags.DEFINE_string("experiment", "effective_horizon", "the experiment will be run in")
 
 flags.DEFINE_string("base_path", "gs://joao-experiments", "The base path for saving runs")
 
