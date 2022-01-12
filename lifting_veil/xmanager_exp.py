@@ -39,9 +39,11 @@ def main(_):
         return ag
     
     path = FLAGS.base_path
-    grp, values = FLAGS.experiment.split('=') #deal with quotes
-    grp = grp.strip("'")
-    values = values.split(",")
+    grp, values = FLAGS.experiment.split('=') 
+    if grp[0] == "'": #deal with quotes
+        grp = grp[1:]
+        values[-1] = values[-1][:-1]
+
 
     agent_name = utils.agents[FLAGS.agent].__name__
 
