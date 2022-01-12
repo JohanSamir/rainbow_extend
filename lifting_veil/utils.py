@@ -151,7 +151,7 @@ experiments = {
 
 groups = { "effective_horizon" : ["update_period", "gamma"],
                 "constancy_of_parameters" : ["init", "update_period", "noisy_net"],
-                "network_starting point" : ["init", "activation", "depth", "normalization"],
+                "network_starting_point" : ["init", "activation", "depth", "normalization"],
                 "network_architecture" : ["depth", "width", "normalization"],
                 "bellman_updates" : ["min_replay_history", "update_period", "target_update_period"],
                 "algorithmic_parameters" : ["clip_rewards", "gamma"],
