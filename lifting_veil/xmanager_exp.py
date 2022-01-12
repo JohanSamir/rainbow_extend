@@ -51,7 +51,7 @@ def main(_):
     for exp, value in zip(utils.groups[grp], values):
         gin_bindings.extend(utils.get_gin_bindings(exp, agent_name, FLAGS.seed, value, False))
     gin.parse_config_files_and_bindings([gin_file], gin_bindings, skip_unknown=False)
-    LOG_PATH = os.path.join(f'{path}/{FLAGS.agent}/{FLAGS.env}/{grp}_{values}', f'test{FLAGS.seed}')
+    LOG_PATH = os.path.join(f'{path}/{FLAGS.agent}/{FLAGS.env}/{grp}_{utils.repr_values(values)}', f'test{FLAGS.seed}')
     print(f"Saving data at {LOG_PATH}")
     agent_runner = run_experiment.TrainRunner(LOG_PATH, create_agent)
 

@@ -237,6 +237,10 @@ def get_gin_bindings(exp, agent_name, initial_seed, value, test):
     return gin_bindings
 
 
+def repr_values(values):
+    cat = "_".join(str(val) for val in values)
+    return cat.replace(".", "p")
+
 def sample_group(grp, seed, num=1):
     rng = np.random.default_rng(seed)
     total = list(itertools.product(*[experiments[exp] for exp in groups[grp]]))
