@@ -258,6 +258,7 @@ def sample_group(grp, seed, num=1):
     indices = rng.choice(len(total), num, replace=False)
     sample = total[indices][0]
     cs = np.cumsum([0] + [len(experiments[exp]) for exp in groups[grp]])
+    seed %= cs[-1]
     idx = bisect.bisect(cs, seed)
     sample[idx - 1] = get(experiments[groups[grp][idx-1]], seed - cs[idx-1])
     return sample
