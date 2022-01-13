@@ -8,8 +8,8 @@ import itertools
 agents = {
     'dqn': JaxDQNAgentNew,
     'rainbow': JaxRainbowAgentNew,
-    # 'quantile': JaxQuantileAgentNew,
-    # 'implicit': JaxImplicitQuantileAgentNew,
+    'c51': JaxRainbowAgentNew,
+    'rainbow_without': JaxDQNAgentNew,
 }
 
 inits = {
@@ -102,7 +102,7 @@ inits = {
     }
 }
 
-activations = ['non_activation', 'relu', 'relu6', 'sigmoid', 'softplus', 'soft_sign', 'silu', 'swish', 'log_sigmoid', 'hard_sigmoid', 'hard_silu', 'hard_swish', 'hard_tanh', 'elu', 'celu', 'selu', 'gelu', 'glu']
+activations = ['non_activation', 'relu', 'relu6', 'sigmoid', 'softplus', 'soft_sign', 'silu', 'log_sigmoid', 'hard_sigmoid', 'hard_silu', 'hard_swish', 'hard_tanh', 'elu', 'celu', 'selu', 'gelu', 'glu']
 
 normalizations = ['non_normalization', 'BatchNorm', 'LayerNorm']
 
@@ -228,6 +228,9 @@ def get_gin_bindings(exp, agent_name, initial_seed, value, test):
     
     elif exp == "batch_size":   
         gin_bindings = [f"{agent_name}.seed={initial_seed}", f"OutOfGraphPrioritizedReplayBuffer.batch_size = {value}"]
+        
+    elif exp == "noisy_net":
+        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"{agent_name}.noisy = {value}"]
     
     else:
         logging.error("Error! Check the kind of experiment")
