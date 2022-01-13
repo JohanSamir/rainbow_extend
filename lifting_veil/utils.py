@@ -7,8 +7,8 @@ import itertools
 agents = {
     'dqn': JaxDQNAgentNew,
     'rainbow': JaxRainbowAgentNew,
-    # 'quantile': JaxQuantileAgentNew,
-    # 'implicit': JaxImplicitQuantileAgentNew,
+    'c51': JaxRainbowAgentNew,
+    'rainbow_without': JaxDQNAgentNew,
 }
 
 inits = {
