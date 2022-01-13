@@ -117,6 +117,8 @@ widths = [32, 64, 128, 256, 512, 1024]
 
 depths = [1, 2, 3, 4]
 
+convs = [1, 2, 3]
+
 update_periods = [1 ,2 ,3, 4, 8, 10, 12]
 
 target_update_periods = [10, 25, 50, 100, 200, 400, 800, 1600]
@@ -132,6 +134,8 @@ update_horizon = [1, 2, 3, 4, 5, 8, 10]
 noisy_net = [True, False]
 
 clip_rewards = ["True", "False"]
+
+weight_decays = [0.01, 0.1, 1]
 
 experiments = {
         "epsilon": epsilons,
@@ -149,6 +153,8 @@ experiments = {
         "update_horizon": update_horizon,
         "clip_rewards": clip_rewards,
         "noisy_net": noisy_net,
+        "weight_decay": weight_decays,
+        "conv": convs,
 }
 
 groups = { "effective_horizon" : ["update_period", "gamma"],
@@ -156,9 +162,8 @@ groups = { "effective_horizon" : ["update_period", "gamma"],
                 "network_starting_point" : ["init", "activation", "depth", "normalization"],
                 "network_architecture" : ["depth", "width", "normalization"],
                 "bellman_updates" : ["min_replay_history", "update_period", "target_update_period"],
-                "algorithmic_parameters" : ["clip_rewards", "gamma"],
                 "distribution_parameterization" : ["clip_rewards", "num_atoms"],
-                "optimizer_parameters" : ["learning_rate", "epsilon", "batch_size"],
+                "optimizer_parameters" : ["learning_rate", "epsilon", "batch_size", "weight_decay"],
                 }
 
 
@@ -191,6 +196,9 @@ def get_gin_bindings(exp, agent_name, initial_seed, value, test):
 
     elif exp == "learning_rate":
         gin_bindings += [f"create_opt.learning_rate = {value}"]
+    
+    elif exp == "weight_decay":
+        gin_bindings += [f"create_opt.weight_decay = {value}"]
 
     elif exp == "width":
         gin_bindings += [f"{agent_name}.neurons = {value}"]
@@ -200,9 +208,6 @@ def get_gin_bindings(exp, agent_name, initial_seed, value, test):
 
     elif exp == "conv":
         gin_bindings += [f"{agent_name}.hidden_conv = {value}"]
-
-    elif exp == "weight_decay":
-        gin_bindings
 
     elif exp == "normalization":
         gin_bindings += [f"{agent_name}.normalization = '{value}'"]
