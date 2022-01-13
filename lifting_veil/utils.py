@@ -3,6 +3,7 @@ from agents.rainbow_agent_new import *
 from absl import logging
 import numpy as np
 import itertools
+import bisect
 
 
 agents = {
@@ -245,10 +246,18 @@ def repr_values(values):
     cat = "_".join(str(val) for val in values)
     return cat.replace(".", "p")
 
+def get(container, idx):
+    if type(container) is dict:
+        return list(container.keys())[idx]
+    return container[idx]
+
 def sample_group(grp, seed, num=1):
     rng = np.random.default_rng(seed)
     total = list(itertools.product(*[experiments[exp] for exp in groups[grp]]))
     total = np.array(total)
     indices = rng.choice(len(total), num, replace=False)
-    sample = total[indices]
+    sample = total[indices][0]
+    cs = np.cumsum([0] + [len(experiments[exp]) for exp in groups[grp]])
+    idx = bisect.bisect(cs, seed)
+    sample[idx - 1] = get(experiments[groups[grp][idx-1]], seed - cs[idx-1])
     return sample
