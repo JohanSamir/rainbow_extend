@@ -185,53 +185,60 @@ def get_init_bidings(agent_name, init, seed=None):
     return gin_bindings
 
 def get_gin_bindings(exp, agent_name, initial_seed, value, test):
+     gin_bindings = [f"{agent_name}.seed={initial_seed}"]
     if exp == "epsilon":
-        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"create_opt.eps = {value}"]
+        gin_bindings += [f"create_opt.eps = {value}"]
 
     elif exp == "learning_rate":
-        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"create_opt.learning_rate = {value}"]
+        gin_bindings += [f"create_opt.learning_rate = {value}"]
 
     elif exp == "width":
-        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"{agent_name}.neurons = {value}"]
+        gin_bindings += [f"{agent_name}.neurons = {value}"]
 
     elif exp == "depth":
-        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"{agent_name}.hidden_layer = {value}"]
+        gin_bindings += [f"{agent_name}.hidden_layer = {value}"]
+
+    elif exp == "conv":
+        gin_bindings += [f"{agent_name}.hidden_conv = {value}"]
+
+    elif exp == "weight_decay":
+        gin_bindings
 
     elif exp == "normalization":
-        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"{agent_name}.normalization = '{value}'"]
+        gin_bindings += [f"{agent_name}.normalization = '{value}'"]
 
     elif exp == "init":
         gin_bindings = get_init_bidings(agent_name, value, initial_seed)
 
     elif exp == "activation":
-        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"{agent_name}.layer_funct = '{value}'"]
+        gin_bindings += [f"{agent_name}.layer_funct = '{value}'"]
 
     elif exp == "update_period":
-        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"{agent_name}.update_period = {value}"]
+        gin_bindings += [f"{agent_name}.update_period = {value}"]
 
     elif exp == "target_update_period":
-        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"{agent_name}.target_update_period = {value}"]
+        gin_bindings += [f"{agent_name}.target_update_period = {value}"]
     
     elif exp == "gamma":
-        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"{agent_name}.gamma = {value}"]
+        gin_bindings += [f"{agent_name}.gamma = {value}"]
     
     elif exp == "min_replay_history":
-        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"{agent_name}.min_replay_history = {value}"]
+        gin_bindings += [f"{agent_name}.min_replay_history = {value}"]
 
     elif exp == "num_atoms":
-        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"{agent_name}.num_atoms = {value}"]
+        gin_bindings += [f"{agent_name}.num_atoms = {value}"]
 
     elif exp == "update_horizon":
-        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"{agent_name}.update_horizon = {value}"]
+        gin_bindings += [f"{agent_name}.update_horizon = {value}"]
 
     elif exp == "clip_rewards":
-        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"Runner.clip_rewards = {value}"]
+        gin_bindings += [f"Runner.clip_rewards = {value}"]
     
     elif exp == "batch_size":   
-        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"OutOfGraphPrioritizedReplayBuffer.batch_size = {value}"]
+        gin_bindings += [f"OutOfGraphPrioritizedReplayBuffer.batch_size = {value}"]
         
     elif exp == "noisy_net":
-        gin_bindings = [f"{agent_name}.seed={initial_seed}", f"{agent_name}.noisy = {value}"]
+        gin_bindings += [f"{agent_name}.noisy = {value}"]
     
     else:
         logging.error("Error! Check the kind of experiment")

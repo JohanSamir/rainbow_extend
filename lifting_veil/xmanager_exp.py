@@ -42,7 +42,7 @@ def main(_):
     
     path = FLAGS.base_path
     grp = FLAGS.experiment
-    values = utils.sample_group(grp, FLAGS.sample_seed)[0]
+    values = utils.sample_group(grp, FLAGS.sample_seed)
 
     agent_name = utils.agents[FLAGS.agent].__name__
 
