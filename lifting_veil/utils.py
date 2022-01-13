@@ -190,7 +190,7 @@ def get_init_bidings(agent_name, init, seed=None):
     return gin_bindings
 
 def get_gin_bindings(exp, agent_name, initial_seed, value, test):
-     gin_bindings = [f"{agent_name}.seed={initial_seed}"]
+    gin_bindings = [f"{agent_name}.seed={initial_seed}"]
     if exp == "epsilon":
         gin_bindings += [f"create_opt.eps = {value}"]
 
