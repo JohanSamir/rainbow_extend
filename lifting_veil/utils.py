@@ -214,12 +214,18 @@ def get(container, idx):
         return list(container.keys())[idx]
     return container[idx]
 
+def cast_to_int(lst):
+    for idx, el in enumerate(lst):
+        if type(el) == np.float64 and el.is_integer():
+            lst[idx] = int(el)
+    return lst
+
 def sample_group(grp, seed, num=1): 
     rng = np.random.default_rng(seed)
     total = list(itertools.product(*[experiments[exp] for exp in groups[grp]]))
     total = np.array(total)
     indices = rng.choice(len(total), num, replace=False)
-    sample = list(total[indices][0])
+    sample = cast_to_int(list(total[indices][0]))        
     cs = np.cumsum([0] + [len(experiments[exp]) for exp in groups[grp]])
     seed %= cs[-1]
     idx = bisect.bisect(cs, seed) - 1
@@ -242,4 +248,3 @@ def print_groups():
 
 if __name__ == "__main__":
     logging.set_verbosity(logging.INFO)
-    print(sample_group("effective_horizon", seed=9))    
