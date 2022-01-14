@@ -230,6 +230,17 @@ def sample_group(grp, seed, num=1):
 
     return sample
 
+def print_groups():
+    print('groups = {}')
+    for grp in groups:
+      print(f"groups['{grp}'] = " + "{")
+      cs = np.cumsum([0] + [len(experiments[exp]) for exp in groups[grp]])
+      for seed in range(cs[-1]):
+        idx = bisect.bisect(cs, seed) - 1
+        sample = get(experiments[groups[grp][idx]], seed - cs[idx])
+        print(f"  '{seed}': '{groups[grp][idx]}={sample}',")
+      print('}')
+
 if __name__ == "__main__":
     logging.set_verbosity(logging.INFO)
     print(sample_group("bellman_updates", seed=1))    
