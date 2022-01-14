@@ -219,12 +219,11 @@ def sample_group(grp, seed, num=1):
     total = list(itertools.product(*[experiments[exp] for exp in groups[grp]]))
     total = np.array(total)
     indices = rng.choice(len(total), num, replace=False)
-    sample = total[indices][0]
+    sample = list(total[indices][0])
     cs = np.cumsum([0] + [len(experiments[exp]) for exp in groups[grp]])
     seed %= cs[-1]
     idx = bisect.bisect(cs, seed) - 1
     sample[idx] = get(experiments[groups[grp][idx]], seed - cs[idx])
-
     logging.info(f"Sample Seed Index = {idx}")
     logging.info(f"Changed {groups[grp][idx]} of group {grp} to {sample[idx]}")
 
@@ -243,4 +242,4 @@ def print_groups():
 
 if __name__ == "__main__":
     logging.set_verbosity(logging.INFO)
-    print(sample_group("bellman_updates", seed=1))    
+    print(sample_group("effective_horizon", seed=9))    
