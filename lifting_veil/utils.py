@@ -13,15 +13,24 @@ agents = {
     'rainbow_without': JaxDQNAgentNew,
 }
 
-inits = {
-    'orthogonal': {
-        'function': jax.nn.initializers.orthogonal
-    },
+trivial_inits = {
     'zeros': {
         'function': jax.nn.initializers.zeros
     },
     'ones': {
         'function': jax.nn.initializers.ones
+    },
+    'variance_baseline': {
+        'function': jax.nn.initializers.variance_scaling,
+        'scale': 1.0 / np.sqrt(3.0),
+        'mode': 'fan_in',
+        'distribution': 'uniform'
+    },
+}
+
+inits = {
+    'orthogonal': {
+        'function': jax.nn.initializers.orthogonal
     },
     'xavier_uni': {
         'function': jax.nn.initializers.variance_scaling,
@@ -35,83 +44,23 @@ inits = {
         'mode': 'fan_avg',
         'distribution': 'truncated_normal'
     },
-    'lecun_uni': {
-        'function': jax.nn.initializers.variance_scaling,
-        'scale': 1,
-        'mode': 'fan_in',
-        'distribution': 'uniform'
-    },
-    'lecun_nor': {
-        'function': jax.nn.initializers.variance_scaling,
-        'scale': 1,
-        'mode': 'fan_in',
-        'distribution': 'truncated_normal'
-    },
     'he_uni': {
         'function': jax.nn.initializers.variance_scaling,
         'scale': 2,
         'mode': 'fan_in',
         'distribution': 'uniform'
     },
-    'he_nor': {
-        'function': jax.nn.initializers.variance_scaling,
-        'scale': 2,
-        'mode': 'fan_in',
-        'distribution': 'truncated_normal'
-    },
-    'variance_baseline': {
-        'function': jax.nn.initializers.variance_scaling,
-        'scale': 1.0 / np.sqrt(3.0),
-        'mode': 'fan_in',
-        'distribution': 'uniform'
-    },
-    'variance_0.1': {
-        'function': jax.nn.initializers.variance_scaling,
-        'scale': 0.1,
-        'mode': 'fan_in',
-        'distribution': 'uniform'
-    },
-    'variance_0.3': {
-        'function': jax.nn.initializers.variance_scaling,
-        'scale': 0.3,
-        'mode': 'fan_in',
-        'distribution': 'uniform'
-    },
-    'variance_0.8': {
-        'function': jax.nn.initializers.variance_scaling,
-        'scale': 0.8,
-        'mode': 'fan_in',
-        'distribution': 'uniform'
-    },
-    'variance_3': {
-        'function': jax.nn.initializers.variance_scaling,
-        'scale': 3,
-        'mode': 'fan_in',
-        'distribution': 'uniform'
-    },
-    'variance_5': {
-        'function': jax.nn.initializers.variance_scaling,
-        'scale': 5,
-        'mode': 'fan_in',
-        'distribution': 'uniform'
-    },
-    'variance_10': {
-        'function': jax.nn.initializers.variance_scaling,
-        'scale': 10,
-        'mode': 'fan_in',
-        'distribution': 'uniform'
-    }
 }
 
-activations = ['non_activation', 'relu', 'relu6', 'sigmoid', 'softplus', 'soft_sign', 'silu', 'log_sigmoid', 'hard_sigmoid', 'hard_silu', 'hard_swish', 'hard_tanh', 'elu', 'celu', 'selu', 'gelu', 'glu']
+activations = ['relu', 'relu6', 'silu', 'selu', 'gelu']
 
 normalizations = ['non_normalization', 'BatchNorm', 'LayerNorm']
 
-learning_rates = [10, 5, 2, 1, 0.1, 0.01, 0.001, 0.0001, 0.00001]
+learning_rates = [0.01, 0.001, 0.0001]
 
 batch_sizes = [32, 64, 128, 256, 512]
 
-epsilons = [1, 0.5, 0.3125, 0.03125, 0.003125, 0.0003125, 0.00003125, 0.000003125]
+epsilons = [0.03125, 0.003125, 0.0003125, 0.00003125, 0.000003125]
 
 widths = [32, 64, 128, 256, 512, 1024]
 
@@ -119,17 +68,17 @@ depths = [1, 2, 3, 4]
 
 convs = [1, 2, 3]
 
-update_periods = [1 ,2 ,3, 4, 8, 10, 12]
+update_periods = [1, 2, 3, 4, 8]
 
 target_update_periods = [10, 25, 50, 100, 200, 400, 800, 1600]
 
-gammas = [0.1, 0.5, 0.9, 0.99, 0.995, 0.999]
+gammas = [0.9, 0.99, 0.995]
 
-min_replay_historys = [125, 250, 375, 500, 625, 750, 875, 1000]
+min_replay_historys = [750, 875, 1000, 1500]
 
-num_atoms = [11, 21, 31, 41, 51, 61]
+num_atoms = [21, 31, 51, 61, 81]
 
-update_horizon = [1, 2, 3, 4, 5, 8, 10]
+update_horizon = [3, 4, 5, 8, 10]
 
 noisy_net = [True, False]
 
@@ -144,6 +93,7 @@ experiments = {
         "depth": depths,
         "normalization": normalizations,
         "init": inits,
+        "trivial_init": trivial_inits,
         "activation": activations,
         "update_period": update_periods,
         "target_update_period": target_update_periods,
@@ -157,8 +107,8 @@ experiments = {
         "conv": convs,
 }
 
-groups = { "effective_horizon" : ["update_period", "gamma"],
-                "constancy_of_parameters" : ["init", "update_period", "noisy_net"],
+groups = { "effective_horizon" : ["update_horizon", "gamma"],
+                "constancy_of_parameters" : ["trivial_inits", "update_horizon", "noisy_net"],
                 "network_starting_point" : ["init", "activation", "depth", "normalization"],
                 "network_architecture" : ["depth", "width", "normalization"],
                 "bellman_updates" : ["min_replay_history", "update_period", "target_update_period"],
@@ -263,7 +213,7 @@ def get(container, idx):
         return list(container.keys())[idx]
     return container[idx]
 
-def sample_group(grp, seed, num=1):
+def sample_group(grp, seed, num=1): 
     rng = np.random.default_rng(seed)
     total = list(itertools.product(*[experiments[exp] for exp in groups[grp]]))
     total = np.array(total)
@@ -271,6 +221,16 @@ def sample_group(grp, seed, num=1):
     sample = total[indices][0]
     cs = np.cumsum([0] + [len(experiments[exp]) for exp in groups[grp]])
     seed %= cs[-1]
-    idx = bisect.bisect(cs, seed)
-    sample[idx - 1] = get(experiments[groups[grp][idx-1]], seed - cs[idx-1])
+    idx = bisect.bisect(cs, seed) - 1
+    sample[idx] = get(experiments[groups[grp][idx]], seed - cs[idx])
+
+    logging.info(f"Sample Seed Index = {idx}")
+    for exp in groups[grp]:
+        logging.info(f"Parameter {exp} values:")
+        logging.info(experiments[exp])
+
     return sample
+
+if __name__ == "__main__":
+    logging.set_verbosity(logging.INFO)
+    print(sample_group("bellman_updates", seed=1))    
