@@ -105,10 +105,11 @@ experiments = {
         "noisy_net": noisy_net,
         "weight_decay": weight_decays,
         "conv": convs,
+        "batch_size": batch_sizes
 }
 
 groups = { "effective_horizon" : ["update_horizon", "gamma"],
-                "constancy_of_parameters" : ["trivial_inits", "update_horizon", "noisy_net"],
+                "constancy_of_parameters" : ["trivial_init", "update_horizon", "noisy_net"],
                 "network_starting_point" : ["init", "activation", "depth", "normalization"],
                 "network_architecture" : ["depth", "width", "normalization"],
                 "bellman_updates" : ["min_replay_history", "update_period", "target_update_period"],
