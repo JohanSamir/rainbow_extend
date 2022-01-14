@@ -225,9 +225,7 @@ def sample_group(grp, seed, num=1):
     sample[idx] = get(experiments[groups[grp][idx]], seed - cs[idx])
 
     logging.info(f"Sample Seed Index = {idx}")
-    for exp in groups[grp]:
-        logging.info(f"Parameter {exp} values:")
-        logging.info(experiments[exp])
+    logging.info(f"Changed {groups[grp][idx]} of group {grp} to {sample[idx]}")
 
     return sample
 
