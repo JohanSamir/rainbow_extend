@@ -72,7 +72,7 @@ update_periods = [1, 2, 3, 4, 8]
 
 target_update_periods = [10, 25, 50, 100, 200, 400, 800, 1600]
 
-gammas = [0.9, 0.99, 0.995]
+gammas = [0.99, 0.995, 0.999]
 
 min_replay_historys = [750, 875, 1000, 1500]
 
