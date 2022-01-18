@@ -85,7 +85,7 @@ noisy_net = [True, False]
 
 clip_rewards = ["True", "False"]
 
-weight_decays = [0.01, 0.1, 1]
+weight_decays = [0, 0.01, 0.1, 1]
 
 experiments = {
         "epsilon": epsilons,
