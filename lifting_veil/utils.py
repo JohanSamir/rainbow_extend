@@ -13,20 +13,8 @@ agents = {
     'rainbow_without': JaxDQNAgentNew,
 }
 
-trivial_inits = {
-    'zeros': {
-        'function': jax.nn.initializers.zeros
-    },
-    'ones': {
-        'function': jax.nn.initializers.ones
-    },
-    'variance_baseline': {
-        'function': jax.nn.initializers.variance_scaling,
-        'scale': 1.0 / np.sqrt(3.0),
-        'mode': 'fan_in',
-        'distribution': 'uniform'
-    },
-}
+trivial_inits = ['zeros', 'ones', 'variance_baseline']
+nontrivial_inits = ['orthogonal', 'xavier_uni', 'xavier_nor', 'he_uni']
 
 inits = {
     'orthogonal': {
@@ -47,6 +35,19 @@ inits = {
     'he_uni': {
         'function': jax.nn.initializers.variance_scaling,
         'scale': 2,
+        'mode': 'fan_in',
+        'distribution': 'uniform'
+    },
+
+    'zeros': {
+        'function': jax.nn.initializers.zeros
+    },
+    'ones': {
+        'function': jax.nn.initializers.ones
+    },
+    'variance_baseline': {
+        'function': jax.nn.initializers.variance_scaling,
+        'scale': 1.0 / np.sqrt(3.0),
         'mode': 'fan_in',
         'distribution': 'uniform'
     },
@@ -94,6 +95,7 @@ experiments = {
         "normalization": normalizations,
         "init": inits,
         "trivial_init": trivial_inits,
+        "nontrivial_init": nontrivial_inits,
         "activation": activations,
         "update_period": update_periods,
         "target_update_period": target_update_periods,
@@ -110,7 +112,7 @@ experiments = {
 
 groups = { "effective_horizon" : ["update_horizon", "gamma"],
                 "constancy_of_parameters" : ["trivial_init", "update_horizon", "noisy_net"],
-                "network_starting_point" : ["init", "activation", "depth", "normalization"],
+                "network_starting_point" : ["nontrivial_init", "activation", "depth", "normalization"],
                 "network_architecture" : ["depth", "width", "normalization"],
                 "bellman_updates" : ["min_replay_history", "update_period", "target_update_period"],
                 "distribution_parameterization" : ["clip_rewards", "num_atoms"],
@@ -163,7 +165,7 @@ def get_gin_bindings(exp, agent_name, initial_seed, value, test):
     elif exp == "normalization":
         gin_bindings += [f"{agent_name}.normalization = '{value}'"]
 
-    elif exp == "init":
+    elif "init" in exp:
         gin_bindings = get_init_bidings(agent_name, value, initial_seed)
 
     elif exp == "activation":
@@ -198,6 +200,7 @@ def get_gin_bindings(exp, agent_name, initial_seed, value, test):
     
     else:
         logging.error("Error! Check the kind of experiment")
+        raise ValueError("Experiment not recognized")
 
     if test:
         gin_bindings.extend(["Runner.num_iterations=4", "Runner.training_steps=200"])
@@ -208,11 +211,6 @@ def get_gin_bindings(exp, agent_name, initial_seed, value, test):
 def repr_values(values):
     cat = "_".join(str(val) for val in values)
     return cat.replace(".", "p")
-
-def get(container, idx):
-    if type(container) is dict:
-        return list(container.keys())[idx]
-    return container[idx]
 
 def cast_to_int(lst):
     for idx, el in enumerate(lst):
@@ -229,7 +227,7 @@ def sample_group(grp, seed, num=1):
     cs = np.cumsum([0] + [len(experiments[exp]) for exp in groups[grp]])
     seed %= cs[-1]
     idx = bisect.bisect(cs, seed) - 1
-    sample[idx] = get(experiments[groups[grp][idx]], seed - cs[idx])
+    sample[idx] = experiments[groups[grp][idx]][seed - cs[idx]]
     logging.info(f"Sample Seed Index = {idx}")
     logging.info(f"Changed {groups[grp][idx]} of group {grp} to {sample[idx]}")
 
@@ -242,7 +240,7 @@ def print_groups():
       cs = np.cumsum([0] + [len(experiments[exp]) for exp in groups[grp]])
       for seed in range(cs[-1]):
         idx = bisect.bisect(cs, seed) - 1
-        sample = get(experiments[groups[grp][idx]], seed - cs[idx])
+        sample = experiments[groups[grp][idx]][seed - cs[idx]]
         print(f"  '{seed}': '{groups[grp][idx]}={sample}',")
       print('}')
 

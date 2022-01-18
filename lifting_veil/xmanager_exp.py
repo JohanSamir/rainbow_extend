@@ -20,7 +20,7 @@ import utils
 FLAGS = flags.FLAGS
 flags.DEFINE_string("env", "cartpole", "the environment the experiment will be run in")
 
-flags.DEFINE_string("agent", "dqn", "the agent used in the experiment")
+flags.DEFINE_string("agent", "rainbow", "the agent used in the experiment")
 
 flags.DEFINE_integer("rl_seed", "1", "the agent-environment PRNG seed")
 
