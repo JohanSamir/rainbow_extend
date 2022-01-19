@@ -24,17 +24,17 @@ target_update_periods = [100, 800]
 
 gammas = [0.99, 0.999]
 
-min_replay_historys = [750, 875, 1000, 1500]
+min_replay_historys = [750, 1000, 1500]
 
-num_atoms = [21, 31, 51, 61, 81]
+num_atoms = [31, 51, 61]
 
-update_horizon = [3, 4, 5, 8, 10]
+update_horizon = [3, 5, 10]
 
 noisy_net = [True, False]
 
 clip_rewards = ["True", "False"]
 
-weight_decays = [0, 1]
+weight_decays = [0, 0.01]
 
 experiments = {
     "epsilon": epsilons,
