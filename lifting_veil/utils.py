@@ -7,7 +7,7 @@ import bisect
 import classic_params
 import minatar_params
 
-suites = {"classic": clasic_params, "minatar": minatar_params}
+suites = {"classic": classic_params, "minatar": minatar_params}
 
 agents = {
     'dqn': JaxDQNAgentNew,
