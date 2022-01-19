@@ -133,7 +133,7 @@ def print_groups(category="classic"):
     print('groups = {}')
     for grp in suites[category].groups:
       print(f"groups['{grp}'] = " + "{")
-      cs = np.cumsum([0] + [len(suites[category].experiments[exp]) for exp in suites[FLAGS.category].groups[grp]])
+      cs = np.cumsum([0] + [len(suites[category].experiments[exp]) for exp in suites[category].groups[grp]])
       for seed in range(cs[-1]):
         idx = bisect.bisect(cs, seed) - 1
         sample = suites[category].experiments[suites[category].groups[grp][idx]][seed - cs[idx]]
