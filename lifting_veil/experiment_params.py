@@ -1,5 +1,6 @@
 from agents.dqn_agent_new import *
 from agents.rainbow_agent_new import *
+import numpy as np
 
 def experiments_env(environment="classic"):
 

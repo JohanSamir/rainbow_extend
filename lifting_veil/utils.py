@@ -4,7 +4,10 @@ from absl import logging
 import numpy as np
 import itertools
 import bisect
-from experiment_params import *
+import classic_params
+import minatar_params
+
+suites = {"classic": clasic_params, "minatar": minatar_params}
 
 agents = {
     'dqn': JaxDQNAgentNew,
@@ -111,30 +114,31 @@ def cast_to_int(lst):
             lst[idx] = int(el)
     return lst
 
-def sample_group(grp, seed, num=1): 
+def sample_group(category, grp, seed, num=1): 
     rng = np.random.default_rng(seed)
-    total = list(itertools.product(*[experiments[exp] for exp in groups[grp]]))
+
+    total = list(itertools.product(*[experiments[exp] for exp in suites[category].groups[grp]]))
     total = np.array(total)
     indices = rng.choice(len(total), num, replace=False)
     sample = cast_to_int(list(total[indices][0]))        
-    cs = np.cumsum([0] + [len(experiments[exp]) for exp in groups[grp]])
+    cs = np.cumsum([0] + [len(experiments[exp]) for exp in suites[category].groups[grp]])
     seed %= cs[-1]
     idx = bisect.bisect(cs, seed) - 1
-    sample[idx] = experiments[groups[grp][idx]][seed - cs[idx]]
+    sample[idx] = experiments[suites[category].groups[grp][idx]][seed - cs[idx]]
     logging.info(f"Sample Seed Index = {idx}")
-    logging.info(f"Changed {groups[grp][idx]} of group {grp} to {sample[idx]}")
+    logging.info(f"Changed {suites[category].groups[grp][idx]} of group {grp} to {sample[idx]}")
 
     return sample
 
-def print_groups():
+def print_groups(category="classic"):
     print('groups = {}')
-    for grp in groups:
+    for grp in suites[category].groups:
       print(f"groups['{grp}'] = " + "{")
-      cs = np.cumsum([0] + [len(experiments[exp]) for exp in groups[grp]])
+      cs = np.cumsum([0] + [len(experiments[exp]) for exp in suites[FLAGS.category].groups[grp]])
       for seed in range(cs[-1]):
         idx = bisect.bisect(cs, seed) - 1
-        sample = experiments[groups[grp][idx]][seed - cs[idx]]
-        print(f"  '{seed}': '{groups[grp][idx]}={sample}',")
+        sample = experiments[suites[category].groups[grp][idx]][seed - cs[idx]]
+        print(f"  '{seed}': '{suites[category].groups[grp][idx]}={sample}',")
       print('}')
 
 if __name__ == "__main__":
