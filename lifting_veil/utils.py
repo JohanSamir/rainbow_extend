@@ -4,7 +4,10 @@ from absl import logging
 import numpy as np
 import itertools
 import bisect
+import classic_params
+import minatar_params
 
+suites = {"classic": classic_params, "minatar": minatar_params}
 
 agents = {
     'dqn': JaxDQNAgentNew,
@@ -12,113 +15,6 @@ agents = {
     'c51': JaxRainbowAgentNew,
     'rainbow_without': JaxDQNAgentNew,
 }
-
-trivial_inits = ['zeros', 'ones', 'variance_baseline']
-nontrivial_inits = ['orthogonal', 'xavier_uni', 'xavier_nor', 'he_uni']
-
-inits = {
-    'orthogonal': {
-        'function': jax.nn.initializers.orthogonal
-    },
-    'xavier_uni': {
-        'function': jax.nn.initializers.variance_scaling,
-        'scale': 1,
-        'mode': 'fan_avg',
-        'distribution': 'uniform'
-    },
-    'xavier_nor': {
-        'function': jax.nn.initializers.variance_scaling,
-        'scale': 1,
-        'mode': 'fan_avg',
-        'distribution': 'truncated_normal'
-    },
-    'he_uni': {
-        'function': jax.nn.initializers.variance_scaling,
-        'scale': 2,
-        'mode': 'fan_in',
-        'distribution': 'uniform'
-    },
-
-    'zeros': {
-        'function': jax.nn.initializers.zeros
-    },
-    'ones': {
-        'function': jax.nn.initializers.ones
-    },
-    'variance_baseline': {
-        'function': jax.nn.initializers.variance_scaling,
-        'scale': 1.0 / np.sqrt(3.0),
-        'mode': 'fan_in',
-        'distribution': 'uniform'
-    },
-}
-
-activations = ['relu', 'relu6', 'silu', 'selu', 'gelu']
-
-normalizations = ['non_normalization', 'BatchNorm', 'LayerNorm']
-
-learning_rates = [0.01, 0.001, 0.0001]
-
-batch_sizes = [32, 64, 128, 256, 512]
-
-epsilons = [0.03125, 0.003125, 0.0003125, 0.00003125, 0.000003125]
-
-widths = [32, 64, 128, 256, 512, 1024]
-
-depths = [1, 2, 3, 4]
-
-convs = [1, 2, 3]
-
-update_periods = [1, 2, 3, 4, 8]
-
-target_update_periods = [10, 25, 50, 100, 200, 400, 800, 1600]
-
-gammas = [0.99, 0.995, 0.999]
-
-min_replay_historys = [750, 875, 1000, 1500]
-
-num_atoms = [21, 31, 51, 61, 81]
-
-update_horizon = [3, 4, 5, 8, 10]
-
-noisy_net = [True, False]
-
-clip_rewards = ["True", "False"]
-
-weight_decays = [0, 0.01, 0.1, 1]
-
-experiments = {
-        "epsilon": epsilons,
-        "learning_rate": learning_rates,
-        "width": widths,
-        "depth": depths,
-        "normalization": normalizations,
-        "init": inits,
-        "trivial_init": trivial_inits,
-        "nontrivial_init": nontrivial_inits,
-        "activation": activations,
-        "update_period": update_periods,
-        "target_update_period": target_update_periods,
-        "gamma": gammas,
-        "min_replay_history": min_replay_historys,
-        "num_atoms": num_atoms,
-        "update_horizon": update_horizon,
-        "clip_rewards": clip_rewards,
-        "noisy_net": noisy_net,
-        "weight_decay": weight_decays,
-        "conv": convs,
-        "batch_size": batch_sizes
-}
-
-groups = { "effective_horizon" : ["update_horizon", "gamma"],
-                "constancy_of_parameters" : ["trivial_init", "update_horizon", "noisy_net"],
-                "network_starting_point" : ["nontrivial_init", "activation", "depth", "normalization"],
-                "network_architecture" : ["depth", "width", "normalization"],
-                "bellman_updates" : ["min_replay_history", "update_period", "target_update_period"],
-                "distribution_parameterization" : ["clip_rewards", "num_atoms"],
-                "optimizer_parameters" : ["learning_rate", "epsilon", "batch_size", "weight_decay"],
-                }
-
 
 def get_init_bidings(agent_name, init, seed=None):
     initializer = inits[init]['function'].__name__
@@ -218,30 +114,30 @@ def cast_to_int(lst):
             lst[idx] = int(el)
     return lst
 
-def sample_group(grp, seed, num=1): 
+def sample_group(category, grp, seed, num=1): 
     rng = np.random.default_rng(seed)
-    total = list(itertools.product(*[experiments[exp] for exp in groups[grp]]))
+    total = list(itertools.product(*[suites[category].experiments[exp] for exp in suites[category].groups[grp]]))
     total = np.array(total)
     indices = rng.choice(len(total), num, replace=False)
     sample = cast_to_int(list(total[indices][0]))        
-    cs = np.cumsum([0] + [len(experiments[exp]) for exp in groups[grp]])
+    cs = np.cumsum([0] + [len(suites[category].experiments[exp]) for exp in suites[category].groups[grp]])
     seed %= cs[-1]
     idx = bisect.bisect(cs, seed) - 1
-    sample[idx] = experiments[groups[grp][idx]][seed - cs[idx]]
+    sample[idx] = suites[category].experiments[suites[category].groups[grp][idx]][seed - cs[idx]]
     logging.info(f"Sample Seed Index = {idx}")
-    logging.info(f"Changed {groups[grp][idx]} of group {grp} to {sample[idx]}")
+    logging.info(f"Changed {suites[category].groups[grp][idx]} of group {grp} to {sample[idx]}")
 
     return sample
 
-def print_groups():
+def print_groups(category="classic"):
     print('groups = {}')
-    for grp in groups:
+    for grp in suites[category].groups:
       print(f"groups['{grp}'] = " + "{")
-      cs = np.cumsum([0] + [len(experiments[exp]) for exp in groups[grp]])
+      cs = np.cumsum([0] + [len(suites[category].experiments[exp]) for exp in suites[FLAGS.category].groups[grp]])
       for seed in range(cs[-1]):
         idx = bisect.bisect(cs, seed) - 1
-        sample = experiments[groups[grp][idx]][seed - cs[idx]]
-        print(f"  '{seed}': '{groups[grp][idx]}={sample}',")
+        sample = suites[category].experiments[suites[category].groups[grp][idx]][seed - cs[idx]]
+        print(f"  '{seed}': '{suites[category].groups[grp][idx]}={sample}',")
       print('}')
 
 if __name__ == "__main__":
