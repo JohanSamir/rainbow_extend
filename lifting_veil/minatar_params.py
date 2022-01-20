@@ -26,7 +26,7 @@ gammas = [0.99, 0.999]
 
 min_replay_historys = [750, 1000, 1500]
 
-num_atoms = [31, 51, 61]
+num_atoms = [21, 31, 51, 61, 81]
 
 update_horizon = [3, 5, 10]
 
