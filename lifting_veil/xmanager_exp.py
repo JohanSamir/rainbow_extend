@@ -16,8 +16,6 @@ from agents.rainbow_agent_new import *
 # from agents import minatar_env
 
 import utils
-import classic_params
-import minatar_params
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string("env", "cartpole", "the environment the experiment will be run in")
@@ -66,3 +64,4 @@ def main(_):
 
 if __name__ == "__main__":
     app.run(main)
+    

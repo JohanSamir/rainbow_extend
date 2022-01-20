@@ -6,8 +6,14 @@ import itertools
 import bisect
 import classic_params
 import minatar_params
+import atari_100k_params
 
-suites = {"classic": classic_params, "minatar": minatar_params}
+
+suites = {
+    "classic": classic_params,
+    "minatar": minatar_params,
+    "atari_100k": atari_100k_params
+}
 
 agents = {
     'dqn': JaxDQNAgentNew,
