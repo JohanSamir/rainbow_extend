@@ -24,6 +24,7 @@ from dopamine.jax import losses
 from dopamine.jax import networks
 from dopamine.jax.agents.dqn import dqn_agent
 from dopamine.replay_memory import prioritized_replay_buffer
+from dopamine.labs.atari_100k import atari_100k_rainbow_agent
 import gin
 import jax
 import jax.numpy as jnp
@@ -176,6 +177,8 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
                  hidden_layer=2,
                  hidden_conv=0,
                  neurons=512,
+                 data_augmentation=False,
+                 preprocess_fn=None,
                  replay_scheme='prioritized',
                  noisy=False,
                  dueling=False,
@@ -244,6 +247,18 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
         self._alpha = alpha
         self._clip_value_min = clip_value_min
         self._rng = jax.random.PRNGKey(seed)
+
+
+        if preprocess_fn == "data_augmentation":
+            self._preprocess_fn = functools.partial(atari_100k_rainbow_agent.preprocess_inputs_with_augmentation,
+                data_augmentation=data_augmentation)
+        elif preprocess_fn is None:
+            self.network_def = network(num_actions=num_actions)
+            self._preprocess_fn = networks.identity_preprocess_fn
+        else:
+            self.network_def = network(num_actions=num_actions, inputs_preprocessed=True)
+            self._preprocess_fn = preprocess_fn                
+
         super(JaxDQNAgentNew,
               self).__init__(num_actions=num_actions,
                              update_period=update_period,
@@ -264,8 +279,10 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
                                                        initzer=self._initzer,
                                                        normalization=self._normalization,
                                                        layer_funct=self._layer_funct),
-                             optimizer=optimizer,
+                             otimizer=optimizer,
                              epsilon_fn=dqn_agent.identity_epsilon if self._noisy == True else epsilon_fn)
+        
+
         self._replay_scheme = replay_scheme
 
     def _build_networks_and_optimizer(self):
@@ -299,6 +316,9 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
             if self.training_steps % self.update_period == 0:
                 self._sample_from_replay_buffer()
 
+                states = self._preprocess_fn(self.replay_elements['state'])
+                next_states = self._preprocess_fn(self.replay_elements['next_state'])
+
                 if self._replay_scheme == 'prioritized':
                     # The original prioritized experience replay uses a linear exponent
                     # schedule 0.4 -> 1.0. Comparing the schedule to a fixed exponent of
@@ -317,9 +337,9 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
                     self.target_network_params,
                     self.optimizer,
                     self.optimizer_state, 
-                    self.replay_elements['state'],
+                    states,
                     self.replay_elements['action'],
-                    self.replay_elements['next_state'],
+                    next_state,
                     self.replay_elements['reward'],
                     self.replay_elements['terminal'],
                     loss_weights,
@@ -388,7 +408,8 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
         if not self.eval_mode:
             self._train_step()
 
-        self._rng, self.action = select_action(self.network_def, self.online_params, self.state, self._rng,
+        state = self._preprocess_fn(self.state)
+        self._rng, self.action = select_action(self.network_def, self.online_params, state, self._rng,
                                                self.num_actions, self.eval_mode, self.epsilon_eval, self.epsilon_train,
                                                self.epsilon_decay_period, self.training_steps, self.min_replay_history,
                                                self.epsilon_fn)
