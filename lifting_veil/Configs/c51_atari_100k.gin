@@ -11,15 +11,15 @@ import agents.external_configurations
 import agents.minatar_env
 import replay_runner
 
-JaxDQNAgent.epsilon_train = 0.01
-JaxDQNAgent.epsilon_eval = 0.001
-JaxDQNAgent.epsilon_decay_period = 2000  # agent steps
+JaxDQNAgent.epsilon_train = 0.1
+JaxDQNAgent.epsilon_eval = 0.05
+JaxDQNAgent.epsilon_decay_period = 5000  # agent steps
 
 JaxRainbowAgentNew.gamma = 0.99
 JaxRainbowAgentNew.update_horizon = 10 # Rainbow
 JaxRainbowAgentNew.min_replay_history = 1600
 JaxRainbowAgentNew.update_period = 1 
-JaxRainbowAgentNew.target_update_period = 2000
+JaxRainbowAgentNew.target_update_period = 1
 
 JaxRainbowAgentNew.optimizer = 'adam'
 JaxRainbowAgentNew.noisy = False
@@ -43,7 +43,7 @@ JaxRainbowAgentNew.vmax = 100.
 JaxRainbowAgentNew.replay_scheme = 'uniform' 
 JaxRainbowAgentNew.network  = @networks_new.RainbowDQN 
 JaxRainbowAgentNew.epsilon_fn = @jax.agents.dqn.dqn_agent.linearly_decaying_epsilon
-Atari100kRainbowAgent.data_augmentation = False
+Atari100kRainbowAgent.data_augmentation = True
 
 create_opt.learning_rate = 0.0001
 create_opt.eps = 0.00015
