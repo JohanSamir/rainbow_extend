@@ -256,8 +256,7 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
             self.network_def = network(num_actions=num_actions)
             self._preprocess_fn = networks.identity_preprocess_fn
         else:
-            self.network_def = network(num_actions=num_actions, inputs_preprocessed=True)
-            self._preprocess_fn = preprocess_fn                
+            print("error: choose a right preprocess_fn parameter ")
 
         super(JaxDQNAgentNew,
               self).__init__(num_actions=num_actions,
@@ -279,7 +278,7 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
                                                        initzer=self._initzer,
                                                        normalization=self._normalization,
                                                        layer_funct=self._layer_funct),
-                             otimizer=optimizer,
+                             optimizer=optimizer,
                              epsilon_fn=dqn_agent.identity_epsilon if self._noisy == True else epsilon_fn)
         
 
@@ -316,8 +315,9 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
             if self.training_steps % self.update_period == 0:
                 self._sample_from_replay_buffer()
 
-                states = self._preprocess_fn(self.replay_elements['state'])
-                next_states = self._preprocess_fn(self.replay_elements['next_state'])
+                self._rng, rng1, rng2 = jax.random.split(self._rng, num=3)
+                states = self._preprocess_fn(self.replay_elements['state'], rng=rng1)
+                next_states = self._preprocess_fn(self.replay_elements['next_state'], rng=rng2)
 
                 if self._replay_scheme == 'prioritized':
                     # The original prioritized experience replay uses a linear exponent
@@ -407,8 +407,9 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
 
         if not self.eval_mode:
             self._train_step()
-
-        state = self._preprocess_fn(self.state)
+        
+        self._rng, rng1= jax.random.split(self._rng, num=2)
+        state = self._preprocess_fn(self.state, rng=rng1)
         self._rng, self.action = select_action(self.network_def, self.online_params, state, self._rng,
                                                self.num_actions, self.eval_mode, self.epsilon_eval, self.epsilon_train,
                                                self.epsilon_decay_period, self.training_steps, self.min_replay_history,
@@ -432,8 +433,10 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
         if not self.eval_mode:
             self._store_transition(self._last_observation, self.action, reward, False)
             self._train_step()
-
-        self._rng, self.action = select_action(self.network_def, self.online_params, self.state, self._rng,
+        
+        self._rng, rng1= jax.random.split(self._rng, num=2)
+        state = self._preprocess_fn(self.state, rng=rng1)
+        self._rng, self.action = select_action(self.network_def, self.online_params, state, self._rng,
                                                self.num_actions, self.eval_mode, self.epsilon_eval, self.epsilon_train,
                                                self.epsilon_decay_period, self.training_steps, self.min_replay_history,
                                                self.epsilon_fn)
