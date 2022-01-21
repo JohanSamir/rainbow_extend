@@ -42,6 +42,8 @@ variance_scaling.distribution='uniform'
 
 JaxDQNAgentNew.layer_funct = 'relu'
 JaxDQNAgentNew.normalization = 'non_normalization'
+JaxDQNAgentNew.data_augmentation = True
+JaxDQNAgentNew.preprocess_fn="data_augmentation"
 
 JaxDQNAgentNew.network = @networks_new.DQNNetwork
 JaxDQNAgentNew.epsilon_fn = @jax.agents.dqn.dqn_agent.linearly_decaying_epsilon
