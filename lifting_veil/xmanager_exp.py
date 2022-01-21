@@ -5,6 +5,8 @@ jax.config.update('jax_platform_name', 'cpu')
 
 from dopamine.discrete_domains import gym_lib
 from dopamine.discrete_domains import run_experiment
+from dopamine.discrete_domains import atari_lib
+
 from absl import flags, app, logging
 import gin.tf
 import sys
@@ -16,6 +18,7 @@ from agents.rainbow_agent_new import *
 # from agents import minatar_env
 
 import utils
+
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string("env", "cartpole", "the environment the experiment will be run in")
@@ -47,10 +50,16 @@ def main(_):
 
     agent_name = utils.agents[FLAGS.agent].__name__
 
-    gin_file = f'Configs/{FLAGS.agent}_{FLAGS.env}.gin'
+    if FLAGS.category == "atari_100k":
+        gin_file = f'Configs/{FLAGS.agent}.gin'
+        gin.clear_config()
+        gin_bindings = "create_atari_environment.game_name={FLAGS.env}"
 
-    gin.clear_config()
-    gin_bindings = []
+    else:
+        gin_file = f'Configs/{FLAGS.agent}_{FLAGS.env}.gin'
+        gin.clear_config()
+        gin_bindings = []
+
     for exp, value in zip(utils.suites[FLAGS.category].groups[grp], values):
         gin_bindings.extend(utils.get_gin_bindings(exp, agent_name, FLAGS.rl_seed, value, False))
     gin.parse_config_files_and_bindings([gin_file], gin_bindings, skip_unknown=False)
@@ -64,4 +73,3 @@ def main(_):
 
 if __name__ == "__main__":
     app.run(main)
-    
