@@ -53,7 +53,7 @@ def main(_):
     if FLAGS.category == "atari_100k":
         gin_file = f'Configs/{FLAGS.agent}_atari_100k.gin'
         gin.clear_config()
-        gin_bindings = [f'create_atari_environment.game_name={FLAGS.env}']
+        gin_bindings = [f'create_atari_environment.game_name="{FLAGS.env}"']
     else:
         gin_file = f'Configs/{FLAGS.agent}_{FLAGS.env}.gin'
         gin.clear_config()
