@@ -339,7 +339,7 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
                     self.optimizer_state, 
                     states,
                     self.replay_elements['action'],
-                    next_state,
+                    next_states,
                     self.replay_elements['reward'],
                     self.replay_elements['terminal'],
                     loss_weights,
@@ -408,9 +408,7 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
         if not self.eval_mode:
             self._train_step()
         
-        self._rng, rng1= jax.random.split(self._rng, num=2)
-        state = self._preprocess_fn(self.state, rng=rng1)
-        self._rng, self.action = select_action(self.network_def, self.online_params, state, self._rng,
+        self._rng, self.action = select_action(self.network_def, self.online_params, self.state, self._rng,
                                                self.num_actions, self.eval_mode, self.epsilon_eval, self.epsilon_train,
                                                self.epsilon_decay_period, self.training_steps, self.min_replay_history,
                                                self.epsilon_fn)
@@ -434,9 +432,7 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
             self._store_transition(self._last_observation, self.action, reward, False)
             self._train_step()
         
-        self._rng, rng1= jax.random.split(self._rng, num=2)
-        state = self._preprocess_fn(self.state, rng=rng1)
-        self._rng, self.action = select_action(self.network_def, self.online_params, state, self._rng,
+        self._rng, self.action = select_action(self.network_def, self.online_params, self.state, self._rng,
                                                self.num_actions, self.eval_mode, self.epsilon_eval, self.epsilon_train,
                                                self.epsilon_decay_period, self.training_steps, self.min_replay_history,
                                                self.epsilon_fn)
