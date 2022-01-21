@@ -43,7 +43,7 @@ variance_scaling.distribution='uniform'
 JaxDQNAgentNew.layer_funct = 'relu'
 JaxDQNAgentNew.normalization = 'non_normalization'
 JaxDQNAgentNew.data_augmentation = True
-JaxDQNAgentNew.preprocess_fn="data_augmentation"
+JaxDQNAgentNew.preprocess_fn = "data_augmentation"
 
 JaxDQNAgentNew.network = @networks_new.DQNNetwork
 JaxDQNAgentNew.epsilon_fn = @jax.agents.dqn.dqn_agent.linearly_decaying_epsilon
@@ -64,7 +64,6 @@ AtariPreprocessing.terminal_on_life_loss = True
 Runner.num_iterations = 10
 Runner.training_steps =  10000  # agent steps
 Runner.max_steps_per_episode = 27000  # agent steps
-
 
 OutOfGraphPrioritizedReplayBuffer.replay_capacity = 1000000 # 1M as a proxy for unbounded memory
 OutOfGraphPrioritizedReplayBuffer.batch_size = 32
