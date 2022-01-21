@@ -19,9 +19,9 @@ JaxDQNAgent.epsilon_eval = 0.001
 JaxDQNAgent.epsilon_decay_period = 2000  # agent steps
 
 JaxDQNAgentNew.gamma = 0.99
-JaxDQNAgentNew.update_horizon = 3
+JaxDQNAgentNew.update_horizon = 10
 JaxDQNAgentNew.min_replay_history = 1600
-JaxDQNAgentNew.update_period = 4
+JaxDQNAgentNew.update_period = 1
 JaxDQNAgentNew.target_update_period = 2000
 
 JaxDQNAgentNew.optimizer = 'adam'
@@ -32,7 +32,7 @@ JaxDQNAgentNew.hidden_layer = 0
 JaxDQNAgentNew.neurons = 512
 JaxDQNAgentNew.replay_scheme = 'prioritized' #'prioritized' or 'uniform'
 JaxDQNAgentNew.target_opt = 1 #0:DQN 1:Double DQN 2:Munchausen DQN
-JaxDQNAgentNew.mse_inf = False
+JaxDQNAgentNew.mse_inf = True
 JaxDQNAgentNew.noisy = True
 JaxDQNAgentNew.dueling = True
 JaxDQNAgentNew.initzer = @variance_scaling()
