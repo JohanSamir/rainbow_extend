@@ -10,9 +10,9 @@ learning_rates = [0.01, 0.0001]
 
 batch_sizes = [32, 64, 128, 256, 512]
 
-epsilons = [0.03125, 0.0003125, 0.000003125]
+epsilons = [0.015, 0.00015, 0.0000015]
 
-widths = [128, 256]
+widths = [256, 512, 768]
 
 depths = [1, 2, 3, 4]
 
@@ -20,15 +20,15 @@ convs = [1, 2, 3]
 
 update_periods = [1, 4]
 
-target_update_periods = [100, 800]
+target_update_periods = [1, 2000]
 
 gammas = [0.99, 0.999]
 
-min_replay_historys = [750, 1000, 1500]
+min_replay_historys = [1000, 1600, 2200]
 
 num_atoms = [21, 31, 51, 61, 81]
 
-update_horizon = [3, 5, 10]
+update_horizon = [5, 10, 15]
 
 noisy_net = [True, False]
 
