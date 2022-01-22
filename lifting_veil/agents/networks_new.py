@@ -137,13 +137,13 @@ class DQNNetwork(nn.Module):
         elif self.net_conf == 'atari':
             # We need to add a "batch dimension" as nn.Conv expects it, yet vmap will
             # have removed the true batch dimension.
+            ks = [8, 4, 3]
+            fts = [32, 64, 64]
+            sts = [4, 2, 1]
             x = x.astype(jnp.float32) / 255.
-            x = nn.Conv(features=32, kernel_size=(8, 8), strides=(4, 4), kernel_init=self.initzer)(x)
-            x = layer_funct_inf[self.layer_funct](x)
-            x = nn.Conv(features=64, kernel_size=(4, 4), strides=(2, 2), kernel_init=self.initzer)(x)
-            x = layer_funct_inf[self.layer_funct](x)
-            x = nn.Conv(features=64, kernel_size=(3, 3), strides=(1, 1), kernel_init=self.initzer)(x)
-            x = layer_funct_inf[self.layer_funct](x)
+            for i in range(self.hidden_conv)
+                x = nn.Conv(features=fts[i], kernel_size=(ks[i], ks[i]), strides=(sts[i], sts[i]), kernel_init=self.initzer)(x)
+                x = layer_funct_inf[self.layer_funct](x)
             x = x.reshape((-1))  # flatten
 
         elif self.net_conf == 'classic':
