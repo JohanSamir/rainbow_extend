@@ -59,4 +59,5 @@ groups = { "effective_horizon" : ["update_horizon", "gamma"],
                 "bellman_updates" : ["min_replay_history", "update_period", "target_update_period"],
                 "distribution_parameterization" : ["num_atoms"],
                 "optimizer_parameters" : ["learning_rate", "epsilon", "batch_size", "weight_decay"],
+                "default" : [ ]
                 }
