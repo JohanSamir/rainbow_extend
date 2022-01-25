@@ -20,6 +20,7 @@ agents = {
     'rainbow': JaxRainbowAgentNew,
     'c51': JaxRainbowAgentNew,
     'rainbow_without': JaxDQNAgentNew,
+    'drq_eps': JaxDQNAgentNew    
 }
 
 def get_init_bidings(agent_name, init, seed=None):
