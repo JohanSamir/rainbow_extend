@@ -107,6 +107,5 @@ groups = { "effective_horizon" : ["update_horizon", "gamma"],
                 "network_architecture" : ["depth", "width", "normalization"],
                 "bellman_updates" : ["min_replay_history", "update_period", "target_update_period"],
                 "distribution_parameterization" : ["clip_rewards", "num_atoms"],
-                "optimizer_parameters" : ["learning_rate", "epsilon", "batch_size", "weight_decay"],
-                "default" : [ ]
+                "optimizer_parameters" : ["learning_rate", "epsilon", "batch_size", "weight_decay"]
                 }

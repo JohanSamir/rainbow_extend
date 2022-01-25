@@ -122,17 +122,22 @@ def cast_to_int(lst):
     return lst
 
 def sample_group(category, grp, seed, num=1): 
-    rng = np.random.default_rng(seed)
-    total = list(itertools.product(*[suites[category].experiments[exp] for exp in suites[category].groups[grp]]))
-    total = np.array(total)
-    indices = rng.choice(len(total), num, replace=False)
-    sample = cast_to_int(list(total[indices][0]))        
-    cs = np.cumsum([0] + [len(suites[category].experiments[exp]) for exp in suites[category].groups[grp]])
-    seed %= cs[-1]
-    idx = bisect.bisect(cs, seed) - 1
-    sample[idx] = suites[category].experiments[suites[category].groups[grp][idx]][seed - cs[idx]]
-    logging.info(f"Sample Seed Index = {idx}")
-    logging.info(f"Changed {suites[category].groups[grp][idx]} of group {grp} to {sample[idx]}")
+
+    if grp == "default"
+        sample = []
+
+    else:
+        rng = np.random.default_rng(seed)
+        total = list(itertools.product(*[suites[category].experiments[exp] for exp in suites[category].groups[grp]]))
+        total = np.array(total)
+        indices = rng.choice(len(total), num, replace=False)
+        sample = cast_to_int(list(total[indices][0]))        
+        cs = np.cumsum([0] + [len(suites[category].experiments[exp]) for exp in suites[category].groups[grp]])
+        seed %= cs[-1]
+        idx = bisect.bisect(cs, seed) - 1
+        sample[idx] = suites[category].experiments[suites[category].groups[grp][idx]][seed - cs[idx]]
+        logging.info(f"Sample Seed Index = {idx}")
+        logging.info(f"Changed {suites[category].groups[grp][idx]} of group {grp} to {sample[idx]}")
 
     return sample
 
