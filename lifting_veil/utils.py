@@ -123,7 +123,7 @@ def cast_to_int(lst):
 
 def sample_group(category, grp, seed, num=1): 
 
-    if grp == "default"
+    if grp == "default":
         sample = []
 
     else:
