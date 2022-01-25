@@ -32,10 +32,10 @@ JaxDQNAgentNew.hidden_layer = 0
 JaxRainbowAgentNew.hidden_conv = 3
 JaxDQNAgentNew.neurons = 512
 JaxDQNAgentNew.replay_scheme = 'uniform' #'prioritized' or 'uniform'
-JaxDQNAgentNew.target_opt = 0 #0:DQN 1:Double DQN 2:Munchausen DQN
+JaxDQNAgentNew.target_opt = 1 #0:DQN 1:Double DQN 2:Munchausen DQN
 JaxDQNAgentNew.mse_inf = True
 JaxDQNAgentNew.noisy = False
-JaxDQNAgentNew.dueling = False
+JaxDQNAgentNew.dueling = True
 JaxDQNAgentNew.initzer = @variance_scaling()
 variance_scaling.scale=1
 variance_scaling.mode='fan_avg'
@@ -63,7 +63,7 @@ atari_lib.create_atari_environment.sticky_actions = False
 AtariPreprocessing.terminal_on_life_loss = True
 
 Runner.num_iterations = 10
-Runner.training_steps =  10000  # agent steps
+Runner.training_steps =  100000#10000  # agent steps
 Runner.max_steps_per_episode = 27000  # agent steps
 
 OutOfGraphPrioritizedReplayBuffer.replay_capacity = 1000000 # 1M as a proxy for unbounded memory
