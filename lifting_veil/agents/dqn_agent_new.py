@@ -253,8 +253,8 @@ class JaxDQNAgentNew(dqn_agent.JaxDQNAgent):
             self._preprocess_fn = functools.partial(atari_100k_rainbow_agent.preprocess_inputs_with_augmentation,
                 data_augmentation=data_augmentation)
         elif preprocess_fn is None:
-            self.network_def = network(num_actions=num_actions)
-            self._preprocess_fn = networks.identity_preprocess_fn
+            # self.network_def = network(num_actions=num_actions)
+            self._preprocess_fn = lambda st, rng: networks.identity_preprocess_fn(st)
         else:
             print("error: choose a right preprocess_fn parameter ")
 
