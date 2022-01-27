@@ -36,8 +36,6 @@ flags.DEFINE_string("experiment", "effective_horizon", "the experiment will be r
 flags.DEFINE_string("base_path", "gs://joao-experiments", "The base path for saving runs")
 
 
-# path = 'gs://joao-experiments'
-
 
 def main(_):
     def create_agent(sess, environment, summary_writer=None, memory=None):
