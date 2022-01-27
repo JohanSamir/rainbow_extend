@@ -275,7 +275,6 @@ class JaxRainbowAgentNew(dqn_agent.JaxDQNAgent):
                                            self.min_replay_history,
                                            self.epsilon_fn,
                                            self._support)
-    # TODO(psc): Why a numpy array? Why not an int?
     self.action = onp.asarray(self.action)
     return self.action
 
