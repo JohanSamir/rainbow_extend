@@ -30,10 +30,6 @@ from xmanager.cloud import caip
 import utils
 
 FLAGS = flags.FLAGS
-# flags.DEFINE_string(
-#     'gin_file',
-#     'https://raw.githubusercontent.com/JohanSamir/rainbow_extend/main/revisiting_rainbow/Configs/rainbow_cartpole.gin',
-#     'Gin file pulled from https://github.com/JohanSamir/rainbow_extend.')
 flags.DEFINE_string('tensorboard', None, 'Tensorboard instance.')
 
 
