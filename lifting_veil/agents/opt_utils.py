@@ -15,14 +15,19 @@ def create_opt(name='adamw', learning_rate=6.25e-5, beta1=0.9, beta2=0.999,
     beta1: float, beta1 parameter for the optimizer.
     beta2: float, beta2 parameter for the optimizer.
     eps: float, epsilon parameter for the optimizer.
+    weight_decay: float, the weight decay magnitude
     centered: bool, centered parameter for RMSProp.
 
   Returns:
     A flax optimizer.
   """
-  if name == 'adam':
+  if name == 'adamw':
     logging.info('Creating AdamW optimizer with settings lr=%f, beta1=%f, '
                  'beta2=%f, eps=%f, weight decay=%f', learning_rate, beta1, beta2, eps, weight_decay)
+    return optax.adamw(learning_rate, b1=beta1, b2=beta2, eps=eps, weight_decay=weight_decay)
+  elif name == 'adam':
+    logging.info('Creating Adam optimizer with settings lr=%f, beta1=%f, '
+                 'beta2=%f, eps=%f', learning_rate, beta1, beta2, eps)
     return optax.adam(learning_rate, b1=beta1, b2=beta2, eps=eps)
   elif name == 'rmsprop':
     logging.info('Creating RMSProp optimizer with settings lr=%f, beta2=%f, '
